@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">InventoryManager</string>
+
+    <string name="permission_not_granted">必要な権限が有効ではありません。有効にしてください。</string>
+</resources>

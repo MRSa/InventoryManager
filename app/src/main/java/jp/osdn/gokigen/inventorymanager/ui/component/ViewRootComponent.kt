@@ -3,12 +3,12 @@ package jp.osdn.gokigen.inventorymanager.ui.component
 import android.content.Context
 import android.util.AttributeSet
 import android.util.Log
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.AbstractComposeView
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import jp.osdn.gokigen.inventorymanager.ui.model.InventoryViewModel
 import jp.osdn.gokigen.inventorymanager.ui.theme.GokigenComposeAppsTheme
@@ -26,21 +26,9 @@ class ViewRootComponent @JvmOverloads constructor(context: Context, attrs: Attri
     override fun Content()
     {
         val navController = rememberNavController()
-        GokigenComposeAppsTheme {
-            Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                Greeting(
-                    name = "Android",
-                    modifier = Modifier.padding(innerPadding)
-                )
+            Surface {
+                NavigationMain(navController, this.myViewModel)
             }
-
-
-/*
-            Surface(color = MaterialTheme.colors.background) {
-                NavigationMain(navController, liaison.getCameraControl(), liaison.getVibrator(), prefsModel, liaison.getAnotherDrawer())
-            }
-*/
-        }
         Log.v(TAG, " ...NavigationRootComponent...")
     }
 
@@ -50,16 +38,16 @@ class ViewRootComponent @JvmOverloads constructor(context: Context, attrs: Attri
     }
 }
 
-
-/*
 @Composable
-fun NavigationMain(navController: NavHostController, cameraControl: ICameraControl, vibrator: IVibrator, prefsModel : A01fPrefsModel, anotherDrawer: IAnotherDrawer)
+fun NavigationMain(navController: NavHostController, prefsModel : InventoryViewModel)
 {
     GokigenComposeAppsTheme {
-        NavHost(navController = navController, startDestination = "LiveViewScreen") {
-            composable("LiveViewScreen") { LiveViewScreen(navController = navController, cameraControl, prefsModel, vibrator, LiveViewOnTouchListener(cameraControl), anotherDrawer) }
-            composable("PreferenceScreen") { PreferenceScreen(navController = navController, prefsModel, vibrator) }
+        NavHost(navController = navController, startDestination = "MainScreen") {
+            composable("MainScreen") { MainScreen(navController = navController, prefsModel = prefsModel) }
+            composable("RegistScreen") { RegistScreen(navController = navController, prefsModel = prefsModel) }
+            composable("ListScreen") { ListScreen(navController = navController, prefsModel = prefsModel) }
+            composable("DetailScreen") { DetailScreen(navController = navController, prefsModel = prefsModel) }
+            composable("PreferenceScreen") { PreferenceScreen(navController = navController, prefsModel = prefsModel) }
         }
     }
 }
-*/

@@ -133,11 +133,11 @@ class MainActivity : AppCompatActivity(), AppSingleton.PreparationCallback
                 }
                 else if ((param == Manifest.permission.READ_EXTERNAL_STORAGE)&&(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU))
                 {
-                    // この場合は、権限付与の判断を除外 (SDK: 33以上はエラーになる...)
+                    // この場合は、権限付与の判断を除外 (SDK: 33以上はエラーになるので...)
                 }
                 else if ((param == Manifest.permission.WRITE_EXTERNAL_STORAGE)&&(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU))
                 {
-                    // この場合は、権限付与の判断を除外 (SDK: 33以上はエラーになる...)
+                    // この場合は、権限付与の判断を除外 (SDK: 33以上はエラーになるので...)
                 }
                 else
                 {

@@ -8,9 +8,8 @@ import androidx.navigation.NavHostController
 import jp.osdn.gokigen.inventorymanager.ui.model.InventoryViewModel
 import jp.osdn.gokigen.inventorymanager.ui.theme.GokigenComposeAppsTheme
 
-
 @Composable
-fun ListScreen(navController: NavHostController, prefsModel : InventoryViewModel, name: String = "ListScreen", modifier: Modifier = Modifier)
+fun RegistScreen(navController: NavHostController, prefsModel : InventoryViewModel, name: String = "RegistScreen", modifier: Modifier = Modifier)
 {
     Text(
         text = "Hello $name!",

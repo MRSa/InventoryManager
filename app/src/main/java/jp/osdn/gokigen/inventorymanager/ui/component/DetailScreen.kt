@@ -10,7 +10,7 @@ import jp.osdn.gokigen.inventorymanager.ui.theme.GokigenComposeAppsTheme
 
 
 @Composable
-fun ListScreen(navController: NavHostController, prefsModel : InventoryViewModel, name: String = "ListScreen", modifier: Modifier = Modifier)
+fun DetailScreen(navController: NavHostController, prefsModel : InventoryViewModel, name: String = "DetailScreen", modifier: Modifier = Modifier)
 {
     Text(
         text = "Hello $name!",

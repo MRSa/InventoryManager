@@ -27,11 +27,11 @@ import jp.osdn.gokigen.inventorymanager.ui.model.InventoryViewModel
 import jp.osdn.gokigen.inventorymanager.ui.theme.GokigenComposeAppsTheme
 
 
-@ExperimentalMaterial3Api
 @Composable
 fun MainScreen(navController: NavHostController, prefsModel : InventoryViewModel, name: String = "MainScreen", modifier: Modifier = Modifier)
 {
     GokigenComposeAppsTheme {
+/*
         TopAppBar(
             colors = topAppBarColors(
                 containerColor = MaterialTheme.colorScheme.primaryContainer,
@@ -41,7 +41,7 @@ fun MainScreen(navController: NavHostController, prefsModel : InventoryViewModel
                 Text(text = stringResource(R.string.app_name) + " (" + stringResource(R.string.main_title_label_message) + ")")
             }
         )
-
+*/
         Column(
             modifier = modifier.fillMaxSize().width(IntrinsicSize.Max),
             verticalArrangement = Arrangement.Center,

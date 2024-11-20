@@ -25,10 +25,10 @@ class ViewRootComponent @JvmOverloads constructor(context: Context, attrs: Attri
     @Composable
     override fun Content()
     {
-        val navController = rememberNavController()
-            Surface {
-                NavigationMain(navController, this.myViewModel)
-            }
+        val navController: NavHostController = rememberNavController()
+        Surface {
+            NavigationMain(navController, this.myViewModel)
+        }
         Log.v(TAG, " ...NavigationRootComponent...")
     }
 

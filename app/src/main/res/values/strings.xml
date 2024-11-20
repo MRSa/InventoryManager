@@ -2,6 +2,12 @@
     <string name="app_name">Inventory Manager</string>
     <string name="permission_not_granted">Permissions not granted by the user.</string>
 
+    <string name="main_title_label_message"> Main</string>
+    <string name="label_main_screen_message">Please select below</string>
+    <string name="button_label_list">Inventory List</string>
+    <string name="button_label_register">Register</string>
+    <string name="button_label_preference">Preferences</string>
+
     <string name="pref_cat_application_settings">App. Settings</string>
     <string name="pref_instruction_manual_url">https://github.com/MRSa/GokigenOSDN_documents/blob/main/Applications/A01f/Readme.md</string>
 

@@ -2,6 +2,12 @@
     <string name="app_name">InventoryManager</string>
     <string name="permission_not_granted">必要な権限が有効ではありません。有効にしてください。</string>
 
+    <string name="main_title_label_message">メイン</string>
+    <string name="label_main_screen_message">選択してください</string>
+    <string name="button_label_list">一覧</string>
+    <string name="button_label_register">登録</string>
+    <string name="button_label_preference">設定</string>
+
     <string name="pref_cat_application_settings">アプリ設定</string>
     <string name="pref_instruction_manual_url">https://github.com/MRSa/GokigenOSDN_documents/blob/main/Applications/A01f/Readme.md</string>
 

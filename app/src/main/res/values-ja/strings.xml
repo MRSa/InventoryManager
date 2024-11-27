@@ -8,10 +8,80 @@
     <string name="button_label_register">登録</string>
     <string name="button_label_preference">設定</string>
 
-    <string name="pref_cat_application_settings">アプリ設定</string>
-    <string name="pref_instruction_manual_url">https://github.com/MRSa/GokigenOSDN_documents/blob/main/Applications/A01f/Readme.md</string>
+    <!--  Use for xml/preference_main.xml -->
+    <string name="pref_cat_application_control">A01f 制御</string>
+    <string name="pref_exit_power_off">アプリ終了</string>
+    <string name="pref_summary_exit_power_off"> </string>
+    <string name="pref_wifi_settings">Wi-Fi 設定</string>
+    <string name="pref_summary_wifi_settings"> </string>
 
+    <string name="pref_cat_application_settings">アプリ設定</string>
+    <string name="save_local_location">内蔵ストレージに保存</string>
+    <string name="notification_title">通知を使用</string>
+    <string name="pref_use_camerax_preview">カメラプレビューを使用(再起動が必要)</string>
+    <string name="pref_connection_method">入力画像 </string>
+    <string name="pref_summary_connection_method"> </string>
+
+    <string name="pref_cat_camera">カメラ</string>
+    <string name="pref_self_timer_count">セルフタイマー秒数</string>
+    <string name="pref_show_grid">グリッド表示</string>
+    <string name="pref_summary_show_grid"> </string>
+    <string name="pref_capture_both_camera_and_live_view">表示画像も保存</string>
+    <string name="pref_summary_capture_both_live_view">表示中画像も保存します。</string>
+
+    <string name="pref_cat_gokigen">GOKIGEN</string>
+    <string name="pref_instruction_manual">操作説明</string>
     <string name="pref_privacy_policy">プライバシーポリシー</string>
+    <string name="pref_degug_info">デバッグ情報</string>
+    <string name="pref_summary_debug_info">LogCat情報</string>
+
+    <string name="pref_instruction_manual_url">https://github.com/MRSa/GokigenOSDN_documents/blob/main/Applications/A01f/Readme.md</string>
     <string name="pref_privacy_policy_url">https://github.com/MRSa/GokigenOSDN_documents/blob/main/PrivacyPolicy.md</string>
 
+    <string name="pref_for_object_detection_model_file">オブジェクト検出モデル:</string>
+    <string name="pref_for_object_detection_model_file2">オブジェクト検出モデル(2):</string>
+    <string name="object_detection_model_load_failure">オブジェクト検出モデルが読み込めませんでした。</string>
+
+    <!--  Use for jp.osdn.gokigen.constants.IApplicationConstantConvert -->
+    <string name="blank"> </string>
+    <string name="app_location">AirA01a</string>
+    <string name="dialog_positive_execute">OK</string>
+    <string name="dialog_negative_cancel">Cancel</string>
+    <string name="dialog_title_exit_application">アプリ終了</string>
+    <string name="dialog_message_exit_application">アプリ終了</string>
+    <string name="dialog_confirm_title_output_log">デバッグログを共有</string>
+    <string name="dialog_confirm_message_output_log">デバッグログを共有します。</string>
+    <string name="action_refresh">更新</string>
+    <string name="finish_refresh">更新が終了しました。</string>
+    <string name="capture_success">撮影 : </string>
+
+    <!--  Use for jp.osdn.gokigen.gokigenassets.constants.ICameraConstantConvert -->
+    <string name="connect_start">start</string>
+    <string name="connect_check_wifi">check WIFI</string>
+    <string name="connect_connect">connecting</string>
+    <string name="connect_connecting">connecting&#8230;</string>
+    <string name="connect_connected">connected</string>
+    <string name="connect_connect_finished">connect finished.</string>
+    <string name="connect_change_run_mode">changeRunMode</string>
+    <string name="connect_restore_camera_settings">restoreCameraSettings</string>
+    <string name="connect_camera_detected">Detected a camera</string>
+    <string name="connect_camera_search_request">Camera Search</string>
+    <string name="connect_camera_found">Found a camera</string>
+    <string name="connect_camera_wait_reply">Wait reply from a camera</string>
+    <string name="connect_camera_received_reply">Received reply from a camera</string>
+    <string name="connect_receive_unknown_message">Received a unknown message.</string>
+
+    <string name="camera_not_found">カメラが見つかりませんでした&#8230;</string>
+    <string name="camera_connect_response_ng">カメラからNG応答がありました。</string>
+    <string name="connect_camera_rejected">カメラが接続を拒否しました。</string>
+
+    <string name="dialog_title_connect_failed">カメラとの接続に失敗しました。</string>
+    <string name="dialog_button_retry">再試行</string>
+    <string name="dialog_button_network_settings">WiFi設定</string>
+
+    <string name="dialog_title_confirmation">確認</string>
+    <string name="dialog_message_power_off">電源OFF</string>
+    <string name="dialog_message_exit">アプリ終了</string>
+
+    <string name="command_line_disconnected">回線が切断されました。</string>
 </resources>

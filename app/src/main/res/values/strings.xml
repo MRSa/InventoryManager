@@ -8,9 +8,86 @@
     <string name="button_label_register">Register</string>
     <string name="button_label_preference">Preferences</string>
 
-    <string name="pref_cat_application_settings">App. Settings</string>
-    <string name="pref_instruction_manual_url">https://github.com/MRSa/GokigenOSDN_documents/blob/main/Applications/A01f/Readme.md</string>
 
+
+
+    <!--  Use for xml/preference_main.xml -->
+    <string name="pref_cat_application_control">App. Control</string>
+    <string name="pref_exit_power_off">Exit Application</string>
+    <string name="pref_summary_exit_power_off"> </string>
+    <string name="pref_wifi_settings">Wi-Fi Settings</string>
+    <string name="pref_summary_wifi_settings"> </string>
+
+    <string name="pref_cat_application_settings">App. Settings</string>
+    <string name="save_local_location">Save local location</string>
+    <string name="notification_title">Use Notification</string>
+    <string name="pref_use_camerax_preview">Use Camera preview(need restart)</string>
+    <string name="pref_connection_method">Input Image </string>
+    <string name="pref_summary_connection_method"> </string>
+
+    <string name="pref_cat_camera">Camera</string>
+    <string name="pref_self_timer_count">Self Timer Seconds</string>
+    <string name="pref_show_grid">Show Grid</string>
+    <string name="pref_summary_show_grid"> </string>
+    <string name="pref_capture_both_camera_and_live_view">Capture LiveView Image</string>
+    <string name="pref_summary_capture_both_live_view">Captures a LiveView image.</string>
+
+    <string name="pref_cat_gokigen">GOKIGEN</string>
+    <string name="pref_instruction_manual">Instructions</string>
     <string name="pref_privacy_policy">Privacy Policy</string>
+    <string name="pref_degug_info">Debug Information</string>
+    <string name="pref_summary_debug_info">LogCat Information</string>
+
+    <string name="pref_instruction_manual_url">https://github.com/MRSa/GokigenOSDN_documents/blob/main/Applications/A01f/Readme.md</string>
     <string name="pref_privacy_policy_url">https://github.com/MRSa/GokigenOSDN_documents/blob/main/PrivacyPolicy.md</string>
+
+    <string name="pref_for_object_detection_model_file">Object Detection Model:</string>
+    <string name="pref_for_object_detection_model_file2">ObjectDetection Model(2):</string>
+    <string name="object_detection_model_load_failure">Object Detection Model is not Ready…</string>
+
+    <!--  Use for jp.osdn.gokigen.constants.IApplicationConstantConvert -->
+    <string name="blank"> </string>
+    <string name="app_location">AirA01a</string>
+    <string name="dialog_positive_execute">OK</string>
+    <string name="dialog_negative_cancel">Cancel</string>
+    <string name="dialog_title_exit_application">Exit Application</string>
+    <string name="dialog_message_exit_application">Exit Application</string>
+    <string name="dialog_confirm_title_output_log">Share debug log</string>
+    <string name="dialog_confirm_message_output_log">Share the debug log, OK?</string>
+    <string name="action_refresh">Refresh</string>
+    <string name="finish_refresh">Finish refresh.</string>
+    <string name="capture_success">Photo capture succeeded: </string>
+
+    <!--  Use for jp.osdn.gokigen.gokigenassets.constants.ICameraConstantConvert -->
+    <string name="connect_start">start</string>
+    <string name="connect_check_wifi">check WIFI</string>
+    <string name="connect_connect">connecting</string>
+    <string name="connect_connecting">connecting&#8230;</string>
+    <string name="connect_connected">connected</string>
+    <string name="connect_connect_finished">connect finished.</string>
+    <string name="connect_change_run_mode">changeRunMode</string>
+    <string name="connect_restore_camera_settings">restoreCameraSettings</string>
+    <string name="connect_camera_detected">Detected a camera</string>
+    <string name="connect_camera_search_request">Camera Search</string>
+    <string name="connect_camera_found">Found a camera</string>
+    <string name="connect_camera_wait_reply">Wait reply from a camera</string>
+    <string name="connect_camera_received_reply">Received reply from a camera</string>
+    <string name="connect_receive_unknown_message">Received a unknown message.</string>
+
+    <string name="camera_not_found">Not Found&#8230;</string>
+    <string name="camera_connect_response_ng">Camera replies NG.</string>
+    <string name="connect_camera_rejected">Camera rejected.</string>
+
+    <string name="dialog_title_connect_failed">Connect failed.</string>
+    <string name="dialog_button_retry">Retry</string>
+    <string name="dialog_button_network_settings">WiFi Settings</string>
+
+    <string name="dialog_title_confirmation">Confirmation</string>
+    <string name="dialog_message_power_off">Power Off</string>
+    <string name="dialog_message_exit">Exit Application</string>
+
+    <string name="command_line_disconnected">Camera control line is disconnected.</string>
+
+
+
 </resources>

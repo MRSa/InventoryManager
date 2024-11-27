@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/base_layout"
+>
+
+    <ImageButton
+        android:id="@+id/button_connect"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/blank"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginRight="2dp"
+        android:src="@drawable/baseline_cloud_off_24"
+        android:visibility="visible"
+        />
+
+    <ImageButton
+        android:id="@+id/button_connect2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/blank"
+        android:layout_toRightOf="@id/button_connect"
+        android:layout_alignTop="@id/button_connect"
+        android:layout_alignParentBottom="true"
+        android:src="@drawable/baseline_linked_camera_24"
+        android:visibility="gone"
+        />
+
+    <ImageButton
+        android:id="@+id/button_configure"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/blank"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginRight="2dp"
+        android:src="@drawable/baseline_settings_24"
+        android:visibility="visible"
+        />
+
+    <ImageButton
+        android:id="@+id/button_camera"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/blank"
+        android:layout_toLeftOf="@id/button_configure"
+        android:layout_marginRight="2dp"
+        android:layout_alignTop="@id/button_configure"
+        android:layout_alignParentBottom="true"
+        android:src="@drawable/baseline_camera_alt_24"
+        android:visibility="invisible"
+        />
+
+    <ImageButton
+        android:id="@+id/button_camera2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/blank"
+        android:layout_toLeftOf="@id/button_camera"
+        android:layout_marginRight="2dp"
+        android:layout_alignTop="@id/button_configure"
+        android:layout_alignParentBottom="true"
+        android:src="@drawable/baseline_camera_24"
+        android:visibility="gone"
+        />
+
+    <TextView
+        android:id="@+id/message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/blank"
+        android:textSize="8pt"
+        android:gravity="center"
+        android:layout_marginStart="0dp"
+        android:layout_toRightOf="@id/button_connect"
+        android:layout_toEndOf="@id/button_connect"
+        android:layout_alignParentBottom="true"
+        android:layout_toLeftOf="@id/button_camera"
+        android:layout_alignTop="@id/button_camera"
+        android:layout_marginRight="2dp"
+        android:visibility="visible"
+        />
+
+    <FrameLayout
+        android:id="@+id/fragment1"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_above="@id/message"
+        android:visibility="visible"
+        />
+
+</RelativeLayout>

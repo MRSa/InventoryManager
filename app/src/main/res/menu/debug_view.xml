@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+       xmlns:compat="http://schemas.android.com/apk/res-auto" >
+
+    <!--  Use for jp.osdn.gokigen.constants.IApplicationConstantConvert -->
+    <item
+        android:id="@+id/action_refresh"
+        compat:showAsAction="always"
+        android:icon="@drawable/baseline_refresh_24"
+        android:title="@string/action_refresh"
+        android:visible="true" />
+
+</menu>

@@ -1,0 +1,311 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/main_layout"
+    tools:context=".MainActivity">
+
+    <ImageButton
+        android:id="@+id/button_camera"
+        android:layout_width="26pt"
+        android:layout_height="26pt"
+        android:scaleType="fitCenter"
+        android:layout_marginBottom="10dp"
+        android:contentDescription="@string/blank"
+        android:src="@drawable/baseline_camera_24"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:elevation="2dp"
+        android:visibility="visible"/>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:id="@+id/liveview_upper_area"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:visibility="visible">
+            <LinearLayout
+                android:id="@+id/panelLayout0"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:visibility="visible"
+                android:orientation="vertical">
+
+                <view
+                    android:id="@+id/liveViewFinder0"
+                    class="jp.osdn.gokigen.gokigenassets.liveview.LiveImageView"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:scaleType="fitCenter"
+                    android:layout_weight="1"
+                    android:visibility="visible" />
+
+                <SeekBar
+                    android:id="@+id/liveview_cache_seekbar0"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:max="1000"
+                    android:minHeight="14pt"
+                    android:layout_marginTop="1dp"
+                    android:layout_marginBottom="1dp"
+                    android:visibility="visible" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/panelLayout1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:visibility="visible"
+                android:orientation="vertical">
+
+                <view
+                    class="jp.osdn.gokigen.gokigenassets.liveview.LiveImageView"
+                    android:id="@+id/liveViewFinder1"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:scaleType="fitCenter"
+                    android:layout_weight="1"
+                    android:visibility="visible" />
+
+                <SeekBar
+                    android:id="@+id/liveview_cache_seekbar1"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:minHeight="14pt"
+                    android:layout_marginTop="1dp"
+                    android:layout_marginBottom="1dp"
+                    android:max="1000"
+                    android:visibility="visible" />
+
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/liveview_middle_up_area"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:visibility="visible">
+            <LinearLayout
+                android:id="@+id/panelLayout2"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:visibility="visible"
+                android:orientation="vertical">
+
+                <view
+                    android:id="@+id/liveViewFinder2"
+                    class="jp.osdn.gokigen.gokigenassets.liveview.LiveImageView"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:scaleType="fitCenter"
+                    android:layout_weight="1"
+                    android:visibility="visible" />
+
+                <SeekBar
+                    android:id="@+id/liveview_cache_seekbar2"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:max="1000"
+                    android:minHeight="14pt"
+                    android:layout_marginTop="1dp"
+                    android:layout_marginBottom="1dp"
+                    android:visibility="visible" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/panelLayout3"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:visibility="visible"
+                android:orientation="vertical">
+
+                <view
+                    class="jp.osdn.gokigen.gokigenassets.liveview.LiveImageView"
+                    android:id="@+id/liveViewFinder3"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:scaleType="fitCenter"
+                    android:layout_weight="1"
+                    android:visibility="visible" />
+
+                <SeekBar
+                    android:id="@+id/liveview_cache_seekbar3"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:minHeight="14pt"
+                    android:layout_marginTop="1dp"
+                    android:layout_marginBottom="1dp"
+                    android:max="1000"
+                    android:visibility="visible" />
+
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/liveview_middle_down_area"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:visibility="visible">
+            <LinearLayout
+                android:id="@+id/panelLayout4"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:visibility="visible"
+                android:orientation="vertical">
+
+                <view
+                    android:id="@+id/liveViewFinder4"
+                    class="jp.osdn.gokigen.gokigenassets.liveview.LiveImageView"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:scaleType="fitCenter"
+                    android:layout_weight="1"
+                    android:visibility="visible" />
+
+                <SeekBar
+                    android:id="@+id/liveview_cache_seekbar4"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:max="1000"
+                    android:minHeight="14pt"
+                    android:layout_marginTop="1dp"
+                    android:layout_marginBottom="1dp"
+                    android:visibility="visible" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/panelLayout5"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:visibility="visible"
+                android:orientation="vertical">
+
+                <view
+                    class="jp.osdn.gokigen.gokigenassets.liveview.LiveImageView"
+                    android:id="@+id/liveViewFinder5"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:scaleType="fitCenter"
+                    android:layout_weight="1"
+                    android:visibility="visible" />
+
+                <SeekBar
+                    android:id="@+id/liveview_cache_seekbar5"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:minHeight="14pt"
+                    android:layout_marginTop="1dp"
+                    android:layout_marginBottom="1dp"
+                    android:max="1000"
+                    android:visibility="visible" />
+
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/liveview_lower_area"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:visibility="visible">
+
+            <LinearLayout
+                android:id="@+id/panelLayout6"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:visibility="visible"
+                android:orientation="vertical">
+
+                <view
+                    class="jp.osdn.gokigen.gokigenassets.liveview.LiveImageView"
+                    android:id="@+id/liveViewFinder6"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:scaleType="fitCenter"
+                    android:visibility="visible" />
+
+                <SeekBar
+                    android:id="@+id/liveview_cache_seekbar6"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:max="1000"
+                    android:minHeight="14pt"
+                    android:layout_marginTop="1dp"
+                    android:layout_marginBottom="1dp"
+                    android:visibility="visible" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/panelLayout7"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:visibility="visible"
+                android:orientation="vertical">
+
+                <view
+                    android:id="@+id/liveViewFinder7"
+                    class="jp.osdn.gokigen.gokigenassets.liveview.LiveImageView"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:scaleType="fitCenter"
+                    android:visibility="visible" />
+
+                <SeekBar
+                    android:id="@+id/liveview_cache_seekbar7"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:max="1000"
+                    android:minHeight="14pt"
+                    android:layout_marginTop="1dp"
+                    android:layout_marginBottom="1dp"
+                    android:visibility="visible" />
+
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

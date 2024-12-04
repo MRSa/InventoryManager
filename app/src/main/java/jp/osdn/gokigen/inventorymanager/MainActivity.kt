@@ -15,14 +15,17 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
+import jp.osdn.gokigen.inventorymanager.liaison.CameraLiaison
 import jp.osdn.gokigen.inventorymanager.preference.PreferenceValueInitializer
 import jp.osdn.gokigen.inventorymanager.ui.component.ViewRootComponent
 import jp.osdn.gokigen.inventorymanager.ui.model.InventoryViewModel
+import jp.osdn.gokigen.gokigenassets.scene.IVibrator
 
 class MainActivity : AppCompatActivity(), AppSingleton.PreparationCallback
 {
     private lateinit var rootComponent : ViewRootComponent
     private lateinit var myViewModel : InventoryViewModel
+    private lateinit var liaison : CameraLiaison
 
     override fun onCreate(savedInstanceState: Bundle?)
     {
@@ -40,9 +43,11 @@ class MainActivity : AppCompatActivity(), AppSingleton.PreparationCallback
             myViewModel = ViewModelProvider(this)[InventoryViewModel::class.java]
             myViewModel.initializeViewModel(this)
 
+            liaison = CameraLiaison(this, myViewModel, myViewModel)
+
             ///////// SET ROOT VIEW /////////
             rootComponent = ViewRootComponent(applicationContext)
-            rootComponent.setLiaisons(myViewModel)
+            rootComponent.setLiaisons(myViewModel, liaison)
             setContent {
                 rootComponent.Content()
             }

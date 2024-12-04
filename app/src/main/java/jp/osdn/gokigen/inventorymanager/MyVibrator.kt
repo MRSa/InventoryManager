@@ -8,16 +8,17 @@ import android.os.VibrationEffect
 import android.os.Vibrator
 import android.os.VibratorManager
 import android.util.Log
+import jp.osdn.gokigen.gokigenassets.scene.IVibrator
 
-interface IVibrator
-{
-    enum class VibratePattern
-    {
-        NONE, SIMPLE_SHORT_SHORT, SIMPLE_SHORT, SIMPLE_MIDDLE, SIMPLE_LONG
-    }
-}
+//interface IVibrator
+//{
+//    enum class VibratePattern
+//    {
+//        NONE, SIMPLE_SHORT_SHORT, SIMPLE_SHORT, SIMPLE_MIDDLE, SIMPLE_LONG
+//    }
+//}
 
-class MyVibrator
+class MyVibrator() : IVibrator
 {
     fun vibrate(myContext: Context, vibratePattern: IVibrator.VibratePattern)
     {
@@ -66,8 +67,14 @@ class MyVibrator
         }
     }
 
+    override fun vibrate(vibratePattern: IVibrator.VibratePattern)
+    {
+        // vibrate(vibratePattern)
+    }
+
     companion object
     {
         val TAG: String = MyVibrator::class.java.simpleName
     }
+
 }

@@ -9,14 +9,13 @@ import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraControl
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatusReceiver
 import jp.osdn.gokigen.gokigenassets.liveview.IAnotherDrawer
 import jp.osdn.gokigen.gokigenassets.scene.IInformationReceiver
-import jp.osdn.gokigen.gokigenassets.scene.IVibrator
 import jp.osdn.gokigen.inventorymanager.R
 import jp.osdn.gokigen.inventorymanager.preference.IPreferencePropertyAccessor
 
-class CameraLiaison(private val activity: AppCompatActivity, private val informationNotify: IInformationReceiver, private val vibrator : IVibrator, statusReceiver : ICameraStatusReceiver)
+class CameraLiaison(private val activity: AppCompatActivity, private val informationNotify: IInformationReceiver, statusReceiver : ICameraStatusReceiver)
 {
     private val drawers = AnotherDrawerHolder()
-    private val cameraProvider = CameraProvider(activity, informationNotify, vibrator, statusReceiver)
+    private val cameraProvider = CameraProvider(activity, informationNotify, statusReceiver)
     private lateinit var cameraControl: ICameraControl  // = cameraProvider.getCameraXControl()
 
     init
@@ -89,7 +88,6 @@ class CameraLiaison(private val activity: AppCompatActivity, private val informa
     }
 
     fun getCameraControl() : ICameraControl { return (cameraControl) }
-    fun getVibrator() : IVibrator { return (vibrator) }
     fun getAnotherDrawer() : IAnotherDrawer { return (drawers) }
 
     fun handleKeyDown(keyCode: Int, event: KeyEvent): Boolean

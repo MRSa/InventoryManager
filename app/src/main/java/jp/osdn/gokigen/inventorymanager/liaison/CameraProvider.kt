@@ -14,7 +14,7 @@ import jp.osdn.gokigen.gokigenassets.liveview.image.CameraLiveViewListenerImpl
 import jp.osdn.gokigen.gokigenassets.liveview.image.IImageProvider
 import jp.osdn.gokigen.gokigenassets.preference.PreferenceAccessWrapper
 import jp.osdn.gokigen.gokigenassets.scene.IInformationReceiver
-import jp.osdn.gokigen.gokigenassets.scene.IVibrator
+import jp.osdn.gokigen.inventorymanager.AppSingleton
 import jp.osdn.gokigen.inventorymanager.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_METHOD_1
 import jp.osdn.gokigen.inventorymanager.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_METHOD_1_DEFAULT_VALUE
 import jp.osdn.gokigen.inventorymanager.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_OPTION1_1
@@ -30,7 +30,7 @@ import jp.osdn.gokigen.inventorymanager.preference.IPreferencePropertyAccessor.C
 import jp.osdn.gokigen.inventorymanager.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_SEQUENCE_1
 import jp.osdn.gokigen.inventorymanager.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_SEQUENCE_1_DEFAULT_VALUE
 
-class CameraProvider(private val activity: AppCompatActivity, private val informationNotify: IInformationReceiver, private val vibrator : IVibrator, private val statusReceiver : ICameraStatusReceiver)
+class CameraProvider(private val activity: AppCompatActivity, private val informationNotify: IInformationReceiver, private val statusReceiver : ICameraStatusReceiver)
 {
     private val liveViewListener = CameraLiveViewListenerImpl(activity, informationNotify)
     private val cameraCoordinator = CameraControlCoordinator(informationNotify)
@@ -94,7 +94,7 @@ class CameraProvider(private val activity: AppCompatActivity, private val inform
         {
             return (cameraXControl0)
         }
-        cameraXControl0 = CameraControl(activity, cameraPreference, vibrator, informationNotify, statusReceiver, number, liveViewListener)
+        cameraXControl0 = CameraControl(activity, cameraPreference, AppSingleton.vibrator, informationNotify, statusReceiver, number, liveViewListener)
         cameraXisCreated = true
         return (cameraXControl0)
     }

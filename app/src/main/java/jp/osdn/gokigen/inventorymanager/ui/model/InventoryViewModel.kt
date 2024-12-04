@@ -8,18 +8,22 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.preference.PreferenceManager
+import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraConnectionStatus
+import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatusReceiver
+import jp.osdn.gokigen.gokigenassets.scene.IInformationReceiver
 import jp.osdn.gokigen.inventorymanager.preference.IPreferencePropertyAccessor
 
-class InventoryViewModel: ViewModel()
+class InventoryViewModel: ViewModel(), IInformationReceiver, ICameraStatusReceiver
 {
     private lateinit var preference : SharedPreferences
     private lateinit var contentResolver: ContentResolver
-
+    private val connectionStatus : MutableLiveData<ICameraConnectionStatus.CameraConnectionStatus> by lazy { MutableLiveData<ICameraConnectionStatus.CameraConnectionStatus>() }
     private val readIsbnImmediately : MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     private val databaseInitialize : MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
 
     val isReadyDatabase: LiveData<Boolean> = databaseInitialize
     val checkIsbnImmediately: LiveData<Boolean> = readIsbnImmediately
+    val cameraConnectionStatus: LiveData<ICameraConnectionStatus.CameraConnectionStatus> = connectionStatus
 
     fun initializeViewModel(activity: AppCompatActivity)
     {
@@ -57,6 +61,48 @@ class InventoryViewModel: ViewModel()
     fun setIsReadyDatabase(value: Boolean)
     {
         databaseInitialize.value = value
+    }
+
+    /* IInformationReceiver */
+    override fun updateMessage(message: String, isBold: Boolean, isColor: Boolean, color: Int)
+    {
+        Log.v(TAG, "updateMessage(): $message")
+    }
+
+    /* IInformationReceiver */
+    override fun appendMessage(message: String, isBold: Boolean, isColor: Boolean, color: Int)
+    {
+        Log.v(TAG, "appendMessage(): $message")
+    }
+
+    /* IInformationReceiver */
+    override fun getCurrentMessage(): String
+    {
+        Log.v(TAG, "getCurrentMessage()")
+        return ""
+    }
+
+    /* ICameraStatusReceiver */
+    override fun onStatusNotify(message: String?)
+    {
+        Log.v(TAG, "onStatusNotify() : $message")
+    }
+    /* ICameraStatusReceiver */
+    override fun onCameraConnected()
+    {
+        Log.v(TAG, "onCameraConnected()")
+    }
+
+    /* ICameraStatusReceiver */
+    override fun onCameraDisconnected()
+    {
+        Log.v(TAG, "onCameraDisconnected()")
+    }
+
+    /* ICameraStatusReceiver */
+    override fun onCameraConnectError(msg: String?)
+    {
+        Log.v(TAG, "onCameraConnectError() : $msg")
     }
 
     companion object

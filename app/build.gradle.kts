@@ -59,6 +59,7 @@ dependencies {
     implementation(libs.androidx.exifinterface)
     implementation(libs.androidx.camera.lifecycle)
     implementation(libs.androidx.runtime.livedata)
+    implementation(libs.androidx.constraintlayout.compose)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

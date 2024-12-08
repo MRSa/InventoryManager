@@ -5,8 +5,15 @@
     <string name="main_title_label_message">メイン</string>
     <string name="label_main_screen_message">選択してください</string>
     <string name="button_label_list">一覧</string>
-    <string name="button_label_register">登録</string>
+    <string name="button_label_register">情報の登録</string>
     <string name="button_label_preference">設定</string>
+
+    <string name="screen_title_registry">情報の登録</string>
+    <string name="button_label_register_next">次の登録へ</string>
+    <string name="label_explain_register_next">画像の保管や文字認識を行ってください。</string>
+    <string name="label_register_item">アイテム </string>
+    <string name="label_register_text">テキスト </string>
+    <string name="label_register_bcr">バーコード </string>
 
     <!--  Use for xml/preference_main.xml -->
     <string name="pref_cat_application_control">A01f 制御</string>

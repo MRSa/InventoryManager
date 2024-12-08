@@ -20,11 +20,13 @@ import jp.osdn.gokigen.inventorymanager.preference.PreferenceValueInitializer
 import jp.osdn.gokigen.inventorymanager.ui.component.ViewRootComponent
 import jp.osdn.gokigen.inventorymanager.ui.model.InventoryViewModel
 import jp.osdn.gokigen.gokigenassets.scene.IVibrator
+import jp.osdn.gokigen.inventorymanager.ui.model.RegisterInformationViewModel
 
 class MainActivity : AppCompatActivity(), AppSingleton.PreparationCallback
 {
     private lateinit var rootComponent : ViewRootComponent
     private lateinit var myViewModel : InventoryViewModel
+    private lateinit var myRegistViewModel : RegisterInformationViewModel
     private lateinit var liaison : CameraLiaison
 
     override fun onCreate(savedInstanceState: Bundle?)
@@ -43,11 +45,14 @@ class MainActivity : AppCompatActivity(), AppSingleton.PreparationCallback
             myViewModel = ViewModelProvider(this)[InventoryViewModel::class.java]
             myViewModel.initializeViewModel(this)
 
-            liaison = CameraLiaison(this, myViewModel, myViewModel)
+            myRegistViewModel = ViewModelProvider(this)[RegisterInformationViewModel::class.java]
+            myRegistViewModel.initializeViewModel(this)
+
+            liaison = CameraLiaison(this, myViewModel, myRegistViewModel)
 
             ///////// SET ROOT VIEW /////////
             rootComponent = ViewRootComponent(applicationContext)
-            rootComponent.setLiaisons(myViewModel, liaison)
+            rootComponent.setLiaisons(myViewModel, myRegistViewModel, liaison)
             setContent {
                 rootComponent.Content()
             }

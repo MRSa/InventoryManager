@@ -319,7 +319,15 @@ class CameraLiveViewListenerImpl(private val context: Context,  private val info
             if (cachePics.size == 0)
             {
                 // 画像が入っていない...
-                return (BitmapFactory.decodeResource(context.resources, ID_DRAWABLE_SPLASH_IMAGE))
+                // Log.v(TAG, " get bitmap resource: $context : ${context.resources} : $ID_DRAWABLE_SPLASH_IMAGE")
+                //return (BitmapFactory.decodeResource(context.resources, ID_DRAWABLE_SPLASH_IMAGE, options))
+
+                val bitmap = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888)
+                val canvas = Canvas(bitmap)
+                val paint = Paint()
+                paint.color = Color.GRAY
+                canvas.drawRect(0f, 0f, 100.0f, 100.0f, paint)
+                return (bitmap)
             }
 
             val pos = (position * maxCachePics.toFloat()).toInt()
@@ -343,7 +351,13 @@ class CameraLiveViewListenerImpl(private val context: Context,  private val info
         {
             e.printStackTrace()
         }
-        return (BitmapFactory.decodeResource(context.resources, ID_DRAWABLE_SPLASH_IMAGE))
+        //return (BitmapFactory.decodeResource(context.resources, ID_DRAWABLE_SPLASH_IMAGE))
+        val bitmap = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(bitmap)
+        val paint = Paint()
+        paint.color = Color.DKGRAY
+        canvas.drawRect(0f, 0f, 100.0f, 100.0f, paint)
+        return (bitmap)
     }
 
     fun isImageReceived() : Boolean

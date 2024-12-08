@@ -1,5 +1,6 @@
 package jp.osdn.gokigen.inventorymanager.ui.component
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
@@ -22,13 +23,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraControl
 import jp.osdn.gokigen.inventorymanager.R
 import jp.osdn.gokigen.inventorymanager.ui.model.InventoryViewModel
 import jp.osdn.gokigen.inventorymanager.ui.theme.GokigenComposeAppsTheme
 
 
 @Composable
-fun MainScreen(navController: NavHostController, prefsModel : InventoryViewModel, name: String = "MainScreen", modifier: Modifier = Modifier)
+fun MainScreen(navController: NavHostController, cameraControl: ICameraControl, prefsModel : InventoryViewModel, name: String = "MainScreen", modifier: Modifier = Modifier)
 {
     GokigenComposeAppsTheme {
 /*
@@ -59,8 +61,13 @@ fun MainScreen(navController: NavHostController, prefsModel : InventoryViewModel
             }
             Button(
                 modifier = Modifier.padding(vertical = 8.dp, horizontal = 24.dp).fillMaxWidth(),
-
-                onClick = { navController.navigate("RegistScreen") }
+                onClick = {
+                    navController.navigate("RegistScreen") {
+                        Log.v("MainScreen", "Navigate to RegistScreen.")
+                        cameraControl.connectToCamera()
+                        cameraControl.startCamera(isPreviewView = false)
+                    }
+                }
             ) {
                 Text(stringResource(R.string.button_label_register))
             }

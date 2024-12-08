@@ -8,8 +8,12 @@
     <string name="button_label_register">Register</string>
     <string name="button_label_preference">Preferences</string>
 
-
-
+    <string name="screen_title_registry">Register Information</string>
+    <string name="button_label_register_next">Next</string>
+    <string name="label_explain_register_next">Store the text, image and/or OCR it.</string>
+    <string name="label_register_item">Item </string>
+    <string name="label_register_text">Text </string>
+    <string name="label_register_bcr">Barcode </string>
 
     <!--  Use for xml/preference_main.xml -->
     <string name="pref_cat_application_control">App. Control</string>
@@ -87,7 +91,5 @@
     <string name="dialog_message_exit">Exit Application</string>
 
     <string name="command_line_disconnected">Camera control line is disconnected.</string>
-
-
 
 </resources>

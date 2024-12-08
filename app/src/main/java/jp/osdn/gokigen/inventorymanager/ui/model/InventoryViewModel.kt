@@ -13,7 +13,7 @@ import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatusReceiver
 import jp.osdn.gokigen.gokigenassets.scene.IInformationReceiver
 import jp.osdn.gokigen.inventorymanager.preference.IPreferencePropertyAccessor
 
-class InventoryViewModel: ViewModel(), IInformationReceiver, ICameraStatusReceiver
+class InventoryViewModel: ViewModel(), IInformationReceiver
 {
     private lateinit var preference : SharedPreferences
     private lateinit var contentResolver: ContentResolver
@@ -82,28 +82,7 @@ class InventoryViewModel: ViewModel(), IInformationReceiver, ICameraStatusReceiv
         return ""
     }
 
-    /* ICameraStatusReceiver */
-    override fun onStatusNotify(message: String?)
-    {
-        Log.v(TAG, "onStatusNotify() : $message")
-    }
-    /* ICameraStatusReceiver */
-    override fun onCameraConnected()
-    {
-        Log.v(TAG, "onCameraConnected()")
-    }
 
-    /* ICameraStatusReceiver */
-    override fun onCameraDisconnected()
-    {
-        Log.v(TAG, "onCameraDisconnected()")
-    }
-
-    /* ICameraStatusReceiver */
-    override fun onCameraConnectError(msg: String?)
-    {
-        Log.v(TAG, "onCameraConnectError() : $msg")
-    }
 
     companion object
     {

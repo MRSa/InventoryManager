@@ -23,12 +23,6 @@ class RegisterInformationViewModel: ViewModel(), ICameraStatusReceiver
     private val labelData5 : MutableLiveData<String> by lazy { MutableLiveData<String>() }
     private val labelData6 : MutableLiveData<String> by lazy { MutableLiveData<String>() }
 
-    private val textData1 : MutableLiveData<String> by lazy { MutableLiveData<String>() }
-    private val textData2 : MutableLiveData<String> by lazy { MutableLiveData<String>() }
-    private val textData3 : MutableLiveData<String> by lazy { MutableLiveData<String>() }
-    private val textData4 : MutableLiveData<String> by lazy { MutableLiveData<String>() }
-    private val textData5 : MutableLiveData<String> by lazy { MutableLiveData<String>() } // Text Recognize
-    private val textData6 : MutableLiveData<String> by lazy { MutableLiveData<String>() } // Barcode Recognize
 
     private val infoData  : MutableLiveData<String> by lazy { MutableLiveData<String>() }
 
@@ -46,13 +40,6 @@ class RegisterInformationViewModel: ViewModel(), ICameraStatusReceiver
     val registerInformationLabel04: LiveData<String> = labelData4
     val registerInformationLabel05: LiveData<String> = labelData5
     val registerInformationLabel06: LiveData<String> = labelData6
-
-    val registerInformationText01: LiveData<String> = textData1
-    val registerInformationText02: LiveData<String> = textData2
-    val registerInformationText03: LiveData<String> = textData3
-    val registerInformationText04: LiveData<String> = textData4
-    val registerInformationText05: LiveData<String> = textData5
-    val registerInformationText06: LiveData<String> = textData6
 
     val registerInformationData : LiveData<String> = infoData
 
@@ -89,20 +76,12 @@ class RegisterInformationViewModel: ViewModel(), ICameraStatusReceiver
             labelData6.value = context.getString(R.string.label_register_bcr)
 
             infoData.value = context.getString(R.string.label_explain_register_next)
-
-            textData1.value = ""
-            textData2.value = ""
-            textData3.value = ""
-            textData4.value = ""
-            textData5.value = ""
-            textData6.value = ""
         }
         catch (e: Exception)
         {
             e.printStackTrace()
         }
     }
-
 
     /* ICameraStatusReceiver */
     override fun onStatusNotify(message: String?) {

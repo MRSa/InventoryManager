@@ -11,6 +11,9 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.safeDrawingPadding
+import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -54,7 +57,9 @@ class MainActivity : AppCompatActivity(), AppSingleton.PreparationCallback
             rootComponent = ViewRootComponent(applicationContext)
             rootComponent.setLiaisons(myViewModel, myRegistViewModel, liaison)
             setContent {
-                rootComponent.Content()
+                //Box(Modifier.safeDrawingPadding()) {
+                    rootComponent.Content()
+                //}
             }
         }
         catch (e: Exception)

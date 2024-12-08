@@ -46,7 +46,6 @@ class CameraLiaison(private val activity: AppCompatActivity, private val informa
                 e.printStackTrace()
                 cameraProvider.getCameraXControl()
             }
-            cameraControl.initialize()
         }
         catch (e: Exception)
         {
@@ -61,6 +60,7 @@ class CameraLiaison(private val activity: AppCompatActivity, private val informa
             val msg = activity.getString(R.string.app_name)
             informationNotify.updateMessage(msg, isBold = false, isColor = true, color = Color.LTGRAY)
 
+            cameraControl.initialize()
             cameraControl.startCamera(isPreviewView = false)
         }
         catch (e: Exception)

@@ -32,7 +32,7 @@ import jp.osdn.gokigen.inventorymanager.ui.theme.GokigenComposeAppsTheme
 @Composable
 fun MainScreen(navController: NavHostController, cameraControl: ICameraControl, prefsModel : InventoryViewModel, name: String = "MainScreen", modifier: Modifier = Modifier)
 {
-    GokigenComposeAppsTheme {
+    MaterialTheme {
 /*
         TopAppBar(
             colors = topAppBarColors(
@@ -64,6 +64,7 @@ fun MainScreen(navController: NavHostController, cameraControl: ICameraControl, 
                 onClick = {
                     navController.navigate("RegistScreen") {
                         Log.v("MainScreen", "Navigate to RegistScreen.")
+                        cameraControl.initialize()
                         cameraControl.connectToCamera()
                         cameraControl.startCamera(isPreviewView = false)
                     }

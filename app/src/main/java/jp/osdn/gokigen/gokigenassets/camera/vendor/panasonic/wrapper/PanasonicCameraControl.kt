@@ -366,7 +366,7 @@ class PanasonicCameraControl(private val context: AppCompatActivity, private val
         }
     }
 
-    override fun doShutter()
+    override fun doShutter(id: Int)
     {
         try
         {

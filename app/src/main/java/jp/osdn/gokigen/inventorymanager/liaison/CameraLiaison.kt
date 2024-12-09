@@ -6,16 +6,17 @@ import android.view.KeyEvent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.preference.PreferenceManager
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraControl
+import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraShutterNotify
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatusReceiver
 import jp.osdn.gokigen.gokigenassets.liveview.IAnotherDrawer
 import jp.osdn.gokigen.gokigenassets.scene.IInformationReceiver
 import jp.osdn.gokigen.inventorymanager.R
 import jp.osdn.gokigen.inventorymanager.preference.IPreferencePropertyAccessor
 
-class CameraLiaison(private val activity: AppCompatActivity, private val informationNotify: IInformationReceiver, statusReceiver : ICameraStatusReceiver)
+class CameraLiaison(private val activity: AppCompatActivity, private val informationNotify: IInformationReceiver, statusReceiver : ICameraStatusReceiver, shutterNotify: ICameraShutterNotify)
 {
     private val drawers = AnotherDrawerHolder()
-    private val cameraProvider = CameraProvider(activity, informationNotify, statusReceiver)
+    private val cameraProvider = CameraProvider(activity, informationNotify, statusReceiver, shutterNotify)
     private lateinit var cameraControl: ICameraControl  // = cameraProvider.getCameraXControl()
 
     init

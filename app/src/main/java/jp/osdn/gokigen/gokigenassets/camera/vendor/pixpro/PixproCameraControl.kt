@@ -239,7 +239,7 @@ class PixproCameraControl(private val context: AppCompatActivity, private val vi
         cameraConnection.alertConnectingFailed(context.getString(ID_STRING_COMMAND_LINE_DISCONNECTED))
     }
 
-    override fun doShutter()
+    override fun doShutter(id: Int)
     {
         try
         {

@@ -315,7 +315,7 @@ class SonyCameraControl(private val context: AppCompatActivity, private val vibr
         }
     }
 
-    override fun doShutter()
+    override fun doShutter(id: Int)
     {
         try
         {

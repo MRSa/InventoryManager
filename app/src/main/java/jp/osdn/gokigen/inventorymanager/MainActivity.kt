@@ -51,7 +51,7 @@ class MainActivity : AppCompatActivity(), AppSingleton.PreparationCallback
             myRegistViewModel = ViewModelProvider(this)[RegisterInformationViewModel::class.java]
             myRegistViewModel.initializeViewModel(this)
 
-            liaison = CameraLiaison(this, myViewModel, myRegistViewModel)
+            liaison = CameraLiaison(this, myViewModel, myRegistViewModel, myRegistViewModel)
 
             ///////// SET ROOT VIEW /////////
             rootComponent = ViewRootComponent(applicationContext)

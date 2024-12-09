@@ -1,6 +1,8 @@
 package jp.osdn.gokigen.inventorymanager.ui.component
 
 import android.util.Log
+import androidx.activity.OnBackPressedCallback
+import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
@@ -17,6 +19,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -32,6 +35,31 @@ import jp.osdn.gokigen.inventorymanager.ui.theme.GokigenComposeAppsTheme
 @Composable
 fun MainScreen(navController: NavHostController, cameraControl: ICameraControl, prefsModel : InventoryViewModel, name: String = "MainScreen", modifier: Modifier = Modifier)
 {
+/*
+    // ----- 戻るボタンを押したときの処理 @ MainScreen
+    val onBackPressedDispatcher = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher
+    //val scope = rememberCoroutineScope()
+    DisposableEffect(onBackPressedDispatcher) {
+        val callback = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                // 戻るボタンを押したときの処理
+                try
+                {
+                    Log.v("MainScreen", "handleOnBackPressed")
+                    navController.navigate("MainScreen")  // MainScreen に遷移する
+                }
+                catch (e: Exception)
+                {
+                    e.printStackTrace()
+                }
+            }
+        }
+        onBackPressedDispatcher?.addCallback(callback)
+        onDispose {
+            callback.remove() // 通常はいらないらしい
+        }
+    }
+*/
     MaterialTheme {
 /*
         TopAppBar(

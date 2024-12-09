@@ -4,17 +4,17 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.util.Log
 import androidx.appcompat.content.res.AppCompatResources
-import androidx.compose.ui.res.stringResource
 import androidx.core.graphics.drawable.toBitmap
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraConnectionStatus
+import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraShutterNotify
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatusReceiver
+import jp.osdn.gokigen.gokigenassets.liveview.image.IImageProvider
 import jp.osdn.gokigen.inventorymanager.R
-import jp.osdn.gokigen.inventorymanager.ui.model.InventoryViewModel.Companion
 
-class RegisterInformationViewModel: ViewModel(), ICameraStatusReceiver
+class RegisterInformationViewModel: ViewModel(), ICameraStatusReceiver, ICameraShutterNotify
 {
     private val labelData1 : MutableLiveData<String> by lazy { MutableLiveData<String>() }
     private val labelData2 : MutableLiveData<String> by lazy { MutableLiveData<String>() }
@@ -29,6 +29,8 @@ class RegisterInformationViewModel: ViewModel(), ICameraStatusReceiver
     private val image01 : MutableLiveData<Bitmap> by lazy { MutableLiveData<Bitmap>() }
     private val image02 : MutableLiveData<Bitmap> by lazy { MutableLiveData<Bitmap>() }
     private val image03 : MutableLiveData<Bitmap> by lazy { MutableLiveData<Bitmap>() }
+    private val image04 : MutableLiveData<Bitmap> by lazy { MutableLiveData<Bitmap>() }
+    private val image05 : MutableLiveData<Bitmap> by lazy { MutableLiveData<Bitmap>() }
 
     private val connectionStatus : MutableLiveData<ICameraConnectionStatus.CameraConnectionStatus> by lazy { MutableLiveData<ICameraConnectionStatus.CameraConnectionStatus>() }
 
@@ -46,6 +48,8 @@ class RegisterInformationViewModel: ViewModel(), ICameraStatusReceiver
     val registerInformationImage1 : LiveData<Bitmap> =  image01
     val registerInformationImage2 : LiveData<Bitmap> =  image02
     val registerInformationImage3 : LiveData<Bitmap> =  image03
+    val registerInformationImage4 : LiveData<Bitmap> =  image04
+    val registerInformationImage5 : LiveData<Bitmap> =  image05
 
     fun initializeViewModel(context: Context)
     {
@@ -67,6 +71,8 @@ class RegisterInformationViewModel: ViewModel(), ICameraStatusReceiver
             image01.value = AppCompatResources.getDrawable(context, R.drawable.baseline_looks_one_24)?.toBitmap()
             image02.value = AppCompatResources.getDrawable(context, R.drawable.baseline_looks_two_24)?.toBitmap()
             image03.value = AppCompatResources.getDrawable(context, R.drawable.baseline_looks_3_24)?.toBitmap()
+            image04.value = AppCompatResources.getDrawable(context, R.drawable.baseline_image_24)?.toBitmap()
+            image05.value = AppCompatResources.getDrawable(context, R.drawable.baseline_image_24)?.toBitmap()
 
             labelData1.value = "${context.getString(R.string.label_register_item)} 1 "
             labelData2.value = "${context.getString(R.string.label_register_item)} 2 "
@@ -81,6 +87,36 @@ class RegisterInformationViewModel: ViewModel(), ICameraStatusReceiver
         {
             e.printStackTrace()
         }
+    }
+
+    fun setTextArea1(value: String)
+    {
+        labelData1.value = value
+    }
+
+    fun setTextArea2(value: String)
+    {
+        labelData2.value = value
+    }
+
+    fun setTextArea3(value: String)
+    {
+        labelData3.value = value
+    }
+
+    fun setTextArea4(value: String)
+    {
+        labelData4.value = value
+    }
+
+    fun setTextReaderArea(value: String)
+    {
+        labelData5.value = value
+    }
+
+    fun setBarcodeReaderArea(value: String)
+    {
+        labelData6.value = value
     }
 
     /* ICameraStatusReceiver */
@@ -112,6 +148,33 @@ class RegisterInformationViewModel: ViewModel(), ICameraStatusReceiver
             infoData.value = msg
         }
     }
+
+    override fun doShutter(id: Int, imageProvider: IImageProvider)
+    {
+        try
+        {
+            Log.v(TAG, "ICameraShutterNotify::doShutter($id)")
+            when (id)
+            {
+                1 -> { image01.value = imageProvider.getImage() }
+                2 -> { image02.value = imageProvider.getImage() }
+                3 -> { image03.value = imageProvider.getImage() }
+                4 -> { image04.value = imageProvider.getImage() }
+                5 -> { image05.value = imageProvider.getImage() }
+                else -> {
+                    Log.v(TAG, "Unknown ID (no operation for $id)")
+                }
+
+            }
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
+
+
+    }
+
 
     companion object
     {

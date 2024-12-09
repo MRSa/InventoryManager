@@ -218,7 +218,7 @@ class RicohPentaxCameraControl(private val context: AppCompatActivity, private v
         //TODO("Not yet implemented")
     }
 
-    override fun doShutter()
+    override fun doShutter(id: Int)
     {
         try
         {

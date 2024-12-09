@@ -3,6 +3,7 @@ package jp.osdn.gokigen.inventorymanager.liaison
 import androidx.appcompat.app.AppCompatActivity
 import jp.osdn.gokigen.gokigenassets.camera.DummyCameraControl
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraControl
+import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraShutterNotify
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatusReceiver
 import jp.osdn.gokigen.gokigenassets.camera.preference.CameraPreference
 import jp.osdn.gokigen.gokigenassets.camera.preference.CameraPreferenceKeySet
@@ -30,7 +31,7 @@ import jp.osdn.gokigen.inventorymanager.preference.IPreferencePropertyAccessor.C
 import jp.osdn.gokigen.inventorymanager.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_SEQUENCE_1
 import jp.osdn.gokigen.inventorymanager.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_SEQUENCE_1_DEFAULT_VALUE
 
-class CameraProvider(private val activity: AppCompatActivity, private val informationNotify: IInformationReceiver, private val statusReceiver : ICameraStatusReceiver)
+class CameraProvider(private val activity: AppCompatActivity, private val informationNotify: IInformationReceiver, private val statusReceiver : ICameraStatusReceiver, private val shutterNotify: ICameraShutterNotify)
 {
     private val liveViewListener = CameraLiveViewListenerImpl(activity, informationNotify)
     private val cameraCoordinator = CameraControlCoordinator(informationNotify)
@@ -53,7 +54,7 @@ class CameraProvider(private val activity: AppCompatActivity, private val inform
         {
             val wrapper = PreferenceAccessWrapper(activity)
             val cameraPreference = setupCameraPreference0(wrapper)
-            return (prepareCameraXControl(cameraPreference, number, liveViewListener))
+            return (prepareCameraXControl(cameraPreference, number, liveViewListener, shutterNotify))
         }
         catch (e : Exception)
         {
@@ -66,7 +67,7 @@ class CameraProvider(private val activity: AppCompatActivity, private val inform
     {
         try
         {
-            return (prepareCameraXControl(setupCameraPreference0(PreferenceAccessWrapper(activity)), number, liveViewListener))
+            return (prepareCameraXControl(setupCameraPreference0(PreferenceAccessWrapper(activity)), number, liveViewListener, shutterNotify))
         }
         catch (e : Exception)
         {
@@ -88,13 +89,13 @@ class CameraProvider(private val activity: AppCompatActivity, private val inform
         return (CameraPreference(0, wrapper, method, false, sequence, option1, option2, option3, option4, option5, CameraPreferenceKeySet(PREFERENCE_CAMERA_OPTION1_1, PREFERENCE_CAMERA_OPTION2_1, PREFERENCE_CAMERA_OPTION3_1, PREFERENCE_CAMERA_OPTION4_1, PREFERENCE_CAMERA_OPTION5_1)))
     }
 
-    private fun prepareCameraXControl(cameraPreference : ICameraPreferenceProvider, number : Int, liveViewListener: CameraLiveViewListenerImpl): ICameraControl
+    private fun prepareCameraXControl(cameraPreference : ICameraPreferenceProvider, number : Int, liveViewListener: CameraLiveViewListenerImpl, shutterNotify: ICameraShutterNotify?): ICameraControl
     {
         if ((cameraXisCreated)&&(::cameraXControl0.isInitialized))
         {
             return (cameraXControl0)
         }
-        cameraXControl0 = CameraControl(activity, cameraPreference, AppSingleton.vibrator, informationNotify, statusReceiver, number, liveViewListener)
+        cameraXControl0 = CameraControl(activity, cameraPreference, AppSingleton.vibrator, informationNotify, statusReceiver, number, liveViewListener, shutterNotify)
         cameraXisCreated = true
         return (cameraXControl0)
     }

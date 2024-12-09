@@ -37,7 +37,7 @@ class DummyCameraControl(private val number : Int = 0) : ICameraControl, View.On
     override fun getStatus(key: String): String { return ("") }
     override fun getStatusColor(key: String): Int { return (Color.WHITE) }
     override fun setStatus(key: String, value: String) { }
-    override fun doShutter() { }
+    override fun doShutter(id : Int) { }
     override fun doShutterOff() { }
 
     override fun canZoom(): Boolean { return (false) }

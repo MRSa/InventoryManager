@@ -113,7 +113,7 @@ class ConsolePanelControl (private val context: AppCompatActivity, private val v
     override fun getFocusingControl(id: Int): IFocusingControl? { return (null) }
     override fun getDisplayInjector(): IDisplayInjector { return (this) }
     override fun changedCaptureMode(captureMode: String) { }
-    override fun doShutter() { }
+    override fun doShutter(id: Int) { }
     override fun doShutterOff() { }
     override fun getAnotherTouchListener(id : Int) : View.OnTouchListener { return (this) }
     override fun getCameraNumber(): Int { return (number) }

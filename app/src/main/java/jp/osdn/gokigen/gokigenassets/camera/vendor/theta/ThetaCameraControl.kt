@@ -179,7 +179,7 @@ class ThetaCameraControl(private val context: AppCompatActivity, private val vib
         }
     }
 
-    override fun doShutter()
+    override fun doShutter(id: Int)
     {
         try
         {

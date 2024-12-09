@@ -193,7 +193,7 @@ class OmdsCameraControl(private val context: AppCompatActivity, private val vibr
         return (false)
     }
 
-    override fun doShutter()
+    override fun doShutter(id: Int)
     {
         try
         {

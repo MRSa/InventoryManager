@@ -8,17 +8,17 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.safeDrawingPadding
-import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -53,29 +53,28 @@ import jp.osdn.gokigen.inventorymanager.R
 import jp.osdn.gokigen.inventorymanager.ui.model.InventoryViewModel
 import jp.osdn.gokigen.inventorymanager.ui.model.RegisterInformationViewModel
 
-@SuppressLint("ClickableViewAccessibility", "UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
+@SuppressLint("ClickableViewAccessibility", "UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun RegistScreen(navController: NavHostController, cameraControl: ICameraControl, viewModel: RegisterInformationViewModel, prefsModel : InventoryViewModel, onTouchListener: LiveViewOnTouchListener, anotherDrawer: IAnotherDrawer?, name: String = "RegistScreen", modifier: Modifier = Modifier)
 {
     var liveView0 : LiveImageView? = null
 
     val connectionStatus = viewModel.cameraConnectionStatus.observeAsState(initial = viewModel.cameraConnectionStatus.value ?: ICameraConnectionStatus.CameraConnectionStatus.UNKNOWN)
-
     val imageData1 = viewModel.registerInformationImage1.observeAsState()
-    val imageData2 = viewModel.registerInformationImage1.observeAsState()
-    val imageData3 = viewModel.registerInformationImage1.observeAsState()
+    val imageData2 = viewModel.registerInformationImage2.observeAsState()
+    val imageData3 = viewModel.registerInformationImage3.observeAsState()
 
-    var area1 by remember { mutableStateOf("") }
-    var area2 by remember { mutableStateOf("") }
-    var area3 by remember { mutableStateOf("") }
-    var area4 by remember { mutableStateOf("") }
-    var area5 by remember { mutableStateOf("") }
-    var area6 by remember { mutableStateOf("") }
+    val area1 = viewModel.registerInformationLabel01.observeAsState()
+    val area2 = viewModel.registerInformationLabel02.observeAsState()
+    val area3 = viewModel.registerInformationLabel03.observeAsState()
+    val area4 = viewModel.registerInformationLabel04.observeAsState()
+    val area5 = viewModel.registerInformationLabel05.observeAsState()
+    val area6 = viewModel.registerInformationLabel06.observeAsState()
 
     // ----- 戻るボタンを押したときの処理で、カメラの制御を止めてしまう
     val onBackPressedDispatcher = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher
-    val scope = rememberCoroutineScope()
+    //val scope = rememberCoroutineScope()
     DisposableEffect(onBackPressedDispatcher) {
         val callback = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
@@ -84,7 +83,7 @@ fun RegistScreen(navController: NavHostController, cameraControl: ICameraControl
                 {
                     cameraControl.finishCamera(false) // カメラ処理を終了
                     Log.v("RegistScreen", "handleOnBackPressed")
-                    navController.navigate("MainScreen")  // MainScreen に遷移する
+                    navController.popBackStack()  // ひとつ戻る
                 }
                 catch (e: Exception)
                 {
@@ -101,8 +100,7 @@ fun RegistScreen(navController: NavHostController, cameraControl: ICameraControl
     val informationMessage = stringResource(R.string.label_explain_register_next)
     MaterialTheme {
         Scaffold(
-            //modifier = Modifier.safeDrawingPadding()
-            //    .windowInsetsPadding(WindowInsets.safeDrawing),
+            //modifier = Modifier.systemBarsPadding(),
 /*
             topBar = {
                 TopAppBar(
@@ -113,12 +111,12 @@ fun RegistScreen(navController: NavHostController, cameraControl: ICameraControl
                     //modifier = Modifier.systemBarsPadding(),
                     title = {
                         Text(text = stringResource(R.string.screen_title_registry))
-                    }
+                    },
                 )
             },
 */
             content = {
-                Column(modifier = Modifier.fillMaxSize().safeDrawingPadding())//.padding(WindowInsets.statusBars.asPaddingValues()))
+                Column(modifier = Modifier.fillMaxSize())
                 {
                     // 画像エリア
                     Row(
@@ -127,11 +125,11 @@ fun RegistScreen(navController: NavHostController, cameraControl: ICameraControl
                             .weight(1f)
                     ) {
                         Column(modifier = Modifier.weight(1f)) {
-                            if (viewModel.registerInformationImage1.value != null) {
+                            if (imageData1.value != null) {
                                 Image(
-                                    viewModel.registerInformationImage1.value!!.asImageBitmap(),
+                                    imageData1.value!!.asImageBitmap(),
                                     contentDescription = null,
-                                    modifier = Modifier.fillMaxWidth().weight(1.0f)
+                                    modifier = Modifier.fillMaxWidth().weight(1.0f).padding(all = 4.dp)
                                 )
                             } else {
                                 Image(
@@ -140,11 +138,11 @@ fun RegistScreen(navController: NavHostController, cameraControl: ICameraControl
                                     modifier = Modifier.fillMaxWidth().weight(1.0f)
                                 )
                             }
-                            if (viewModel.registerInformationImage2.value != null) {
+                            if (imageData2.value != null) {
                                 Image(
-                                    viewModel.registerInformationImage2.value!!.asImageBitmap(),
+                                    imageData2.value!!.asImageBitmap(),
                                     contentDescription = null,
-                                    modifier = Modifier.fillMaxWidth().weight(1.0f)
+                                    modifier = Modifier.fillMaxWidth().weight(1.0f).padding(all = 4.dp)
                                 )
                             } else {
                                 Image(
@@ -153,11 +151,11 @@ fun RegistScreen(navController: NavHostController, cameraControl: ICameraControl
                                     modifier = Modifier.fillMaxWidth().weight(1.0f)
                                 )
                             }
-                            if (viewModel.registerInformationImage3.value != null) {
+                            if (imageData3.value != null) {
                                 Image(
-                                    viewModel.registerInformationImage3.value!!.asImageBitmap(),
+                                    imageData3.value!!.asImageBitmap(),
                                     contentDescription = null,
-                                    modifier = Modifier.fillMaxWidth().weight(1.0f)
+                                    modifier = Modifier.fillMaxWidth().weight(1.0f).padding(all = 4.dp)
                                 )
                             } else {
                                 Image(
@@ -235,9 +233,9 @@ fun RegistScreen(navController: NavHostController, cameraControl: ICameraControl
                             )
                             TextField(
                                 enabled = true,
-                                value = area1,
+                                value = area1.value ?: "",
                                 singleLine = true,
-                                onValueChange = { newText -> area1 = newText },
+                                onValueChange = viewModel::setTextArea1,
                                 modifier = Modifier.weight(5.0f)
                             )
                         }
@@ -253,9 +251,9 @@ fun RegistScreen(navController: NavHostController, cameraControl: ICameraControl
                             )
                             TextField(
                                 enabled = true,
-                                value = area2,
+                                value = area2.value ?: "",
                                 singleLine = true,
-                                onValueChange = { newText -> area2 = newText },
+                                onValueChange = viewModel::setTextArea2,
                                 modifier = Modifier.weight(5.0f)
                             )
                         }
@@ -271,9 +269,9 @@ fun RegistScreen(navController: NavHostController, cameraControl: ICameraControl
                             )
                             TextField(
                                 enabled = true,
-                                value = area3,
+                                value = area3.value ?: "",
                                 singleLine = true,
-                                onValueChange = { newText -> area3 = newText },
+                                onValueChange = viewModel::setTextArea3,
                                 modifier = Modifier.weight(5.0f)
                             )
                         }
@@ -289,9 +287,9 @@ fun RegistScreen(navController: NavHostController, cameraControl: ICameraControl
                             )
                             TextField(
                                 enabled = true,
-                                value = area4,
+                                value = area4.value ?: "",
                                 singleLine = true,
-                                onValueChange = { newText -> area4 = newText },
+                                onValueChange = viewModel::setTextArea4,
                                 modifier = Modifier.weight(5.0f)
                             )
                         }
@@ -306,9 +304,9 @@ fun RegistScreen(navController: NavHostController, cameraControl: ICameraControl
                             )
                             TextField(
                                 enabled = false,
-                                value = area5,
+                                value = area5.value ?: "",
                                 singleLine = true,
-                                onValueChange = { newText -> area5 = newText },
+                                onValueChange = viewModel::setTextReaderArea,
                                 modifier = Modifier.weight(5.0f)
                             )
                         }
@@ -323,9 +321,9 @@ fun RegistScreen(navController: NavHostController, cameraControl: ICameraControl
                             )
                             TextField(
                                 enabled = false,
-                                value = area6,
+                                value = area6.value ?: "",
                                 singleLine = true,
-                                onValueChange = { newText -> area6 = newText },
+                                onValueChange = viewModel::setBarcodeReaderArea,
                                 modifier = Modifier.weight(5.0f)
                             )
                         }
@@ -345,7 +343,7 @@ fun RegistScreen(navController: NavHostController, cameraControl: ICameraControl
                         }
                         Spacer(modifier = Modifier.weight(2.0f))
                         IconButton(
-                            onClick = { },
+                            onClick = { cameraControl.getCameraShutter(1)?.doShutter(1) },
                             enabled = true
                         ) {
                             Icon(
@@ -354,7 +352,7 @@ fun RegistScreen(navController: NavHostController, cameraControl: ICameraControl
                             )
                         }
                         IconButton(
-                            onClick = { },
+                            onClick = { cameraControl.getCameraShutter(2)?.doShutter(2) },
                             enabled = true
                         ) {
                             Icon(
@@ -363,7 +361,7 @@ fun RegistScreen(navController: NavHostController, cameraControl: ICameraControl
                             )
                         }
                         IconButton(
-                            onClick = { },
+                            onClick = { cameraControl.getCameraShutter(3)?.doShutter(3) },
                             enabled = true
                         ) {
                             Icon(
@@ -372,7 +370,7 @@ fun RegistScreen(navController: NavHostController, cameraControl: ICameraControl
                             )
                         }
                         Spacer(modifier = Modifier.weight(1.0f))
-                        IconButton(onClick = { }, enabled = true) {
+                        IconButton(onClick = { cameraControl.getCameraShutter(4)?.doShutter(4) }, enabled = true) {
                             val iconId = R.drawable.baseline_text_fields_24
                             Icon(
                                 painter = painterResource(id = iconId),
@@ -381,7 +379,7 @@ fun RegistScreen(navController: NavHostController, cameraControl: ICameraControl
                         }
                         Spacer(modifier = Modifier.weight(1.0f))
                         IconButton(
-                            onClick = { },
+                            onClick = { cameraControl.getCameraShutter(5)?.doShutter(5) },
                             enabled = true
                         ) {
                             Icon(

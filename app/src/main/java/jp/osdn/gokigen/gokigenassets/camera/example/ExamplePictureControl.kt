@@ -81,7 +81,7 @@ class ExamplePictureControl(private val context: AppCompatActivity, private val 
     override fun getDisplayInjector(): IDisplayInjector? { return (null) }
     override fun onClick(v: View?) { }
     override fun changedCaptureMode(captureMode: String) { }
-    override fun doShutter() { }
+    override fun doShutter(id: Int) { }
     override fun doShutterOff() { }
     override fun handleKeyDown(keyCode: Int, event: KeyEvent): Boolean { return (false) }
     override fun setNeighborCameraControl(index: Int, camera0: ICameraControl?, camera1: ICameraControl?, camera2: ICameraControl?, camera3: ICameraControl?) { }

@@ -33,7 +33,7 @@ import jp.osdn.gokigen.gokigenassets.scene.IVibrator
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
-class CameraControl(private val activity : AppCompatActivity, private val preference: ICameraPreferenceProvider, private val vibrator : IVibrator, private val informationReceiver : IInformationReceiver, private val statusReceiver : ICameraStatusReceiver, private val number : Int = 0, private val liveViewListener:CameraLiveViewListenerImpl = CameraLiveViewListenerImpl(activity, informationReceiver)) : ICameraControl, ICameraShutter
+class CameraControl(private val activity : AppCompatActivity, private val preference: ICameraPreferenceProvider, private val vibrator : IVibrator, private val informationReceiver : IInformationReceiver, private val statusReceiver : ICameraStatusReceiver, private val number : Int = 0, private val liveViewListener:CameraLiveViewListenerImpl = CameraLiveViewListenerImpl(activity, informationReceiver), private val shutterNotify: ICameraShutterNotify? = null) : ICameraControl, ICameraShutter
 {
     private lateinit var cameraExecutor: ExecutorService
     private lateinit var fileControl : FileControl
@@ -504,19 +504,22 @@ class CameraControl(private val activity : AppCompatActivity, private val prefer
 
     override fun getCameraStatus(): ICameraStatus { return (cameraXCameraStatusHolder) }
 
-
-
-
-
-
-    override fun doShutter()
+    override fun doShutter(cameraId: Int)
     {
         try
         {
-            if (::fileControl.isInitialized)
+            Log.v(TAG, "doShutter() id:$cameraId")
+            if (cameraId == 0)
             {
-                fileControl.takePhoto(0)
+                if (::fileControl.isInitialized)
+                {
+                    fileControl.takePhoto(0)
+                }
+                return
             }
+            //  IDが0ではない場合は、シャッターを駆動させない(けど、バイブレーションで通知する)
+            vibrator.vibrate(IVibrator.VibratePattern.SIMPLE_MIDDLE)
+            shutterNotify?.doShutter(cameraId, liveViewListener)
         }
         catch (e: Exception)
         {

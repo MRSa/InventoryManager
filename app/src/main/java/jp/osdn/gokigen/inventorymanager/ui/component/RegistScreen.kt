@@ -1,6 +1,7 @@
 package jp.osdn.gokigen.inventorymanager.ui.component
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.util.Log
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
@@ -39,6 +40,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.input.pointer.pointerInteropFilter
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -64,6 +66,8 @@ fun RegistScreen(navController: NavHostController, cameraControl: ICameraControl
     val imageData1 = viewModel.registerInformationImage1.observeAsState()
     val imageData2 = viewModel.registerInformationImage2.observeAsState()
     val imageData3 = viewModel.registerInformationImage3.observeAsState()
+
+    val information = viewModel.registerInformationData.observeAsState()
 
     val area1 = viewModel.registerInformationLabel01.observeAsState()
     val area2 = viewModel.registerInformationLabel02.observeAsState()
@@ -97,7 +101,7 @@ fun RegistScreen(navController: NavHostController, cameraControl: ICameraControl
         }
     }
 
-    val informationMessage = stringResource(R.string.label_explain_register_next)
+    val informationMessage = information.value ?: ""
     MaterialTheme {
         Scaffold(
             //modifier = Modifier.systemBarsPadding(),
@@ -335,7 +339,12 @@ fun RegistScreen(navController: NavHostController, cameraControl: ICameraControl
                     )
                     {
                         IconButton(onClick = { }, enabled = false) {
-                            val iconId = R.drawable.baseline_cloud_done_24
+                            val iconId = when (connectionStatus.value) {
+                                ICameraConnectionStatus.CameraConnectionStatus.CONNECTED -> { R.drawable.baseline_cloud_done_24 }
+                                ICameraConnectionStatus.CameraConnectionStatus.CONNECTING -> { R.drawable.baseline_cloud_queue_24 }
+                                ICameraConnectionStatus.CameraConnectionStatus.DISCONNECTED -> { R.drawable.baseline_cloud_off_24 }
+                                else -> { R.drawable.baseline_cloud_24 }
+                            }
                             Icon(
                                 painter = painterResource(id = iconId),
                                 contentDescription = "ConnectionStatus"
@@ -398,8 +407,10 @@ fun RegistScreen(navController: NavHostController, cameraControl: ICameraControl
                             text = informationMessage
                         )
                         Spacer(modifier = Modifier.weight(4.0f))
+
+                        val context = LocalContext.current
                         Button(
-                            onClick = { /* ボタンクリック時の処理 */ },
+                            onClick = { viewModel.resetData(context = context) },
                             modifier = Modifier.align(Alignment.Bottom)
                         ) {
                             Text(stringResource(R.string.button_label_register_next))

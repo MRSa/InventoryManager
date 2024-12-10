@@ -8,6 +8,10 @@ import androidx.core.graphics.drawable.toBitmap
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.google.mlkit.vision.barcode.BarcodeScannerOptions
+import com.google.mlkit.vision.barcode.BarcodeScanning
+import com.google.mlkit.vision.barcode.common.Barcode
+import com.google.mlkit.vision.common.InputImage
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraConnectionStatus
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraShutterNotify
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatusReceiver
@@ -51,6 +55,15 @@ class RegisterInformationViewModel: ViewModel(), ICameraStatusReceiver, ICameraS
     val registerInformationImage4 : LiveData<Bitmap> =  image04
     val registerInformationImage5 : LiveData<Bitmap> =  image05
 
+    val bcrOptions = BarcodeScannerOptions.Builder()
+        .setBarcodeFormats(
+            Barcode.FORMAT_EAN_13,
+            Barcode.FORMAT_ALL_FORMATS,
+            )
+        .enableAllPotentialBarcodes() // Optional
+        .build()
+    val scanner = BarcodeScanning.getClient()
+
     fun initializeViewModel(context: Context)
     {
         try
@@ -78,8 +91,8 @@ class RegisterInformationViewModel: ViewModel(), ICameraStatusReceiver, ICameraS
             labelData2.value = "${context.getString(R.string.label_register_item)} 2 "
             labelData3.value = "${context.getString(R.string.label_register_item)} 3 "
             labelData4.value = "${context.getString(R.string.label_register_item)} 4 "
-            labelData5.value = context.getString(R.string.label_register_text)
-            labelData6.value = context.getString(R.string.label_register_bcr)
+            labelData5.value = ""
+            labelData6.value = ""
 
             infoData.value = context.getString(R.string.label_explain_register_next)
         }
@@ -131,12 +144,14 @@ class RegisterInformationViewModel: ViewModel(), ICameraStatusReceiver, ICameraS
     override fun onCameraConnected()
     {
         Log.v(TAG, "onCameraConnected()")
+        connectionStatus.value = ICameraConnectionStatus.CameraConnectionStatus.CONNECTED
     }
 
     /* ICameraStatusReceiver */
     override fun onCameraDisconnected()
     {
         Log.v(TAG, "onCameraDisconnected()")
+        connectionStatus.value = ICameraConnectionStatus.CameraConnectionStatus.DISCONNECTED
     }
 
     /* ICameraStatusReceiver */
@@ -147,6 +162,7 @@ class RegisterInformationViewModel: ViewModel(), ICameraStatusReceiver, ICameraS
         {
             infoData.value = msg
         }
+        connectionStatus.value = ICameraConnectionStatus.CameraConnectionStatus.UNKNOWN
     }
 
     override fun doShutter(id: Int, imageProvider: IImageProvider)
@@ -159,22 +175,97 @@ class RegisterInformationViewModel: ViewModel(), ICameraStatusReceiver, ICameraS
                 1 -> { image01.value = imageProvider.getImage() }
                 2 -> { image02.value = imageProvider.getImage() }
                 3 -> { image03.value = imageProvider.getImage() }
-                4 -> { image04.value = imageProvider.getImage() }
-                5 -> { image05.value = imageProvider.getImage() }
+                4 -> {
+                    image04.value = imageProvider.getImage()
+                    infoData.value = " TEXT RECOGNITION"
+                    // Text Recognition
+                    doTextRecognition(id, image04.value)
+                }
+                5 -> {
+                    image05.value = imageProvider.getImage()
+                    infoData.value = " READ BARCODE"
+                    val image = image05.value
+                    if (image == null)
+                    {
+                        //  画像が取得できていないので、何もしない
+                        Log.v(TAG, "ABORT : readBarcord() : The image is null...")
+                        return
+                    }
+                    val inputImage = InputImage.fromBitmap(image, 0)
+                    val result = scanner.process(inputImage)
+                        .addOnSuccessListener { barcodes -> readBarcord(barcodes) }
+                        .addOnFailureListener { infoData.value = "Barcode Read Failure..." }
+                }
                 else -> {
                     Log.v(TAG, "Unknown ID (no operation for $id)")
                 }
-
             }
         }
         catch (e: Exception)
         {
             e.printStackTrace()
         }
-
-
     }
 
+    private fun doTextRecognition(id: Int, image: Bitmap?)
+    {
+        try
+        {
+            if (image == null)
+            {
+                //  画像が取得できていないので、何もしない
+                Log.v(TAG, "ABORT : doTextRecognition() : The image is null...")
+                return
+            }
+            Log.v(TAG, "doTextRecognition() : $id")
+
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
+    }
+
+    private fun readBarcord(barcodes: List<Barcode>)
+    {
+        try
+        {
+            var readData = ""
+            for (barcode in barcodes)
+            {
+                val rawValue = barcode.rawValue
+                val valueType = barcode.valueType
+                // See API reference for complete list of supported types
+                Log.v(TAG, "readBarcord: $valueType")
+                when (valueType) {
+                    Barcode.TYPE_WIFI -> {
+                        val ssid = barcode.wifi!!.ssid
+                        val password = barcode.wifi!!.password
+                        val type = barcode.wifi!!.encryptionType
+                        readData += " WIFI: (SSID:$ssid PASS:$password TYPE:$type)"
+                    }
+                    Barcode.TYPE_URL -> {
+                        readData += " URL:${barcode.url!!.url} (${barcode.url!!.title}) "
+                    }
+                    Barcode.TYPE_PRODUCT -> {
+                        readData += " PRD:$rawValue "
+                    }
+                    Barcode.TYPE_TEXT -> {
+                        readData += " TXT:$rawValue "
+                    }
+                    Barcode.TYPE_ISBN -> {
+                        readData += " ISBN:$rawValue "
+                    }
+                }
+            }
+            labelData6.value = readData
+            infoData.value = "read Barcode : ${barcodes.size}"
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
+    }
 
     companion object
     {

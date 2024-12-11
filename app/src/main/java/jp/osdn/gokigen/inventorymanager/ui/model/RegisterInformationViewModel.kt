@@ -64,14 +64,14 @@ class RegisterInformationViewModel: ViewModel(), ICameraStatusReceiver, ICameraS
     private var prodValue : String = ""
     private var textValue : String = ""
 
-    private val bcrOptions = BarcodeScannerOptions.Builder()
-        .setBarcodeFormats(
-            Barcode.FORMAT_ALL_FORMATS,
-            Barcode.FORMAT_EAN_13,
-            )
-        .enableAllPotentialBarcodes()
-        .build()
-    private val scanner = BarcodeScanning.getClient(bcrOptions)
+    //private val bcrOptions = BarcodeScannerOptions.Builder()
+    //    .setBarcodeFormats(
+    //        Barcode.FORMAT_ALL_FORMATS,
+    //        Barcode.FORMAT_EAN_13,
+    //        )
+    //    .enableAllPotentialBarcodes()
+    //    .build()
+    private val scanner = BarcodeScanning.getClient()
 
     private val recognizerOptions = JapaneseTextRecognizerOptions.Builder().build()
     private var recognizer: TextRecognizer = TextRecognition.getClient(recognizerOptions)
@@ -279,6 +279,9 @@ class RegisterInformationViewModel: ViewModel(), ICameraStatusReceiver, ICameraS
                     Barcode.TYPE_ISBN -> {
                         readData += " ISBN:$rawValue "
                         isbnValue = rawValue ?: ""
+                    }
+                    else -> {
+                        readData += " ?[$valueType]:$rawValue "
                     }
                 }
             }

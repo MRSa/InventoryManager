@@ -12,11 +12,16 @@ import com.google.mlkit.vision.barcode.BarcodeScannerOptions
 import com.google.mlkit.vision.barcode.BarcodeScanning
 import com.google.mlkit.vision.barcode.common.Barcode
 import com.google.mlkit.vision.common.InputImage
+import com.google.mlkit.vision.text.Text
+import com.google.mlkit.vision.text.TextRecognition
+import com.google.mlkit.vision.text.TextRecognizer
+import com.google.mlkit.vision.text.japanese.JapaneseTextRecognizerOptions
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraConnectionStatus
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraShutterNotify
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatusReceiver
 import jp.osdn.gokigen.gokigenassets.liveview.image.IImageProvider
 import jp.osdn.gokigen.inventorymanager.R
+
 
 class RegisterInformationViewModel: ViewModel(), ICameraStatusReceiver, ICameraShutterNotify
 {
@@ -52,17 +57,24 @@ class RegisterInformationViewModel: ViewModel(), ICameraStatusReceiver, ICameraS
     val registerInformationImage1 : LiveData<Bitmap> =  image01
     val registerInformationImage2 : LiveData<Bitmap> =  image02
     val registerInformationImage3 : LiveData<Bitmap> =  image03
-    val registerInformationImage4 : LiveData<Bitmap> =  image04
-    val registerInformationImage5 : LiveData<Bitmap> =  image05
+    //val registerInformationImage4 : LiveData<Bitmap> =  image04
+    //val registerInformationImage5 : LiveData<Bitmap> =  image05
 
-    val bcrOptions = BarcodeScannerOptions.Builder()
+    private var isbnValue : String = ""
+    private var prodValue : String = ""
+    private var textValue : String = ""
+
+    private val bcrOptions = BarcodeScannerOptions.Builder()
         .setBarcodeFormats(
-            Barcode.FORMAT_EAN_13,
             Barcode.FORMAT_ALL_FORMATS,
+            Barcode.FORMAT_EAN_13,
             )
-        .enableAllPotentialBarcodes() // Optional
+        .enableAllPotentialBarcodes()
         .build()
-    val scanner = BarcodeScanning.getClient()
+    private val scanner = BarcodeScanning.getClient(bcrOptions)
+
+    private val recognizerOptions = JapaneseTextRecognizerOptions.Builder().build()
+    private var recognizer: TextRecognizer = TextRecognition.getClient(recognizerOptions)
 
     fun initializeViewModel(context: Context)
     {
@@ -87,12 +99,15 @@ class RegisterInformationViewModel: ViewModel(), ICameraStatusReceiver, ICameraS
             image04.value = AppCompatResources.getDrawable(context, R.drawable.baseline_image_24)?.toBitmap()
             image05.value = AppCompatResources.getDrawable(context, R.drawable.baseline_image_24)?.toBitmap()
 
-            labelData1.value = "${context.getString(R.string.label_register_item)} 1 "
-            labelData2.value = "${context.getString(R.string.label_register_item)} 2 "
-            labelData3.value = "${context.getString(R.string.label_register_item)} 3 "
-            labelData4.value = "${context.getString(R.string.label_register_item)} 4 "
+            labelData1.value = ""
+            labelData2.value = ""
+            labelData3.value = ""
+            labelData4.value = ""
             labelData5.value = ""
             labelData6.value = ""
+            isbnValue = ""
+            prodValue = ""
+            textValue = ""
 
             infoData.value = context.getString(R.string.label_explain_register_next)
         }
@@ -178,8 +193,18 @@ class RegisterInformationViewModel: ViewModel(), ICameraStatusReceiver, ICameraS
                 4 -> {
                     image04.value = imageProvider.getImage()
                     infoData.value = " TEXT RECOGNITION"
-                    // Text Recognition
-                    doTextRecognition(id, image04.value)
+                    val image = image04.value
+                    if (image == null)
+                    {
+                        //  画像が取得できていないので、何もしない
+                        Log.v(TAG, "ABORT : textRecognition() : The image is null...")
+                        return
+                    }
+                    val inputImage = InputImage.fromBitmap(image, 0)
+                    //val result =
+                    recognizer.process(inputImage)
+                        .addOnSuccessListener { recognitionData -> recognizedText(recognitionData) }
+                        .addOnFailureListener { infoData.value = "Failure Text Recognition..." }
                 }
                 5 -> {
                     image05.value = imageProvider.getImage()
@@ -192,7 +217,8 @@ class RegisterInformationViewModel: ViewModel(), ICameraStatusReceiver, ICameraS
                         return
                     }
                     val inputImage = InputImage.fromBitmap(image, 0)
-                    val result = scanner.process(inputImage)
+                    //val result =
+                    scanner.process(inputImage)
                         .addOnSuccessListener { barcodes -> readBarcord(barcodes) }
                         .addOnFailureListener { infoData.value = "Barcode Read Failure..." }
                 }
@@ -207,18 +233,13 @@ class RegisterInformationViewModel: ViewModel(), ICameraStatusReceiver, ICameraS
         }
     }
 
-    private fun doTextRecognition(id: Int, image: Bitmap?)
+    private fun recognizedText(value: Text)
     {
         try
         {
-            if (image == null)
-            {
-                //  画像が取得できていないので、何もしない
-                Log.v(TAG, "ABORT : doTextRecognition() : The image is null...")
-                return
-            }
-            Log.v(TAG, "doTextRecognition() : $id")
-
+            labelData5.value = value.text
+            infoData.value = "text recognized : ${value.text.length}"
+            Log.v(TAG, "recognizedText() : ${value.text}")
         }
         catch (e: Exception)
         {
@@ -249,12 +270,15 @@ class RegisterInformationViewModel: ViewModel(), ICameraStatusReceiver, ICameraS
                     }
                     Barcode.TYPE_PRODUCT -> {
                         readData += " PRD:$rawValue "
+                        prodValue = rawValue ?: ""
                     }
                     Barcode.TYPE_TEXT -> {
                         readData += " TXT:$rawValue "
+                        textValue = rawValue ?: ""
                     }
                     Barcode.TYPE_ISBN -> {
                         readData += " ISBN:$rawValue "
+                        isbnValue = rawValue ?: ""
                     }
                 }
             }

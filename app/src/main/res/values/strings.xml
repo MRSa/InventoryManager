@@ -11,6 +11,7 @@
     <string name="screen_title_registry">Register Information</string>
     <string name="button_label_register_next">Next</string>
     <string name="label_explain_register_next">Store the text, image and/or OCR it.</string>
+    <string name="label_register_category">Category</string>
     <string name="label_register_item">Item </string>
     <string name="label_register_text">Text </string>
     <string name="label_register_bcr">Barcode </string>

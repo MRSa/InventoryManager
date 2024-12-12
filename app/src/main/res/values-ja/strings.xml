@@ -11,6 +11,7 @@
     <string name="screen_title_registry">情報の登録</string>
     <string name="button_label_register_next">次の登録へ</string>
     <string name="label_explain_register_next">画像の保管や文字認識を行ってください。</string>
+    <string name="label_register_category">カテゴリ </string>
     <string name="label_register_item">アイテム </string>
     <string name="label_register_text">テキスト </string>
     <string name="label_register_bcr">バーコード </string>

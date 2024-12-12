@@ -8,7 +8,6 @@ import androidx.core.graphics.drawable.toBitmap
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.google.mlkit.vision.barcode.BarcodeScannerOptions
 import com.google.mlkit.vision.barcode.BarcodeScanning
 import com.google.mlkit.vision.barcode.common.Barcode
 import com.google.mlkit.vision.common.InputImage
@@ -25,13 +24,13 @@ import jp.osdn.gokigen.inventorymanager.R
 
 class RegisterInformationViewModel: ViewModel(), ICameraStatusReceiver, ICameraShutterNotify
 {
+    private val category : MutableLiveData<String> by lazy { MutableLiveData<String>() }
     private val labelData1 : MutableLiveData<String> by lazy { MutableLiveData<String>() }
     private val labelData2 : MutableLiveData<String> by lazy { MutableLiveData<String>() }
     private val labelData3 : MutableLiveData<String> by lazy { MutableLiveData<String>() }
     private val labelData4 : MutableLiveData<String> by lazy { MutableLiveData<String>() }
     private val labelData5 : MutableLiveData<String> by lazy { MutableLiveData<String>() }
     private val labelData6 : MutableLiveData<String> by lazy { MutableLiveData<String>() }
-
 
     private val infoData  : MutableLiveData<String> by lazy { MutableLiveData<String>() }
 
@@ -45,6 +44,7 @@ class RegisterInformationViewModel: ViewModel(), ICameraStatusReceiver, ICameraS
 
     val cameraConnectionStatus: LiveData<ICameraConnectionStatus.CameraConnectionStatus> = connectionStatus
 
+    val registerInformationCategory: LiveData<String> = category
     val registerInformationLabel01: LiveData<String> = labelData1
     val registerInformationLabel02: LiveData<String> = labelData2
     val registerInformationLabel03: LiveData<String> = labelData3
@@ -63,6 +63,13 @@ class RegisterInformationViewModel: ViewModel(), ICameraStatusReceiver, ICameraS
     private var isbnValue : String = ""
     private var prodValue : String = ""
     private var textValue : String = ""
+    private var urlValue : String = ""
+
+    private var isReadImage1 : Boolean = false
+    private var isReadImage2 : Boolean = false
+    private var isReadImage3 : Boolean = false
+    private var isReadImage4 : Boolean = false
+    private var isReadImage5 : Boolean = false
 
     //private val bcrOptions = BarcodeScannerOptions.Builder()
     //    .setBarcodeFormats(
@@ -108,6 +115,12 @@ class RegisterInformationViewModel: ViewModel(), ICameraStatusReceiver, ICameraS
             isbnValue = ""
             prodValue = ""
             textValue = ""
+            urlValue = ""
+            isReadImage1 = false
+            isReadImage2 = false
+            isReadImage3 = false
+            isReadImage4 = false
+            isReadImage5 = false
 
             infoData.value = context.getString(R.string.label_explain_register_next)
         }
@@ -115,6 +128,11 @@ class RegisterInformationViewModel: ViewModel(), ICameraStatusReceiver, ICameraS
         {
             e.printStackTrace()
         }
+    }
+
+    fun setCategory(value: String)
+    {
+        category.value = value
     }
 
     fun setTextArea1(value: String)
@@ -187,11 +205,21 @@ class RegisterInformationViewModel: ViewModel(), ICameraStatusReceiver, ICameraS
             Log.v(TAG, "ICameraShutterNotify::doShutter($id)")
             when (id)
             {
-                1 -> { image01.value = imageProvider.getImage() }
-                2 -> { image02.value = imageProvider.getImage() }
-                3 -> { image03.value = imageProvider.getImage() }
+                1 -> {
+                    image01.value = imageProvider.getImage()
+                    isReadImage1 = true
+                }
+                2 -> {
+                    image02.value = imageProvider.getImage()
+                    isReadImage2 = true
+                }
+                3 -> {
+                    image03.value = imageProvider.getImage()
+                    isReadImage3 = true
+                }
                 4 -> {
                     image04.value = imageProvider.getImage()
+                    isReadImage4 = true
                     infoData.value = " TEXT RECOGNITION"
                     val image = image04.value
                     if (image == null)
@@ -208,6 +236,7 @@ class RegisterInformationViewModel: ViewModel(), ICameraStatusReceiver, ICameraS
                 }
                 5 -> {
                     image05.value = imageProvider.getImage()
+                    isReadImage5 = true
                     infoData.value = " READ BARCODE"
                     val image = image05.value
                     if (image == null)
@@ -256,7 +285,6 @@ class RegisterInformationViewModel: ViewModel(), ICameraStatusReceiver, ICameraS
             {
                 val rawValue = barcode.rawValue
                 val valueType = barcode.valueType
-                // See API reference for complete list of supported types
                 Log.v(TAG, "readBarcord: $valueType")
                 when (valueType) {
                     Barcode.TYPE_WIFI -> {
@@ -267,6 +295,7 @@ class RegisterInformationViewModel: ViewModel(), ICameraStatusReceiver, ICameraS
                     }
                     Barcode.TYPE_URL -> {
                         readData += " URL:${barcode.url!!.url} (${barcode.url!!.title}) "
+                        urlValue = barcode.url!!.url ?: ""
                     }
                     Barcode.TYPE_PRODUCT -> {
                         readData += " PRD:$rawValue "

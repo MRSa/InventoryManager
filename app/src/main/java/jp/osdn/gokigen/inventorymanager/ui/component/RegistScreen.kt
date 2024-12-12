@@ -9,10 +9,12 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -43,7 +45,9 @@ import androidx.compose.ui.input.pointer.pointerInteropFilter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.NavHostController
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraConnectionStatus
@@ -54,6 +58,7 @@ import jp.osdn.gokigen.gokigenassets.liveview.LiveViewOnTouchListener
 import jp.osdn.gokigen.inventorymanager.R
 import jp.osdn.gokigen.inventorymanager.ui.model.InventoryViewModel
 import jp.osdn.gokigen.inventorymanager.ui.model.RegisterInformationViewModel
+
 
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
 @SuppressLint("ClickableViewAccessibility", "UnusedMaterial3ScaffoldPaddingParameter")
@@ -68,7 +73,7 @@ fun RegistScreen(navController: NavHostController, cameraControl: ICameraControl
     val imageData3 = viewModel.registerInformationImage3.observeAsState()
 
     val information = viewModel.registerInformationData.observeAsState()
-
+    val category = viewModel.registerInformationCategory.observeAsState()
     val area1 = viewModel.registerInformationLabel01.observeAsState()
     val area2 = viewModel.registerInformationLabel02.observeAsState()
     val area3 = viewModel.registerInformationLabel03.observeAsState()
@@ -168,6 +173,25 @@ fun RegistScreen(navController: NavHostController, cameraControl: ICameraControl
                                     modifier = Modifier.fillMaxWidth().weight(1.0f)
                                 )
                             }
+                            Row(
+                                modifier = Modifier.fillMaxWidth().height(48.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+
+                                    text = stringResource(R.string.label_register_category),
+                                    modifier = Modifier.weight(1f),
+                                    fontSize = 16.sp
+                                )
+                                TextField(
+                                    enabled = true,
+                                    value = category.value ?: "",
+                                    singleLine = true,
+                                    onValueChange = viewModel::setCategory,
+                                    modifier = Modifier.weight(2.0f),
+                                    textStyle = TextStyle(fontSize = 16.sp),
+                                )
+                            }
                         }
                         Column(modifier = Modifier.weight(1f)) {
                             AndroidView(
@@ -233,14 +257,16 @@ fun RegistScreen(navController: NavHostController, cameraControl: ICameraControl
                             Text(
 
                                 text = stringResource(R.string.label_register_item),
-                                modifier = Modifier.weight(1f)
+                                modifier = Modifier.weight(1f),
+                                fontSize = 16.sp
                             )
                             TextField(
                                 enabled = true,
                                 value = area1.value ?: "",
                                 singleLine = true,
                                 onValueChange = viewModel::setTextArea1,
-                                modifier = Modifier.weight(5.0f)
+                                modifier = Modifier.weight(5.0f),
+                                textStyle = TextStyle(fontSize = 16.sp),
                             )
                         }
 
@@ -251,14 +277,16 @@ fun RegistScreen(navController: NavHostController, cameraControl: ICameraControl
                             Text(
 
                                 text = stringResource(R.string.label_register_item),
-                                modifier = Modifier.weight(1f)
+                                modifier = Modifier.weight(1f),
+                                fontSize = 16.sp
                             )
                             TextField(
                                 enabled = true,
                                 value = area2.value ?: "",
                                 singleLine = true,
                                 onValueChange = viewModel::setTextArea2,
-                                modifier = Modifier.weight(5.0f)
+                                modifier = Modifier.weight(5.0f),
+                                textStyle = TextStyle(fontSize = 16.sp),
                             )
                         }
 
@@ -269,14 +297,16 @@ fun RegistScreen(navController: NavHostController, cameraControl: ICameraControl
                             Text(
 
                                 text = stringResource(R.string.label_register_item),
-                                modifier = Modifier.weight(1f)
+                                modifier = Modifier.weight(1f),
+                                fontSize = 16.sp
                             )
                             TextField(
                                 enabled = true,
                                 value = area3.value ?: "",
                                 singleLine = true,
                                 onValueChange = viewModel::setTextArea3,
-                                modifier = Modifier.weight(5.0f)
+                                modifier = Modifier.weight(5.0f),
+                                textStyle = TextStyle(fontSize = 16.sp),
                             )
                         }
 
@@ -287,14 +317,16 @@ fun RegistScreen(navController: NavHostController, cameraControl: ICameraControl
                             Text(
 
                                 text = stringResource(R.string.label_register_item),
-                                modifier = Modifier.weight(1f)
+                                modifier = Modifier.weight(1f),
+                                fontSize = 16.sp
                             )
                             TextField(
                                 enabled = true,
                                 value = area4.value ?: "",
                                 singleLine = true,
                                 onValueChange = viewModel::setTextArea4,
-                                modifier = Modifier.weight(5.0f)
+                                modifier = Modifier.weight(5.0f),
+                                textStyle = TextStyle(fontSize = 16.sp),
                             )
                         }
 

@@ -23,10 +23,12 @@ import jp.osdn.gokigen.inventorymanager.preference.PreferenceValueInitializer
 import jp.osdn.gokigen.inventorymanager.ui.component.ViewRootComponent
 import jp.osdn.gokigen.inventorymanager.ui.model.InventoryViewModel
 import jp.osdn.gokigen.gokigenassets.scene.IVibrator
+import jp.osdn.gokigen.inventorymanager.storage.DataContent
 import jp.osdn.gokigen.inventorymanager.ui.model.RegisterInformationViewModel
 
 class MainActivity : AppCompatActivity(), AppSingleton.PreparationCallback
 {
+    //private val storageDao = AppSingleton.db.storageDao()
     private lateinit var rootComponent : ViewRootComponent
     private lateinit var myViewModel : InventoryViewModel
     private lateinit var myRegistViewModel : RegisterInformationViewModel
@@ -91,6 +93,9 @@ class MainActivity : AppCompatActivity(), AppSingleton.PreparationCallback
                     {
                         // ----- アプリケーションの初期化を行う
                         AppSingleton.prepareApplication(this)
+
+                        // ----- for debug
+                        dumpDatabase()
                     }
                 }
                 requestPermission.launch(REQUIRED_PERMISSIONS)
@@ -99,6 +104,9 @@ class MainActivity : AppCompatActivity(), AppSingleton.PreparationCallback
             {
                 // ----- アプリケーションの初期化を行う
                 AppSingleton.prepareApplication(this)
+
+                // ----- for debug
+                dumpDatabase()
             }
         }
         catch (e: Exception)
@@ -165,6 +173,31 @@ class MainActivity : AppCompatActivity(), AppSingleton.PreparationCallback
         return (result)
     }
 
+    private fun dumpDatabase()
+    {
+/*
+        try
+        {
+            if (isDebugLog)
+            {
+                val contents: List<DataContent> = storageDao.getAll()
+                Log.v(TAG, " = = = = = number of contents : ${contents.count()} = = = = =")
+
+                var index = 1
+                for (value in contents)
+                {
+                    Log.v(TAG, "    $index title:${value.title} hash:${value.hashValue}")
+                    index++
+                }
+            }
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
+*/
+    }
+
     companion object
     {
         private val TAG = MainActivity::class.java.simpleName
@@ -179,5 +212,6 @@ class MainActivity : AppCompatActivity(), AppSingleton.PreparationCallback
             //Manifest.permission.ACCESS_WIFI_STATE,
             //Manifest.permission.CHANGE_WIFI_MULTICAST_STATE,
         )
+        private const val isDebugLog = false
     }
 }

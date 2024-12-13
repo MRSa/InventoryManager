@@ -11,9 +11,6 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.safeDrawingPadding
-import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -24,11 +21,12 @@ import jp.osdn.gokigen.inventorymanager.ui.component.ViewRootComponent
 import jp.osdn.gokigen.inventorymanager.ui.model.InventoryViewModel
 import jp.osdn.gokigen.gokigenassets.scene.IVibrator
 import jp.osdn.gokigen.inventorymanager.storage.DataContent
+import jp.osdn.gokigen.inventorymanager.storage.InventoryDataHolder
 import jp.osdn.gokigen.inventorymanager.ui.model.RegisterInformationViewModel
 
 class MainActivity : AppCompatActivity(), AppSingleton.PreparationCallback
 {
-    //private val storageDao = AppSingleton.db.storageDao()
+    private lateinit var db : InventoryDataHolder
     private lateinit var rootComponent : ViewRootComponent
     private lateinit var myViewModel : InventoryViewModel
     private lateinit var myRegistViewModel : RegisterInformationViewModel
@@ -46,6 +44,8 @@ class MainActivity : AppCompatActivity(), AppSingleton.PreparationCallback
 
             ///////// INITIALIZATION /////////
             PreferenceValueInitializer().initializePreferences(this)
+
+            db = AppSingleton.db
 
             myViewModel = ViewModelProvider(this)[InventoryViewModel::class.java]
             myViewModel.initializeViewModel(this)
@@ -175,12 +175,11 @@ class MainActivity : AppCompatActivity(), AppSingleton.PreparationCallback
 
     private fun dumpDatabase()
     {
-/*
         try
         {
-            if (isDebugLog)
+            if ((isDebugLog)&&(AppSingleton.isReadyDatabase))
             {
-                val contents: List<DataContent> = storageDao.getAll()
+                val contents: List<DataContent> = db.storageDao().getAll()
                 Log.v(TAG, " = = = = = number of contents : ${contents.count()} = = = = =")
 
                 var index = 1
@@ -195,7 +194,6 @@ class MainActivity : AppCompatActivity(), AppSingleton.PreparationCallback
         {
             e.printStackTrace()
         }
-*/
     }
 
     companion object

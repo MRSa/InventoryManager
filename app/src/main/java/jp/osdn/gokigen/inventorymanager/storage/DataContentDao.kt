@@ -45,7 +45,7 @@ interface DataContentDao
     @Query("UPDATE contents SET is_delete = :isDelete, delete_date = :deleteDate WHERE id = :id")
     fun markDelete(id: Int, isDelete: Boolean, deleteDate: Date)
 
-    @Query("UPDATE contents SET title = :title, sub_title = :subTitle, author = :author, publisher = :publisher, category = :category WHERE id = :id")
+    @Query("UPDATE contents SET title = :title, sub_title = :subTitle, author = :author, publisher = :publisher, category = :category, update_date = :updateDate WHERE id = :id")
     fun updateContent(id: Int, title: String, subTitle: String, author: String, publisher: String, category: String, updateDate: Date)
 
     @Insert

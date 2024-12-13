@@ -12,19 +12,20 @@ class AppSingleton : Application()
         super.onCreate()
         Log.v(TAG, "AppSingleton::create()")
         vibrator = MyVibrator()
-/*
+/**/
         try
         {
             db = Room.databaseBuilder(
                 applicationContext,
                 InventoryDataHolder::class.java, "inventory-database"
             ).build()
+            isReadyDatabase = true
         }
         catch (e: Exception)
         {
             e.printStackTrace()
         }
-*/
+/**/
     }
 
     interface PreparationCallback

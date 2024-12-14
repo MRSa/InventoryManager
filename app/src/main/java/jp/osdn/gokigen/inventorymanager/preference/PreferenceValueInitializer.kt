@@ -2,6 +2,7 @@ package jp.osdn.gokigen.inventorymanager.preference
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.util.Log
 import androidx.preference.PreferenceManager
 
 class PreferenceValueInitializer
@@ -10,6 +11,7 @@ class PreferenceValueInitializer
     {
         try
         {
+            Log.v(TAG, "initializePreferences()")
             val preferences = PreferenceManager.getDefaultSharedPreferences(context) ?: return
             val items : Map<String, *> = preferences.all
             val editor : SharedPreferences.Editor = preferences.edit()
@@ -19,6 +21,14 @@ class PreferenceValueInitializer
                 editor.putBoolean(
                     IPreferencePropertyAccessor.PREFERENCE_CHECK_ISBN_IMMEDIATELY,
                     IPreferencePropertyAccessor.PREFERENCE_CHECK_ISBN_IMMEDIATELY_DEFAULT_VALUE
+                )
+            }
+
+            if (!items.containsKey(IPreferencePropertyAccessor.PREFERENCE_OVERWRITE_FROM_ISBN_TO_TITLE))
+            {
+                editor.putBoolean(
+                    IPreferencePropertyAccessor.PREFERENCE_OVERWRITE_FROM_ISBN_TO_TITLE,
+                    IPreferencePropertyAccessor.PREFERENCE_OVERWRITE_FROM_ISBN_TO_TITLE_DEFAULT_VALUE
                 )
             }
 
@@ -82,6 +92,5 @@ class PreferenceValueInitializer
     companion object
     {
         private val TAG = PreferenceValueInitializer::class.java.simpleName
-        private const val REQUEST_CODE_PERMISSIONS = 10
     }
 }

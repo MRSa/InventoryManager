@@ -211,6 +211,6 @@ class MainActivity : AppCompatActivity(), AppSingleton.PreparationCallback
             //Manifest.permission.ACCESS_WIFI_STATE,
             //Manifest.permission.CHANGE_WIFI_MULTICAST_STATE,
         )
-        private const val DEBUG_LOG = true
+        private const val DEBUG_LOG = false
     }
 }

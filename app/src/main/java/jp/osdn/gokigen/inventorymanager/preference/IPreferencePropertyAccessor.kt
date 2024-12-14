@@ -9,6 +9,9 @@ interface IPreferencePropertyAccessor
         const val PREFERENCE_CHECK_ISBN_IMMEDIATELY = "check_isbn_immediately"
         const val PREFERENCE_CHECK_ISBN_IMMEDIATELY_DEFAULT_VALUE = false
 
+        const val PREFERENCE_OVERWRITE_FROM_ISBN_TO_TITLE = "overwrite_title_from_isbn"
+        const val PREFERENCE_OVERWRITE_FROM_ISBN_TO_TITLE_DEFAULT_VALUE = false
+
         // --- CAMERA CONNECTION METHOD PREFERENCES
         const val PREFERENCE_CAMERA_METHOD_INDEX = "camera_method"
         const val PREFERENCE_CAMERA_METHOD_INDEX_DEFAULT_VALUE = "1"

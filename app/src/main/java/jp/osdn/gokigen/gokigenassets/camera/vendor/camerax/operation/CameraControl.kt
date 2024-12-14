@@ -504,12 +504,12 @@ class CameraControl(private val activity : AppCompatActivity, private val prefer
 
     override fun getCameraStatus(): ICameraStatus { return (cameraXCameraStatusHolder) }
 
-    override fun doShutter(cameraId: Int)
+    override fun doShutter(id: Int)
     {
         try
         {
-            Log.v(TAG, "doShutter() id:$cameraId")
-            if (cameraId == 0)
+            Log.v(TAG, "doShutter() id:$id")
+            if (id == 0)
             {
                 if (::fileControl.isInitialized)
                 {
@@ -519,7 +519,7 @@ class CameraControl(private val activity : AppCompatActivity, private val prefer
             }
             //  IDが0ではない場合は、シャッターを駆動させない(けど、バイブレーションで通知する)
             vibrator.vibrate(IVibrator.VibratePattern.SIMPLE_MIDDLE)
-            shutterNotify?.doShutter(cameraId, liveViewListener)
+            shutterNotify?.doShutter(id, liveViewListener)
         }
         catch (e: Exception)
         {

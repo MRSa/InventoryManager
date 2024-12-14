@@ -6,10 +6,9 @@ import androidx.room.Index
 import androidx.room.PrimaryKey
 import java.util.Date
 
-@Entity(tableName = "contents", indices = [Index(value = ["hash_value"], unique = true)])
+@Entity(tableName = "contents", indices = [Index(value = ["id"], unique = true)])
 data class DataContent(
-    @PrimaryKey(autoGenerate = true) val id: Int,                     // (id)
-    @ColumnInfo(name = "hash_value") val hashValue: String?,          // hash value
+    @PrimaryKey(autoGenerate = true) val id: Long,                     // (id)
     @ColumnInfo(name = "title") val title: String?,                   // AREA 1
     @ColumnInfo(name = "sub_title") val subTitle: String?,            // AREA 2
     @ColumnInfo(name = "author") val author: String?,                 // AREA 3
@@ -18,7 +17,7 @@ data class DataContent(
     @ColumnInfo(name = "isbn") val isbn: String?,                     // BCR (ISBN)
     @ColumnInfo(name = "product_id") val productId: String?,          // BCR (PRD)
     @ColumnInfo(name = "url") val urlStr: String?,                    // BCR (URL)
-    @ColumnInfo(name = "bcr_text") val fileName: String?,             // BCR (TEXT)
+    @ColumnInfo(name = "bcr_text") val bcrText: String?,             // BCR (TEXT)
     @ColumnInfo(name = "note") val note: String?,                     // TEXT recognition
     @ColumnInfo(name = "category") val category: String?,             // CATEGORY
     @ColumnInfo(name = "image_file_1_name") val imageFile1: String?,  // Image file name (1)
@@ -36,7 +35,7 @@ data class DataContent(
 )
 {
     companion object {
-        fun create(hash: String?,
+        fun create(
                    title: String?,
                    subTitle: String?,
                    author: String?,
@@ -57,7 +56,6 @@ data class DataContent(
             return (
                     DataContent(
                         0,
-                        hash,
                         title,
                         subTitle,
                         author,

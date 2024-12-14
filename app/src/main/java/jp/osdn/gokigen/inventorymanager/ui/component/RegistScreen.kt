@@ -1,38 +1,28 @@
 package jp.osdn.gokigen.inventorymanager.ui.component
 
 import android.annotation.SuppressLint
-import android.content.Context
+import android.graphics.Bitmap
 import android.util.Log
+import androidx.activity.ComponentActivity
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeDrawing
-import androidx.compose.foundation.layout.safeDrawingPadding
-import androidx.compose.foundation.layout.systemBarsPadding
-import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.Button
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.*
@@ -56,14 +46,14 @@ import jp.osdn.gokigen.gokigenassets.liveview.IAnotherDrawer
 import jp.osdn.gokigen.gokigenassets.liveview.LiveImageView
 import jp.osdn.gokigen.gokigenassets.liveview.LiveViewOnTouchListener
 import jp.osdn.gokigen.inventorymanager.R
-import jp.osdn.gokigen.inventorymanager.ui.model.InventoryViewModel
+import jp.osdn.gokigen.inventorymanager.liaison.InventoryDataAccessor
 import jp.osdn.gokigen.inventorymanager.ui.model.RegisterInformationViewModel
 
 
-@OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalComposeUiApi::class)
 @SuppressLint("ClickableViewAccessibility", "UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun RegistScreen(navController: NavHostController, cameraControl: ICameraControl, viewModel: RegisterInformationViewModel, prefsModel : InventoryViewModel, onTouchListener: LiveViewOnTouchListener, anotherDrawer: IAnotherDrawer?, name: String = "RegistScreen", modifier: Modifier = Modifier)
+fun RegistScreen(navController: NavHostController, cameraControl: ICameraControl, viewModel: RegisterInformationViewModel, onTouchListener: LiveViewOnTouchListener, anotherDrawer: IAnotherDrawer?)
 {
     var liveView0 : LiveImageView? = null
 
@@ -370,7 +360,18 @@ fun RegistScreen(navController: NavHostController, cameraControl: ICameraControl
                         horizontalArrangement = Arrangement.Start
                     )
                     {
+                        val context = LocalContext.current
+                        IconButton(onClick = { viewModel.resetData(context = context) }, enabled = true)
+                        {
+                            //  入力中データをクリアするボタン
+                            Icon(
+                                painter = painterResource(id = R.drawable.baseline_crop_free_24),
+                                contentDescription = "Clear"
+                            )
+                        }
+/*
                         IconButton(onClick = { }, enabled = false) {
+                            //  カメラとの接続状態を示すアイコン （操作はできない）
                             val iconId = when (connectionStatus.value) {
                                 ICameraConnectionStatus.CameraConnectionStatus.CONNECTED -> { R.drawable.baseline_cloud_done_24 }
                                 ICameraConnectionStatus.CameraConnectionStatus.CONNECTING -> { R.drawable.baseline_cloud_queue_24 }
@@ -382,6 +383,7 @@ fun RegistScreen(navController: NavHostController, cameraControl: ICameraControl
                                 contentDescription = "ConnectionStatus"
                             )
                         }
+*/
                         Spacer(modifier = Modifier.weight(2.0f))
                         IconButton(
                             onClick = { cameraControl.getCameraShutter(1)?.doShutter(1) },
@@ -442,7 +444,39 @@ fun RegistScreen(navController: NavHostController, cameraControl: ICameraControl
 
                         val context = LocalContext.current
                         Button(
-                            onClick = { viewModel.resetData(context = context) },
+                            onClick = {
+                                // ----- データをデーターベースに登録して、次に進む
+                                val categoryValue = category.value ?: ""
+                                val data1 = area1.value ?: ""
+                                val data2 = area2.value ?: ""
+                                val data3 = area3.value ?: ""
+                                val data4 = area4.value ?: ""
+                                val data5 = area4.value ?: ""
+
+                                val image1 = if (viewModel.isImage1Read()) { viewModel.registerInformationImage1.value } else { null }
+                                val image2 = if (viewModel.isImage2Read()) { viewModel.registerInformationImage2.value } else { null }
+                                val image3 = if (viewModel.isImage3Read()) { viewModel.registerInformationImage3.value } else { null }
+                                val image4 = if (viewModel.isImage4Read()) { viewModel.registerInformationImage4.value } else { null }
+                                val image5 = if (viewModel.isImage5Read()) { viewModel.registerInformationImage5.value } else { null }
+
+                                val image1Copy = if (image1 != null) { Bitmap.createBitmap(image1) } else { null }
+                                val image2Copy = if (image2 != null) { Bitmap.createBitmap(image2) } else { null }
+                                val image3Copy = if (image3 != null) { Bitmap.createBitmap(image3) } else { null }
+                                val image4Copy = if (image4 != null) { Bitmap.createBitmap(image4) } else { null }
+                                val image5Copy = if (image5 != null) { Bitmap.createBitmap(image5) } else { null }
+
+                                val isbn = viewModel.getIsbnValue()
+                                val productId = viewModel.getProductIdValue()
+                                val readText = viewModel.getTextValue()
+                                val readUrl = viewModel.getUrlValue()
+
+                                val myActivity = context as ComponentActivity
+                                val accessor = InventoryDataAccessor(myActivity)
+                                accessor.entryData(categoryValue, data1, data2, data3, data4, data5, isbn, productId, readText, readUrl, image1Copy, image2Copy, image3Copy, image4Copy, image5Copy)
+
+                                // ----- データ入力フィールドをクリアする
+                                viewModel.resetData(context = context)
+                                      },
                             modifier = Modifier.align(Alignment.Bottom)
                         ) {
                             Text(stringResource(R.string.button_label_register_next))

@@ -12,7 +12,7 @@ class AppSingleton : Application()
         super.onCreate()
         Log.v(TAG, "AppSingleton::create()")
         vibrator = MyVibrator()
-/**/
+
         try
         {
             db = Room.databaseBuilder(
@@ -25,7 +25,6 @@ class AppSingleton : Application()
         {
             e.printStackTrace()
         }
-/**/
     }
 
     interface PreparationCallback
@@ -35,22 +34,10 @@ class AppSingleton : Application()
 
     companion object
     {
+        const val APP_NAMESPACE = "inventory"
         private val TAG = AppSingleton::class.java.simpleName
         lateinit var vibrator: MyVibrator
         lateinit var db: InventoryDataHolder
         var isReadyDatabase = false
-
-        fun prepareApplication(callback: PreparationCallback)
-        {
-            try
-            {
-
-            }
-            catch (e: Exception)
-            {
-                e.printStackTrace()
-            }
-        }
-
     }
 }

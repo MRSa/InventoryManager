@@ -8,11 +8,9 @@ import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatusReceiver
 import jp.osdn.gokigen.gokigenassets.camera.preference.CameraPreference
 import jp.osdn.gokigen.gokigenassets.camera.preference.CameraPreferenceKeySet
 import jp.osdn.gokigen.gokigenassets.camera.preference.ICameraPreferenceProvider
-import jp.osdn.gokigen.gokigenassets.camera.vendor.CameraControlCoordinator
 import jp.osdn.gokigen.gokigenassets.camera.vendor.camerax.operation.CameraControl
 import jp.osdn.gokigen.gokigenassets.liveview.ILiveViewRefresher
 import jp.osdn.gokigen.gokigenassets.liveview.image.CameraLiveViewListenerImpl
-import jp.osdn.gokigen.gokigenassets.liveview.image.IImageProvider
 import jp.osdn.gokigen.gokigenassets.preference.PreferenceAccessWrapper
 import jp.osdn.gokigen.gokigenassets.scene.IInformationReceiver
 import jp.osdn.gokigen.inventorymanager.AppSingleton
@@ -34,7 +32,6 @@ import jp.osdn.gokigen.inventorymanager.preference.IPreferencePropertyAccessor.C
 class CameraProvider(private val activity: AppCompatActivity, private val informationNotify: IInformationReceiver, private val statusReceiver : ICameraStatusReceiver, private val shutterNotify: ICameraShutterNotify)
 {
     private val liveViewListener = CameraLiveViewListenerImpl(activity, informationNotify)
-    private val cameraCoordinator = CameraControlCoordinator(informationNotify)
     private var cameraXisCreated = false
     private lateinit var cameraXControl0: ICameraControl
 
@@ -43,12 +40,7 @@ class CameraProvider(private val activity: AppCompatActivity, private val inform
         liveViewListener.setRefresher(refresher = refresher)
     }
 
-    fun getImageProvider() : IImageProvider
-    {
-        return (liveViewListener)
-    }
-
-    fun decideCameraControl(connectionMethod : String, number : Int) : ICameraControl
+    fun decideCameraControl(number: Int) : ICameraControl
     {
         try
         {

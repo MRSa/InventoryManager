@@ -24,6 +24,7 @@ class ViewRootComponent @JvmOverloads constructor(context: Context, attrs: Attri
     private lateinit var myRegistViewModel : RegisterInformationViewModel
     private lateinit var myLiaison : CameraLiaison
 
+
     fun setLiaisons(viewModel : InventoryViewModel, registScreenViewModel: RegisterInformationViewModel, liaison : CameraLiaison)
     {
         this.myViewModel = viewModel
@@ -55,7 +56,7 @@ fun NavigationMain(navController: NavHostController, cameraControl: ICameraContr
     GokigenComposeAppsTheme {
         NavHost(navController = navController, startDestination = "MainScreen") {
             composable("MainScreen") { MainScreen(navController = navController, cameraControl = cameraControl, prefsModel = prefsModel) }
-            composable("RegistScreen") { RegistScreen(navController = navController, cameraControl = cameraControl, viewModel = registViewModel, prefsModel = prefsModel, onTouchListener = onTouchListener, anotherDrawer = anotherDrawer) }
+            composable("RegistScreen") { RegistScreen(navController = navController, cameraControl = cameraControl, viewModel = registViewModel, onTouchListener = onTouchListener, anotherDrawer = anotherDrawer) }
             composable("ListScreen") { ListScreen(navController = navController, prefsModel = prefsModel) }
             composable("DetailScreen") { DetailScreen(navController = navController, prefsModel = prefsModel) }
             composable("PreferenceScreen") { PreferenceScreen(navController = navController, prefsModel = prefsModel) }

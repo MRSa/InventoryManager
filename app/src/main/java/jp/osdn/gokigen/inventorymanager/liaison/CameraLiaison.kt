@@ -4,14 +4,12 @@ import android.graphics.Color
 import android.util.Log
 import android.view.KeyEvent
 import androidx.appcompat.app.AppCompatActivity
-import androidx.preference.PreferenceManager
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraControl
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraShutterNotify
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatusReceiver
 import jp.osdn.gokigen.gokigenassets.liveview.IAnotherDrawer
 import jp.osdn.gokigen.gokigenassets.scene.IInformationReceiver
 import jp.osdn.gokigen.inventorymanager.R
-import jp.osdn.gokigen.inventorymanager.preference.IPreferencePropertyAccessor
 
 class CameraLiaison(private val activity: AppCompatActivity, private val informationNotify: IInformationReceiver, statusReceiver : ICameraStatusReceiver, shutterNotify: ICameraShutterNotify)
 {
@@ -23,24 +21,8 @@ class CameraLiaison(private val activity: AppCompatActivity, private val informa
     {
         try
         {
-            val preference = PreferenceManager.getDefaultSharedPreferences(activity)
-            val connectionIndex =
-                try
-                {
-                    (preference.getString(
-                        IPreferencePropertyAccessor.PREFERENCE_CAMERA_METHOD_INDEX,
-                        IPreferencePropertyAccessor.PREFERENCE_CAMERA_METHOD_INDEX_DEFAULT_VALUE
-                    ))?.toInt() ?: 2
-                }
-                catch (e: Exception)
-                {
-                    e.printStackTrace()
-                    3
-                }
-
             cameraControl = try {
-                val items = activity.resources.getStringArray(R.array.connection_method_value)
-                cameraProvider.decideCameraControl(items[connectionIndex], 0)
+                cameraProvider.decideCameraControl(0)
             }
             catch (e: Exception)
             {

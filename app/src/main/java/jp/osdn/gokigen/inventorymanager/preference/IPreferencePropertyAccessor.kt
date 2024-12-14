@@ -18,7 +18,7 @@ interface IPreferencePropertyAccessor
         const val PREFERENCE_CAMERA_SEQUENCE_1 = "camera_sequence1"
         const val PREFERENCE_CAMERA_SEQUENCE_1_DEFAULT_VALUE = "0"
         const val PREFERENCE_CAMERA_OPTION1_1 = "camera_option11"
-        const val PREFERENCE_CAMERA_OPTION1_1_DEFAULT_VALUE = ""
+        const val PREFERENCE_CAMERA_OPTION1_1_DEFAULT_VALUE = "WQHD"
         const val PREFERENCE_CAMERA_OPTION2_1 = "camera_option21"
         const val PREFERENCE_CAMERA_OPTION2_1_DEFAULT_VALUE = ""
         const val PREFERENCE_CAMERA_OPTION3_1 = "camera_option31"

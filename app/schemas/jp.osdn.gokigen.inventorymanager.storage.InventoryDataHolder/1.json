@@ -2,23 +2,17 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "4406b38a9b97f6f2bd1f8763045c8c1e",
+    "identityHash": "2b222184bc73529576aca451363d8044",
     "entities": [
       {
         "tableName": "contents",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `hash_value` TEXT, `title` TEXT, `sub_title` TEXT, `author` TEXT, `publisher` TEXT, `description` TEXT, `isbn` TEXT, `product_id` TEXT, `url` TEXT, `bcr_text` TEXT, `note` TEXT, `category` TEXT, `image_file_1_name` TEXT, `image_file_2_name` TEXT, `image_file_3_name` TEXT, `image_file_4_name` TEXT, `image_file_5_name` TEXT, `checked` INTEGER NOT NULL, `inform_message` TEXT, `inform_date` INTEGER, `is_delete` INTEGER NOT NULL, `delete_date` INTEGER, `update_date` INTEGER, `create_date` INTEGER)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `title` TEXT, `sub_title` TEXT, `author` TEXT, `publisher` TEXT, `description` TEXT, `isbn` TEXT, `product_id` TEXT, `url` TEXT, `bcr_text` TEXT, `note` TEXT, `category` TEXT, `image_file_1_name` TEXT, `image_file_2_name` TEXT, `image_file_3_name` TEXT, `image_file_4_name` TEXT, `image_file_5_name` TEXT, `checked` INTEGER NOT NULL, `inform_message` TEXT, `inform_date` INTEGER, `is_delete` INTEGER NOT NULL, `delete_date` INTEGER, `update_date` INTEGER, `create_date` INTEGER)",
         "fields": [
           {
             "fieldPath": "id",
             "columnName": "id",
             "affinity": "INTEGER",
             "notNull": true
-          },
-          {
-            "fieldPath": "hashValue",
-            "columnName": "hash_value",
-            "affinity": "TEXT",
-            "notNull": false
           },
           {
             "fieldPath": "title",
@@ -69,7 +63,7 @@
             "notNull": false
           },
           {
-            "fieldPath": "fileName",
+            "fieldPath": "bcrText",
             "columnName": "bcr_text",
             "affinity": "TEXT",
             "notNull": false
@@ -167,13 +161,13 @@
         },
         "indices": [
           {
-            "name": "index_contents_hash_value",
+            "name": "index_contents_id",
             "unique": true,
             "columnNames": [
-              "hash_value"
+              "id"
             ],
             "orders": [],
-            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_contents_hash_value` ON `${TABLE_NAME}` (`hash_value`)"
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_contents_id` ON `${TABLE_NAME}` (`id`)"
           }
         ],
         "foreignKeys": []
@@ -182,7 +176,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '4406b38a9b97f6f2bd1f8763045c8c1e')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '2b222184bc73529576aca451363d8044')"
     ]
   }
 }

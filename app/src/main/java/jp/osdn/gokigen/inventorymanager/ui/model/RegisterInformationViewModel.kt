@@ -57,8 +57,8 @@ class RegisterInformationViewModel: ViewModel(), ICameraStatusReceiver, ICameraS
     val registerInformationImage1 : LiveData<Bitmap> =  image01
     val registerInformationImage2 : LiveData<Bitmap> =  image02
     val registerInformationImage3 : LiveData<Bitmap> =  image03
-    //val registerInformationImage4 : LiveData<Bitmap> =  image04
-    //val registerInformationImage5 : LiveData<Bitmap> =  image05
+    val registerInformationImage4 : LiveData<Bitmap> =  image04
+    val registerInformationImage5 : LiveData<Bitmap> =  image05
 
     private var isbnValue : String = ""
     private var prodValue : String = ""
@@ -87,7 +87,7 @@ class RegisterInformationViewModel: ViewModel(), ICameraStatusReceiver, ICameraS
     {
         try
         {
-            Log.v(TAG, "initializeViewModel()")
+            Log.v(TAG, "RegisterInformationViewModel::initializeViewModel()")
             resetData(context)
         }
         catch (e: Exception)
@@ -164,6 +164,17 @@ class RegisterInformationViewModel: ViewModel(), ICameraStatusReceiver, ICameraS
     {
         labelData6.value = value
     }
+
+    fun isImage1Read(): Boolean { return(isReadImage1) }
+    fun isImage2Read(): Boolean { return(isReadImage2) }
+    fun isImage3Read(): Boolean { return(isReadImage3) }
+    fun isImage4Read(): Boolean { return(isReadImage4) }
+    fun isImage5Read(): Boolean { return(isReadImage5) }
+
+    fun getIsbnValue(): String { return(isbnValue) }
+    fun getProductIdValue(): String { return(prodValue) }
+    fun getTextValue(): String { return(textValue) }
+    fun getUrlValue(): String { return(urlValue) }
 
     /* ICameraStatusReceiver */
     override fun onStatusNotify(message: String?) {

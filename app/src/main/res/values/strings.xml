@@ -17,6 +17,9 @@
     <string name="label_register_bcr">Barcode </string>
     <string name="label_error_read_text">Read Error</string>
 
+    <string name="label_data_recorded">Recorded the data.</string>
+    <string name="label_data_not_entry">Ignore as no data entered.</string>
+
     <!--  Use for xml/preference_main.xml -->
     <string name="pref_cat_application_control">App. Control</string>
     <string name="pref_exit_power_off">Exit Application</string>

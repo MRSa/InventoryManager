@@ -46,7 +46,6 @@ class MainActivity : AppCompatActivity(), AppSingleton.PreparationCallback
             PreferenceValueInitializer().initializePreferences(this)
 
             db = AppSingleton.db
-
             myViewModel = ViewModelProvider(this)[InventoryViewModel::class.java]
             myViewModel.initializeViewModel(this)
 
@@ -83,7 +82,7 @@ class MainActivity : AppCompatActivity(), AppSingleton.PreparationCallback
                     ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS)
                     if(!allPermissionsGranted())
                     {
-                        // Abort launch application because required permissions was rejected.
+                        // 必要な権限がそろっていないことを通知する
                         Toast.makeText(this, getString(R.string.permission_not_granted), Toast.LENGTH_SHORT).show()
                         Log.v(TAG, "----- APPLICATION LAUNCH ABORTED -----")
                         AppSingleton.vibrator.vibrate(this, IVibrator.VibratePattern.SIMPLE_LONG)
@@ -91,9 +90,6 @@ class MainActivity : AppCompatActivity(), AppSingleton.PreparationCallback
                     }
                     else
                     {
-                        // ----- アプリケーションの初期化を行う
-                        AppSingleton.prepareApplication(this)
-
                         // ----- for debug
                         dumpDatabase()
                     }
@@ -102,9 +98,6 @@ class MainActivity : AppCompatActivity(), AppSingleton.PreparationCallback
             }
             else
             {
-                // ----- アプリケーションの初期化を行う
-                AppSingleton.prepareApplication(this)
-
                 // ----- for debug
                 dumpDatabase()
             }
@@ -122,7 +115,7 @@ class MainActivity : AppCompatActivity(), AppSingleton.PreparationCallback
             Log.v(TAG, "finishedPreparation() : $result [Detail:$detail]")
             if (!result)
             {
-                // ----- 起動に失敗...メッセージをToast表示
+                // ----- 起動に失敗...Toast表示で理由を通知する
                 val message = "${getString(R.string.permission_not_granted)} : $detail"
                 Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
             }
@@ -177,17 +170,25 @@ class MainActivity : AppCompatActivity(), AppSingleton.PreparationCallback
     {
         try
         {
-            if ((isDebugLog)&&(AppSingleton.isReadyDatabase))
+            if ((DEBUG_LOG)&&(AppSingleton.isReadyDatabase))
             {
-                val contents: List<DataContent> = db.storageDao().getAll()
-                Log.v(TAG, " = = = = = number of contents : ${contents.count()} = = = = =")
-
-                var index = 1
-                for (value in contents)
-                {
-                    Log.v(TAG, "    $index title:${value.title} hash:${value.hashValue}")
-                    index++
-                }
+                Thread {
+                    try
+                    {
+                        val contents: List<DataContent> = db.storageDao().getAll()
+                        Log.v(TAG, " = = = = = number of contents : ${contents.count()} = = = = =")
+                        var index = 1
+                        for (value in contents)
+                        {
+                            Log.v(TAG, "  $value")
+                            index++
+                        }
+                    }
+                    catch (e: Exception)
+                    {
+                        e.printStackTrace()
+                    }
+                }.start()
             }
         }
         catch (e: Exception)
@@ -210,6 +211,6 @@ class MainActivity : AppCompatActivity(), AppSingleton.PreparationCallback
             //Manifest.permission.ACCESS_WIFI_STATE,
             //Manifest.permission.CHANGE_WIFI_MULTICAST_STATE,
         )
-        private const val isDebugLog = false
+        private const val DEBUG_LOG = true
     }
 }

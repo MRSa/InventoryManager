@@ -2,16 +2,23 @@ package jp.osdn.gokigen.inventorymanager.ui.component
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.material3.Divider
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
@@ -19,13 +26,45 @@ import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import jp.osdn.gokigen.inventorymanager.ui.model.InventoryViewModel
+import jp.osdn.gokigen.inventorymanager.R
+import jp.osdn.gokigen.inventorymanager.ui.model.PreferenceViewModel
 import jp.osdn.gokigen.inventorymanager.ui.theme.GokigenComposeAppsTheme
 
 @Composable
-fun PreferenceScreen(navController: NavHostController, prefsModel: InventoryViewModel)
+fun PreferenceScreen(navController: NavHostController, prefsModel: PreferenceViewModel)
 {
     val padding = 2.dp
+
+    val overwriteInfo = prefsModel.overwriteInfoFromIsbn.observeAsState()
+    val checkImmediately = prefsModel.checkIsbnImmediately.observeAsState()
+
+    MaterialTheme {
+        Column {
+            Spacer(Modifier.size(padding))
+            ShowAboutGokigen()
+            Spacer(Modifier.size(padding))
+            ShowGokigenPrivacyPolicy()
+            Spacer(Modifier.size(padding))
+        }
+
+/*
+        Scaffold(
+
+            content = { innerPadding -> Column {
+
+                }
+            }
+        )
+
+ */
+    }
+
+
+
+
+
+
+
 
     GokigenComposeAppsTheme {
         Column {
@@ -73,7 +112,7 @@ fun PreferenceScreenTitle()
             modifier = Modifier.padding(all = 6.dp))
     }
 }
-
+*/
 
 @Composable
 fun ShowAboutGokigen()
@@ -86,13 +125,13 @@ fun ShowAboutGokigen()
         Column {
             Text(
                 text = stringResource(R.string.pref_instruction_manual),
-                color = MaterialTheme.colors.primaryVariant,
+                color = MaterialTheme.colorScheme.primary,
                 fontSize = with(density) { 18.dp.toSp() }
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
                 text = openUri,
-                color = MaterialTheme.colors.secondaryVariant,
+                color = MaterialTheme.colorScheme.secondary,
                 modifier = Modifier.clickable(onClick = { uriHandler.openUri(openUri) }),
                 fontSize = with(density) { 14.dp.toSp() }
             )
@@ -111,18 +150,16 @@ fun ShowGokigenPrivacyPolicy()
         Column {
             Text(
                 text = stringResource(R.string.pref_privacy_policy),
-                color = MaterialTheme.colors.primaryVariant,
+                color = MaterialTheme.colorScheme.primary,
                 fontSize = with(density) { 18.dp.toSp() }
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
                 text = openUri,
-                color = MaterialTheme.colors.primaryVariant,
+                color = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.clickable(onClick = { uriHandler.openUri(openUri) }),
                 fontSize = with(density) { 14.dp.toSp() }
             )
         }
     }
 }
-
-*/

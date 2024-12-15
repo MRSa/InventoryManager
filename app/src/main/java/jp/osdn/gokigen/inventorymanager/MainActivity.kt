@@ -22,6 +22,7 @@ import jp.osdn.gokigen.inventorymanager.ui.model.InventoryViewModel
 import jp.osdn.gokigen.gokigenassets.scene.IVibrator
 import jp.osdn.gokigen.inventorymanager.storage.DataContent
 import jp.osdn.gokigen.inventorymanager.storage.InventoryDataHolder
+import jp.osdn.gokigen.inventorymanager.ui.model.PreferenceViewModel
 import jp.osdn.gokigen.inventorymanager.ui.model.RegisterInformationViewModel
 
 class MainActivity : AppCompatActivity(), AppSingleton.PreparationCallback
@@ -30,6 +31,7 @@ class MainActivity : AppCompatActivity(), AppSingleton.PreparationCallback
     private lateinit var rootComponent : ViewRootComponent
     private lateinit var myViewModel : InventoryViewModel
     private lateinit var myRegistViewModel : RegisterInformationViewModel
+    private lateinit var myPreferenceViewModel : PreferenceViewModel
     private lateinit var liaison : CameraLiaison
 
     override fun onCreate(savedInstanceState: Bundle?)
@@ -52,11 +54,14 @@ class MainActivity : AppCompatActivity(), AppSingleton.PreparationCallback
             myRegistViewModel = ViewModelProvider(this)[RegisterInformationViewModel::class.java]
             myRegistViewModel.initializeViewModel(this)
 
+            myPreferenceViewModel = ViewModelProvider(this)[PreferenceViewModel::class.java]
+            myPreferenceViewModel.initializeViewModel(this)
+
             liaison = CameraLiaison(this, myViewModel, myRegistViewModel, myRegistViewModel)
 
             ///////// SET ROOT VIEW /////////
             rootComponent = ViewRootComponent(applicationContext)
-            rootComponent.setLiaisons(myViewModel, myRegistViewModel, liaison)
+            rootComponent.setLiaisons(myViewModel, myRegistViewModel, myPreferenceViewModel, liaison)
             setContent {
                 //Box(Modifier.safeDrawingPadding()) {
                     rootComponent.Content()

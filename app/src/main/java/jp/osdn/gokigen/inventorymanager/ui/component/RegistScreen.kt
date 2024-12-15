@@ -40,7 +40,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.NavHostController
-import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraConnectionStatus
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraControl
 import jp.osdn.gokigen.gokigenassets.liveview.IAnotherDrawer
 import jp.osdn.gokigen.gokigenassets.liveview.LiveImageView
@@ -57,7 +56,7 @@ fun RegistScreen(navController: NavHostController, cameraControl: ICameraControl
 {
     var liveView0 : LiveImageView? = null
 
-    val connectionStatus = viewModel.cameraConnectionStatus.observeAsState(initial = viewModel.cameraConnectionStatus.value ?: ICameraConnectionStatus.CameraConnectionStatus.UNKNOWN)
+    //val connectionStatus = viewModel.cameraConnectionStatus.observeAsState(initial = viewModel.cameraConnectionStatus.value ?: ICameraConnectionStatus.CameraConnectionStatus.UNKNOWN)
     val imageData1 = viewModel.registerInformationImage1.observeAsState()
     val imageData2 = viewModel.registerInformationImage2.observeAsState()
     val imageData3 = viewModel.registerInformationImage3.observeAsState()

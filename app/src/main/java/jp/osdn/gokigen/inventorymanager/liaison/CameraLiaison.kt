@@ -64,12 +64,6 @@ class CameraLiaison(private val activity: AppCompatActivity, private val informa
         }
     }
 
-    fun finish()
-    {
-        Log.v(TAG, " finishCamera() ")
-        cameraControl.finishCamera(false)
-    }
-
     fun getCameraControl() : ICameraControl { return (cameraControl) }
     fun getAnotherDrawer() : IAnotherDrawer { return (drawers) }
 

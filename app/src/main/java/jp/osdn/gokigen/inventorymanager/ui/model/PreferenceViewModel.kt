@@ -12,6 +12,7 @@ import jp.osdn.gokigen.inventorymanager.preference.IPreferencePropertyAccessor
 class PreferenceViewModel: ViewModel()
 {
     private lateinit var preference : SharedPreferences
+
     private val readIsbnImmediately : MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     private val overwriteTitleFromIsbn : MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
 
@@ -32,6 +33,46 @@ class PreferenceViewModel: ViewModel()
                 IPreferencePropertyAccessor.PREFERENCE_OVERWRITE_FROM_ISBN_TO_TITLE_DEFAULT_VALUE
             )
             Log.v(TAG, "PreferenceViewModel::initializeViewModel() isbn: ${readIsbnImmediately.value} overwriteTitle: ${overwriteTitleFromIsbn.value}")
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
+    }
+
+    fun setCheckIsbnImmediately(value: Boolean)
+    {
+        try
+        {
+            if (!::preference.isInitialized)
+            {
+                Log.v(TAG, " Preference Manager is unknown...")
+                return
+            }
+            val editor = preference.edit()
+            editor.putBoolean(IPreferencePropertyAccessor.PREFERENCE_CHECK_ISBN_IMMEDIATELY, value)
+            editor.apply()
+            readIsbnImmediately.value = value
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
+    }
+
+    fun setOverwriteInformation(value: Boolean)
+    {
+        try
+        {
+            if (!::preference.isInitialized)
+            {
+                Log.v(TAG, " Preference Manager is unknown...")
+                return
+            }
+            val editor = preference.edit()
+            editor.putBoolean(IPreferencePropertyAccessor.PREFERENCE_OVERWRITE_FROM_ISBN_TO_TITLE, value)
+            editor.apply()
+            overwriteTitleFromIsbn.value = value
         }
         catch (e: Exception)
         {

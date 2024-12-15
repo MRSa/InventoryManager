@@ -19,10 +19,11 @@ import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraConnectionStatus
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraShutterNotify
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatusReceiver
 import jp.osdn.gokigen.gokigenassets.liveview.image.IImageProvider
+import jp.osdn.gokigen.gokigenassets.scene.IInformationReceiver
 import jp.osdn.gokigen.inventorymanager.R
 
 
-class RegisterInformationViewModel: ViewModel(), ICameraStatusReceiver, ICameraShutterNotify
+class RegisterInformationViewModel: ViewModel(), ICameraStatusReceiver, ICameraShutterNotify, IInformationReceiver
 {
     private val category : MutableLiveData<String> by lazy { MutableLiveData<String>() }
     private val labelData1 : MutableLiveData<String> by lazy { MutableLiveData<String>() }
@@ -41,8 +42,7 @@ class RegisterInformationViewModel: ViewModel(), ICameraStatusReceiver, ICameraS
     private val image05 : MutableLiveData<Bitmap> by lazy { MutableLiveData<Bitmap>() }
 
     private val connectionStatus : MutableLiveData<ICameraConnectionStatus.CameraConnectionStatus> by lazy { MutableLiveData<ICameraConnectionStatus.CameraConnectionStatus>() }
-
-    val cameraConnectionStatus: LiveData<ICameraConnectionStatus.CameraConnectionStatus> = connectionStatus
+    //val cameraConnectionStatus: LiveData<ICameraConnectionStatus.CameraConnectionStatus> = connectionStatus
 
     val registerInformationCategory: LiveData<String> = category
     val registerInformationLabel01: LiveData<String> = labelData1
@@ -332,6 +332,24 @@ class RegisterInformationViewModel: ViewModel(), ICameraStatusReceiver, ICameraS
         {
             e.printStackTrace()
         }
+    }
+
+    /* IInformationReceiver */
+    override fun updateMessage(message: String, isBold: Boolean, isColor: Boolean, color: Int)
+    {
+        infoData.value = message
+    }
+
+    /* IInformationReceiver */
+    override fun appendMessage(message: String, isBold: Boolean, isColor: Boolean, color: Int)
+    {
+        infoData.value = "${infoData.value} $message"
+    }
+
+    /* IInformationReceiver */
+    override fun getCurrentMessage(): String
+    {
+        return (infoData.value ?: "")
     }
 
     companion object

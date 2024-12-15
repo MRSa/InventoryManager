@@ -25,7 +25,7 @@ import jp.osdn.gokigen.inventorymanager.storage.InventoryDataHolder
 import jp.osdn.gokigen.inventorymanager.ui.model.PreferenceViewModel
 import jp.osdn.gokigen.inventorymanager.ui.model.RegisterInformationViewModel
 
-class MainActivity : AppCompatActivity(), AppSingleton.PreparationCallback
+class MainActivity : AppCompatActivity()
 {
     private lateinit var db : InventoryDataHolder
     private lateinit var rootComponent : ViewRootComponent
@@ -48,8 +48,6 @@ class MainActivity : AppCompatActivity(), AppSingleton.PreparationCallback
             PreferenceValueInitializer().initializePreferences(this)
 
             db = AppSingleton.db
-            myViewModel = ViewModelProvider(this)[InventoryViewModel::class.java]
-            myViewModel.initializeViewModel(this)
 
             myRegistViewModel = ViewModelProvider(this)[RegisterInformationViewModel::class.java]
             myRegistViewModel.initializeViewModel(this)
@@ -57,7 +55,9 @@ class MainActivity : AppCompatActivity(), AppSingleton.PreparationCallback
             myPreferenceViewModel = ViewModelProvider(this)[PreferenceViewModel::class.java]
             myPreferenceViewModel.initializeViewModel(this)
 
-            liaison = CameraLiaison(this, myViewModel, myRegistViewModel, myRegistViewModel)
+            liaison = CameraLiaison(this, myRegistViewModel, myRegistViewModel, myRegistViewModel)
+
+            myViewModel = ViewModelProvider(this)[InventoryViewModel::class.java]
 
             ///////// SET ROOT VIEW /////////
             rootComponent = ViewRootComponent(applicationContext)
@@ -105,29 +105,6 @@ class MainActivity : AppCompatActivity(), AppSingleton.PreparationCallback
             {
                 // ----- for debug
                 dumpDatabase()
-            }
-        }
-        catch (e: Exception)
-        {
-            e.printStackTrace()
-        }
-    }
-
-    override fun finishedPreparation(result: Boolean, detail: String)
-    {
-        try
-        {
-            Log.v(TAG, "finishedPreparation() : $result [Detail:$detail]")
-            if (!result)
-            {
-                // ----- 起動に失敗...Toast表示で理由を通知する
-                val message = "${getString(R.string.permission_not_granted)} : $detail"
-                Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
-            }
-            if (::myViewModel.isInitialized)
-            {
-                // ---- DBが初期化できたことを設定する
-                myViewModel.setIsReadyDatabase(result)
             }
         }
         catch (e: Exception)

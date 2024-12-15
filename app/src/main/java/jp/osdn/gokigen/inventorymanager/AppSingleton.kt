@@ -27,11 +27,6 @@ class AppSingleton : Application()
         }
     }
 
-    interface PreparationCallback
-    {
-        fun finishedPreparation(result: Boolean, detail: String)
-    }
-
     companion object
     {
         const val APP_NAMESPACE = "inventory"

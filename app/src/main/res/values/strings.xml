@@ -28,6 +28,7 @@
 
     <string name="label_return_to_main_screen">Return to Main</string>
     <string name="data_empty">No data</string>
+    <string name="data_updating">Updating</string>
 
     <!--  Use for xml/preference_main.xml -->
     <string name="pref_cat_application_control">App. Control</string>

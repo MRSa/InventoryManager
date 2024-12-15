@@ -1,7 +1,6 @@
 package jp.osdn.gokigen.inventorymanager.ui.model
 
 import android.util.Log
-import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -20,9 +19,6 @@ class InventoryViewModel: ViewModel()
 
     private val isRefreshing : MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val refreshingData: LiveData<Boolean> = isRefreshing
-
-    private val databaseInitialize : MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
-    val isReadyDatabase: LiveData<Boolean> = databaseInitialize
 
     init
     {

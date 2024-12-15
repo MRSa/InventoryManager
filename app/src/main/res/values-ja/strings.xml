@@ -28,6 +28,7 @@
 
     <string name="label_return_to_main_screen">メイン画面に戻る</string>
     <string name="data_empty">データ未登録</string>
+    <string name="data_updating">データ更新中</string>
 
     <!--  Use for xml/preference_main.xml -->
     <string name="pref_cat_application_control">A01f 制御</string>

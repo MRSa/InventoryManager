@@ -1,3 +1,3 @@
-Inventory Manager
+Inventory Manager : An android application to manage personal inventories (e.g. books, electric parts, etc.)
 
-An android application to manage personal inventories (e.g. books, electric parts, etc.)
+This repository is under construction.

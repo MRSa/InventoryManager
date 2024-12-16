@@ -29,6 +29,13 @@
     <string name="label_return_to_main_screen">メイン画面に戻る</string>
     <string name="data_empty">データ未登録</string>
     <string name="data_updating">データ更新中</string>
+    <string name="button_label_edit">編集</string>
+    <string name="label_title">題名</string>
+    <string name="label_subtitle">副題</string>
+    <string name="label_author">作者</string>
+    <string name="label_publisher">会社</string>
+    <string name="label_isbn">ISBN</string>
+    <string name="label_text_recognition">文字認識</string>
 
     <!--  Use for xml/preference_main.xml -->
     <string name="pref_cat_application_control">A01f 制御</string>

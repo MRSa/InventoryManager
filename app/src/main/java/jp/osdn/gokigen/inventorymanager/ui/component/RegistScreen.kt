@@ -450,7 +450,7 @@ fun RegistScreen(navController: NavHostController, cameraControl: ICameraControl
                                 val data2 = area2.value ?: ""
                                 val data3 = area3.value ?: ""
                                 val data4 = area4.value ?: ""
-                                val data5 = area4.value ?: ""
+                                val data5 = area5.value ?: ""
 
                                 val image1 = if (viewModel.isImage1Read()) { viewModel.registerInformationImage1.value } else { null }
                                 val image2 = if (viewModel.isImage2Read()) { viewModel.registerInformationImage2.value } else { null }

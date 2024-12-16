@@ -63,9 +63,9 @@ fun NavigationMain(navController: NavHostController, cameraControl: ICameraContr
             composable("MainScreen") { MainScreen(navController = navController, cameraControl = cameraControl) }
             composable("RegistScreen") { RegistScreen(navController = navController, cameraControl = cameraControl, viewModel = registViewModel, onTouchListener = onTouchListener, anotherDrawer = anotherDrawer) }
             composable("ListScreen") { ListScreen(navController = navController, prefsModel = prefsModel) }
-            composable("DetailScreen/{id}", listOf(navArgument("id") { type = NavType.IntType })) { backStackEntry ->
-                val id = backStackEntry.arguments?.getInt("id") ?: 0
-                DetailScreen(navController = navController, prefsModel = prefsModel, id = id)
+            composable("DetailScreen/{id}", listOf(navArgument("id") { type = NavType.LongType })) { backStackEntry ->
+                val id = backStackEntry.arguments?.getLong("id") ?: 0
+                DetailScreen(navController = navController, viewModel = prefsModel, id = id)
             }
             composable("PreferenceScreen") { PreferenceScreen(navController = navController, prefsModel = preferenceViewModel) }
         }

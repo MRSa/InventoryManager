@@ -2,19 +2,21 @@ package jp.osdn.gokigen.inventorymanager.ui.component
 
 import android.content.Intent
 import android.net.Uri
-import androidx.compose.foundation.background
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawingPadding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -31,8 +33,8 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -42,18 +44,23 @@ import jp.osdn.gokigen.inventorymanager.R
 import jp.osdn.gokigen.inventorymanager.ui.model.InventoryViewModel
 
 @Composable
-fun ListScreen(navController: NavHostController, prefsModel : InventoryViewModel)
+fun ListScreen(navController: NavHostController, viewModel : InventoryViewModel)
 {
-    prefsModel.refresh()
+    val padding = 6.dp
+
+    //viewModel.refresh()
     MaterialTheme {
         Scaffold(
             topBar = { MainTopBar(navController) },
             modifier = Modifier
                 .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background),
+                .safeDrawingPadding()
+                //.background(MaterialTheme.colorScheme.background),
         ) {
             Modifier.padding(it).fillMaxWidth()
-            ReceivedContentList(navController, prefsModel)
+            CommandPanel(viewModel)
+            Spacer(Modifier.size(padding))
+            ReceivedContentList(navController, viewModel)
         }
     }
 }
@@ -68,10 +75,10 @@ fun MainTopBar(navController: NavHostController)
         title = {
             Text(stringResource(id = R.string.app_name))
         },
-        //backgroundColor = Color(0xff3DDC84),
-        //contentColor = if (isSystemInDarkTheme()) { Color.Black } else { Color.White },
         actions = {
-            IconButton(onClick = { navController.navigate("PreferenceScreen") }) {
+            IconButton(
+                enabled = false,
+                onClick = { navController.navigate("PreferenceScreen") }) {
                 Icon(Icons.Default.Settings, contentDescription = "Settings")
             }
             IconButton(
@@ -82,6 +89,39 @@ fun MainTopBar(navController: NavHostController)
         }
     )
 }
+
+@Composable
+fun CommandPanel(viewModel : InventoryViewModel)
+{
+    Row()
+    {
+        IconButton(
+            modifier = Modifier,
+            onClick = { })
+        {
+            Icon(
+                painter = painterResource(R.drawable.baseline_filter_alt_24),
+                contentDescription = "filter")
+        }
+
+        IconButton(
+            modifier = Modifier,
+            onClick = { viewModel.refresh() })
+        {
+            Icon(Icons.Filled.Refresh, contentDescription = "Information")
+        }
+
+        IconButton(
+            modifier = Modifier,
+            onClick = { })
+        {
+            Icon(
+                painter = painterResource(R.drawable.baseline_import_export_24),
+                contentDescription = "import/export")
+        }
+    }
+}
+
 
 @Composable
 fun ReceivedContentList(navController: NavHostController, dataListModel: InventoryViewModel)

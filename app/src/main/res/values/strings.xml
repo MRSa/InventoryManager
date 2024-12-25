@@ -37,6 +37,10 @@
     <string name="label_isbn">ISBN</string>
     <string name="label_text_recognition">Text recognition</string>
 
+    <string name="label_data_start_export">Start data export… </string>
+    <string name="label_data_exporting">Data exporting… </string>
+    <string name="label_data_exported">Data exported </string>
+
     <!--  Use for xml/preference_main.xml -->
     <string name="pref_cat_application_control">App. Control</string>
     <string name="pref_exit_power_off">Exit Application</string>

@@ -3,13 +3,13 @@ package jp.osdn.gokigen.inventorymanager.ui.component
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -19,6 +19,8 @@ import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Warning
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -41,27 +43,33 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import jp.osdn.gokigen.inventorymanager.R
+import jp.osdn.gokigen.inventorymanager.export.DataExporter
 import jp.osdn.gokigen.inventorymanager.ui.model.InventoryViewModel
 
 @Composable
-fun ListScreen(navController: NavHostController, viewModel : InventoryViewModel)
+fun ListScreen(navController: NavHostController, viewModel : InventoryViewModel, exporter: DataExporter)
 {
     val padding = 6.dp
 
-    //viewModel.refresh()
     MaterialTheme {
         Scaffold(
             topBar = { MainTopBar(navController) },
             modifier = Modifier
-                .fillMaxSize()
-                .safeDrawingPadding()
+                .fillMaxSize(),
                 //.background(MaterialTheme.colorScheme.background),
-        ) {
-            Modifier.padding(it).fillMaxWidth()
-            CommandPanel(viewModel)
-            Spacer(Modifier.size(padding))
-            ReceivedContentList(navController, viewModel)
-        }
+            content = { innerPadding ->
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(innerPadding)
+                ) {
+                    CommandPanel(viewModel, exporter)
+                    HorizontalDivider(thickness = 1.dp)
+                    Spacer(Modifier.size(padding))
+                    ReceivedContentList(navController, viewModel)
+                }
+            }
+        )
     }
 }
 
@@ -91,11 +99,14 @@ fun MainTopBar(navController: NavHostController)
 }
 
 @Composable
-fun CommandPanel(viewModel : InventoryViewModel)
+fun CommandPanel(dataListModel : InventoryViewModel, exporter: DataExporter)
 {
+    val exporting = dataListModel.dataExporting.observeAsState()
     Row()
     {
+/*
         IconButton(
+            enabled = false,
             modifier = Modifier,
             onClick = { })
         {
@@ -103,15 +114,17 @@ fun CommandPanel(viewModel : InventoryViewModel)
                 painter = painterResource(R.drawable.baseline_filter_alt_24),
                 contentDescription = "filter")
         }
-
+*/
         IconButton(
             modifier = Modifier,
-            onClick = { viewModel.refresh() })
+            onClick = { dataListModel.refresh() })
         {
             Icon(Icons.Filled.Refresh, contentDescription = "Information")
         }
 
+/*
         IconButton(
+            enabled = false,
             modifier = Modifier,
             onClick = { })
         {
@@ -119,9 +132,44 @@ fun CommandPanel(viewModel : InventoryViewModel)
                 painter = painterResource(R.drawable.baseline_import_export_24),
                 contentDescription = "import/export")
         }
+*/
+        Spacer(modifier = Modifier.weight(1f))
+
+        IconButton(
+            modifier = Modifier,
+            onClick = {
+                exporter.doExport()
+            })
+        {
+            Icon(
+                painter = painterResource(R.drawable.baseline_save_alt_24),
+                contentDescription = "export")
+        }
+    }
+
+    if (exporting.value == true)
+    {
+        // ----- ビジーダイアログを表示する
+        ShowExportingDialog(dataListModel)
     }
 }
 
+@Composable
+fun ShowExportingDialog(dataListModel: InventoryViewModel)
+{
+    val fileName = dataListModel.exportingFileName.observeAsState()
+    AlertDialog(
+        onDismissRequest = {  },
+        title = { Text("${stringResource(R.string.label_data_exporting)} ${fileName.value}") },
+        text = {
+            Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                CircularProgressIndicator()
+            }
+        },
+        confirmButton = {  },
+        dismissButton = null
+    )
+}
 
 @Composable
 fun ReceivedContentList(navController: NavHostController, dataListModel: InventoryViewModel)

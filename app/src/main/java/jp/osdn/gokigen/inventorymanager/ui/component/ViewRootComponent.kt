@@ -16,6 +16,7 @@ import androidx.navigation.navArgument
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraControl
 import jp.osdn.gokigen.gokigenassets.liveview.IAnotherDrawer
 import jp.osdn.gokigen.gokigenassets.liveview.LiveViewOnTouchListener
+import jp.osdn.gokigen.inventorymanager.export.DataExporter
 import jp.osdn.gokigen.inventorymanager.liaison.CameraLiaison
 import jp.osdn.gokigen.inventorymanager.ui.model.InventoryViewModel
 import jp.osdn.gokigen.inventorymanager.ui.model.PreferenceViewModel
@@ -27,14 +28,16 @@ class ViewRootComponent @JvmOverloads constructor(context: Context, attrs: Attri
     private lateinit var myRegistViewModel : RegisterInformationViewModel
     private lateinit var myPreferenceViewModel : PreferenceViewModel
     private lateinit var myLiaison : CameraLiaison
+    private lateinit var myExporter : DataExporter
 
 
-    fun setLiaisons(viewModel : InventoryViewModel, registScreenViewModel: RegisterInformationViewModel, preferenceViewModel: PreferenceViewModel, liaison : CameraLiaison)
+    fun setLiaisons(viewModel : InventoryViewModel, registScreenViewModel: RegisterInformationViewModel, preferenceViewModel: PreferenceViewModel, liaison : CameraLiaison, exporter: DataExporter)
     {
         this.myViewModel = viewModel
         this.myRegistViewModel = registScreenViewModel
         this.myPreferenceViewModel = preferenceViewModel
         this.myLiaison = liaison
+        this.myExporter = exporter
         Log.v(TAG, " ...setLiaisons...")
     }
 
@@ -44,7 +47,7 @@ class ViewRootComponent @JvmOverloads constructor(context: Context, attrs: Attri
         val navController: NavHostController = rememberNavController()
         Surface {
             val cameraControl = this.myLiaison.getCameraControl()
-            NavigationMain(navController, cameraControl, this.myRegistViewModel, this.myViewModel, this.myPreferenceViewModel, LiveViewOnTouchListener(cameraControl), this.myLiaison.getAnotherDrawer())
+            NavigationMain(navController, cameraControl, this.myRegistViewModel, this.myViewModel, this.myPreferenceViewModel, LiveViewOnTouchListener(cameraControl), this.myLiaison.getAnotherDrawer(), this.myExporter)
         }
         Log.v(TAG, " ...NavigationRootComponent...")
     }
@@ -56,7 +59,7 @@ class ViewRootComponent @JvmOverloads constructor(context: Context, attrs: Attri
 }
 
 @Composable
-fun NavigationMain(navController: NavHostController, cameraControl: ICameraControl, registViewModel : RegisterInformationViewModel, prefsModel : InventoryViewModel, preferenceViewModel: PreferenceViewModel, onTouchListener: LiveViewOnTouchListener, anotherDrawer: IAnotherDrawer?)
+fun NavigationMain(navController: NavHostController, cameraControl: ICameraControl, registViewModel : RegisterInformationViewModel, prefsModel : InventoryViewModel, preferenceViewModel: PreferenceViewModel, onTouchListener: LiveViewOnTouchListener, anotherDrawer: IAnotherDrawer?, exporter: DataExporter)
 {
     MaterialTheme {
         NavHost(navController = navController, startDestination = "MainScreen") {
@@ -64,7 +67,7 @@ fun NavigationMain(navController: NavHostController, cameraControl: ICameraContr
             composable("RegistScreen") { RegistScreen(navController = navController, cameraControl = cameraControl, viewModel = registViewModel, onTouchListener = onTouchListener, anotherDrawer = anotherDrawer) }
             composable("ListScreen") {
                 prefsModel.refresh()
-                ListScreen(navController = navController, viewModel = prefsModel)
+                ListScreen(navController = navController, viewModel = prefsModel, exporter = exporter)
             }
             composable("DetailScreen/{id}", listOf(navArgument("id") { type = NavType.LongType })) { backStackEntry ->
                 val id = backStackEntry.arguments?.getLong("id") ?: 0

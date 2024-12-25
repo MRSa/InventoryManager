@@ -20,6 +20,7 @@ import jp.osdn.gokigen.inventorymanager.preference.PreferenceValueInitializer
 import jp.osdn.gokigen.inventorymanager.ui.component.ViewRootComponent
 import jp.osdn.gokigen.inventorymanager.ui.model.InventoryViewModel
 import jp.osdn.gokigen.gokigenassets.scene.IVibrator
+import jp.osdn.gokigen.inventorymanager.export.DataExporter
 import jp.osdn.gokigen.inventorymanager.storage.DataContent
 import jp.osdn.gokigen.inventorymanager.storage.InventoryDataHolder
 import jp.osdn.gokigen.inventorymanager.ui.model.PreferenceViewModel
@@ -33,6 +34,7 @@ class MainActivity : AppCompatActivity()
     private lateinit var myRegistViewModel : RegisterInformationViewModel
     private lateinit var myPreferenceViewModel : PreferenceViewModel
     private lateinit var liaison : CameraLiaison
+    private val dataExporter =  DataExporter(this)
 
     override fun onCreate(savedInstanceState: Bundle?)
     {
@@ -61,7 +63,7 @@ class MainActivity : AppCompatActivity()
 
             ///////// SET ROOT VIEW /////////
             rootComponent = ViewRootComponent(applicationContext)
-            rootComponent.setLiaisons(myViewModel, myRegistViewModel, myPreferenceViewModel, liaison)
+            rootComponent.setLiaisons(myViewModel, myRegistViewModel, myPreferenceViewModel, liaison, dataExporter)
             setContent {
                 //Box(Modifier.safeDrawingPadding()) {
                     rootComponent.Content()

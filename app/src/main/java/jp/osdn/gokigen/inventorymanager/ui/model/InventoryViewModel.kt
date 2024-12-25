@@ -20,6 +20,12 @@ class InventoryViewModel: ViewModel()
     private val isRefreshing : MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val refreshingData: LiveData<Boolean> = isRefreshing
 
+    private val isExporting : MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
+    val dataExporting: LiveData<Boolean> = isExporting
+
+    private val exportingFile : MutableLiveData<String> by lazy { MutableLiveData<String>() }
+    val exportingFileName: LiveData<String> = exportingFile
+
     init
     {
         update()

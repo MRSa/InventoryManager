@@ -37,6 +37,10 @@
     <string name="label_isbn">ISBN</string>
     <string name="label_text_recognition">文字認識</string>
 
+    <string name="label_data_start_export">エクスポートを開始… </string>
+    <string name="label_data_exporting">データエクスポート中… </string>
+    <string name="label_data_exported">エクスポートしました。  </string>
+
     <!--  Use for xml/preference_main.xml -->
     <string name="pref_cat_application_control">A01f 制御</string>
     <string name="pref_exit_power_off">アプリ終了</string>

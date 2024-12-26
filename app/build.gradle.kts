@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.ksp)
     alias(libs.plugins.room)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
@@ -67,6 +68,7 @@ dependencies {
     implementation(libs.mlkit.text.recognition)
     implementation(libs.mlkit.text.recognition.japanese)
     implementation(libs.bundles.androidx.room.bundle)
+    implementation(libs.kotlinx.serialization)
     ksp(libs.androidx.room.compiler)
     annotationProcessor (libs.androidx.room.compiler)
     debugImplementation(libs.androidx.ui.tooling)

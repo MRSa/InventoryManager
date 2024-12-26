@@ -20,6 +20,7 @@ runtimeLivedata = "1.7.6"
 mlkit = "17.3.0"
 mlKitTextRecognition = "16.0.1"
 room = "2.6.1"
+kotlinSerialization = "1.7.3"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -49,6 +50,7 @@ mlkit-text-recognition-japanese = { group = "com.google.mlkit", name = "text-rec
 androidx-room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room"}
 androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room"}
 androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room"}
+kotlinx-serialization = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinSerialization" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
@@ -56,6 +58,7 @@ kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp"}
 room = { id = "androidx.room", version.ref = "room" }
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 
 [bundles]
 androidx-room-bundle = ["androidx-room-runtime", "androidx-room-ktx"]

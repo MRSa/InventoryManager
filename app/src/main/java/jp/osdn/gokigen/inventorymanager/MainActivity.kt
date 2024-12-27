@@ -21,6 +21,7 @@ import jp.osdn.gokigen.inventorymanager.ui.component.ViewRootComponent
 import jp.osdn.gokigen.inventorymanager.ui.model.InventoryViewModel
 import jp.osdn.gokigen.gokigenassets.scene.IVibrator
 import jp.osdn.gokigen.inventorymanager.export.DataExporter
+import jp.osdn.gokigen.inventorymanager.recognize.RecognizeFromIsbn
 import jp.osdn.gokigen.inventorymanager.storage.DataContent
 import jp.osdn.gokigen.inventorymanager.storage.InventoryDataHolder
 import jp.osdn.gokigen.inventorymanager.ui.model.PreferenceViewModel
@@ -35,6 +36,7 @@ class MainActivity : AppCompatActivity()
     private lateinit var myPreferenceViewModel : PreferenceViewModel
     private lateinit var liaison : CameraLiaison
     private val dataExporter =  DataExporter(this)
+    private val isbnRecognizer = RecognizeFromIsbn(this)
 
     override fun onCreate(savedInstanceState: Bundle?)
     {
@@ -63,7 +65,7 @@ class MainActivity : AppCompatActivity()
 
             ///////// SET ROOT VIEW /////////
             rootComponent = ViewRootComponent(applicationContext)
-            rootComponent.setLiaisons(myViewModel, myRegistViewModel, myPreferenceViewModel, liaison, dataExporter)
+            rootComponent.setLiaisons(myViewModel, myRegistViewModel, myPreferenceViewModel, liaison, dataExporter, isbnRecognizer)
             setContent {
                 //Box(Modifier.safeDrawingPadding()) {
                     rootComponent.Content()

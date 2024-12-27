@@ -41,6 +41,11 @@
     <string name="label_data_exporting">Data exporting… </string>
     <string name="label_data_exported">Data exported </string>
 
+    <string name="label_data_start_update_record">Start update record from ISBN Number… </string>
+    <string name="label_data_updating_record">Updating records… </string>
+    <string name="label_data_finish_update_record">Finished update </string>
+    <string name="label_data_finish_update_record_counts"> records. </string>
+
     <!--  Use for xml/preference_main.xml -->
     <string name="pref_cat_application_control">App. Control</string>
     <string name="pref_exit_power_off">Exit Application</string>

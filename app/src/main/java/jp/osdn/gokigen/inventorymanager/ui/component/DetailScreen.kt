@@ -30,7 +30,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import jp.osdn.gokigen.inventorymanager.R
-import jp.osdn.gokigen.inventorymanager.image.InOutExportImage
+import jp.osdn.gokigen.inventorymanager.export.InOutExportImage
 import jp.osdn.gokigen.inventorymanager.liaison.DetailModel
 import jp.osdn.gokigen.inventorymanager.ui.model.InventoryViewModel
 

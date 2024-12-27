@@ -44,10 +44,11 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import jp.osdn.gokigen.inventorymanager.R
 import jp.osdn.gokigen.inventorymanager.export.DataExporter
+import jp.osdn.gokigen.inventorymanager.recognize.RecognizeFromIsbn
 import jp.osdn.gokigen.inventorymanager.ui.model.InventoryViewModel
 
 @Composable
-fun ListScreen(navController: NavHostController, viewModel : InventoryViewModel, exporter: DataExporter)
+fun ListScreen(navController: NavHostController, viewModel : InventoryViewModel, exporter: DataExporter, recognizer: RecognizeFromIsbn)
 {
     val padding = 6.dp
 
@@ -56,6 +57,7 @@ fun ListScreen(navController: NavHostController, viewModel : InventoryViewModel,
             topBar = { MainTopBar(navController) },
             modifier = Modifier
                 .fillMaxSize(),
+                // .padding(),
                 //.background(MaterialTheme.colorScheme.background),
             content = { innerPadding ->
                 Column(
@@ -63,7 +65,7 @@ fun ListScreen(navController: NavHostController, viewModel : InventoryViewModel,
                         .fillMaxSize()
                         .padding(innerPadding)
                 ) {
-                    CommandPanel(navController, viewModel, exporter)
+                    CommandPanel(navController, viewModel, exporter, recognizer)
                     HorizontalDivider(thickness = 1.dp)
                     Spacer(Modifier.size(padding))
                     ReceivedContentList(navController, viewModel)
@@ -83,6 +85,7 @@ fun MainTopBar(navController: NavHostController)
         title = {
             Text(stringResource(id = R.string.app_name))
         },
+        //modifier = Modifier.padding(top = WindowInsets.systemBars.top),
         actions = {
             IconButton(
                 enabled = false,
@@ -99,7 +102,7 @@ fun MainTopBar(navController: NavHostController)
 }
 
 @Composable
-fun CommandPanel(navController: NavHostController, dataListModel : InventoryViewModel, exporter: DataExporter)
+fun CommandPanel(navController: NavHostController, dataListModel : InventoryViewModel, exporter: DataExporter, recognizer: RecognizeFromIsbn)
 {
     val exporting = dataListModel.dataExporting.observeAsState()
     Row()
@@ -126,24 +129,38 @@ fun CommandPanel(navController: NavHostController, dataListModel : InventoryView
                 contentDescription = "filter")
         }
 */
+        Spacer(modifier = Modifier.weight(1f))
         IconButton(
             modifier = Modifier,
             onClick = { dataListModel.refresh() })
         {
             Icon(Icons.Filled.Refresh, contentDescription = "Information")
         }
+        Spacer(modifier = Modifier.weight(1f))
 
-/*
         IconButton(
-            enabled = false,
             modifier = Modifier,
-            onClick = { })
+            onClick = {
+                recognizer.doRecognizeAllFromIsbn()
+            })
         {
             Icon(
-                painter = painterResource(R.drawable.baseline_import_export_24),
-                contentDescription = "import/export")
+                painter = painterResource(R.drawable.baseline_menu_book_24),
+                contentDescription = "Update from ISBN")
         }
-*/
+        Spacer(modifier = Modifier.weight(1f))
+
+        /*
+                IconButton(
+                    enabled = false,
+                    modifier = Modifier,
+                    onClick = { })
+                {
+                    Icon(
+                        painter = painterResource(R.drawable.baseline_import_export_24),
+                        contentDescription = "import/export")
+                }
+        */
         Spacer(modifier = Modifier.weight(1f))
 
         IconButton(

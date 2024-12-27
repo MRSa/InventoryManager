@@ -10,7 +10,6 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import jp.osdn.gokigen.inventorymanager.AppSingleton
 import jp.osdn.gokigen.inventorymanager.R
-import jp.osdn.gokigen.inventorymanager.image.InOutExportImage
 import jp.osdn.gokigen.inventorymanager.storage.DateConverter
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.encodeToString
@@ -67,11 +66,11 @@ class DataExporter(private val activity: AppCompatActivity)
                     bcrText = data.bcrText,
                     note = data.note,
                     category = data.category,
-                    imageFile1 = data.imageFile1,
-                    imageFile2 = data.imageFile2,
-                    imageFile3 = data.imageFile3,
-                    imageFile4 = data.imageFile4,
-                    imageFile5 = data.imageFile5,
+                    imageFile1 = if ((data.imageFile1?:"").isNotEmpty()) { "${data.id}/${data.imageFile1}" } else { data.imageFile1 },
+                    imageFile2 = if ((data.imageFile2?:"").isNotEmpty()) { "${data.id}/${data.imageFile2}" } else { data.imageFile2 },
+                    imageFile3 = if ((data.imageFile3?:"").isNotEmpty()) { "${data.id}/${data.imageFile3}" } else { data.imageFile3 },
+                    imageFile4 = if ((data.imageFile4?:"").isNotEmpty()) { "${data.id}/${data.imageFile4}" } else { data.imageFile4 },
+                    imageFile5 = if ((data.imageFile5?:"").isNotEmpty()) { "${data.id}/${data.imageFile5}" } else { data.imageFile5 },
                     checked = data.checked,
                     informMessage = data.informMessage,
                     informDate = dateConverter.fromDateToLong(data.informDate),

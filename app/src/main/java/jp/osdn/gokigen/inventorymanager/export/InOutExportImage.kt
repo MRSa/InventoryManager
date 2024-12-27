@@ -1,4 +1,4 @@
-package jp.osdn.gokigen.inventorymanager.image
+package jp.osdn.gokigen.inventorymanager.export
 
 import android.content.ContentValues
 import android.content.Context
@@ -7,9 +7,9 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Build
+import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
-import jp.osdn.gokigen.inventorymanager.AppSingleton
 import java.io.File
 import java.io.FileOutputStream
 import java.io.OutputStream
@@ -102,14 +102,14 @@ class InOutExportImage(private val context : Context)
     {
         try
         {
-            Log.v(TAG, "exportImageFile($id, $fileName) to $destinationBaseDirectory")
+            Log.v(TAG, "exportImageFile($id, $fileName) to $destinationBaseDirectory/$id/")
             val image = getImageLocal(id, fileName)
             if (image == null)
             {
                 Log.v(TAG, "exportImageFile($id, $fileName) : image get failure")
                 return (false)
             }
-            return (exportJpegFileImpl(image, destinationBaseDirectory, fileName))
+            return (exportJpegFileImpl(image, "$destinationBaseDirectory/$id", fileName))
         }
         catch (e: Exception)
         {
@@ -135,7 +135,7 @@ class InOutExportImage(private val context : Context)
             values.put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
             {
-                values.put(MediaStore.Images.Media.RELATIVE_PATH, "Pictures/" + AppSingleton.APP_NAMESPACE)
+                values.put(MediaStore.Images.Media.RELATIVE_PATH, "${Environment.DIRECTORY_PICTURES}/$outputDir/")
                 values.put(MediaStore.Images.Media.IS_PENDING, true)
                 extStorageUri = MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
                 Log.v(TAG, "---------- $fileName $values")

@@ -8,7 +8,7 @@ import androidx.preference.PreferenceManager
 import jp.osdn.gokigen.gokigenassets.utils.communication.SimpleHttpClient
 import jp.osdn.gokigen.inventorymanager.AppSingleton
 import jp.osdn.gokigen.inventorymanager.R
-import jp.osdn.gokigen.inventorymanager.image.InOutExportImage
+import jp.osdn.gokigen.inventorymanager.export.InOutExportImage
 import jp.osdn.gokigen.inventorymanager.preference.IPreferencePropertyAccessor
 import jp.osdn.gokigen.inventorymanager.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CHECK_ISBN_IMMEDIATELY_DEFAULT_VALUE
 import jp.osdn.gokigen.inventorymanager.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_OVERWRITE_FROM_ISBN_TO_TITLE_DEFAULT_VALUE

@@ -10,6 +10,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import jp.osdn.gokigen.inventorymanager.AppSingleton
 import jp.osdn.gokigen.inventorymanager.R
+import jp.osdn.gokigen.inventorymanager.image.InOutExportImage
 import jp.osdn.gokigen.inventorymanager.storage.DateConverter
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.encodeToString
@@ -188,10 +189,22 @@ class DataExporter(private val activity: AppCompatActivity)
         Log.v(TAG, "exportImageFilesMain() : $baseDirectory, ${imageFileList.size} images.")
         try
         {
+            var resultOk = 0
+            var resultNg = 0
+            val exporter = InOutExportImage(activity)
             for (item in imageFileList)
             {
                 Log.v(TAG, "${item.id}/${item.imageFileName} -> $baseDirectory/${item.id}/${item.imageFileName}")
+                if (exporter.exportJpegFile(item.id, item.imageFileName?:"image.jpg", baseDirectory))
+                {
+                    resultOk++
+                }
+                else
+                {
+                    resultNg++
+                }
             }
+            Log.v(TAG, "Export Jpeg Images : Success:$resultOk  Failure:$resultNg")
         }
         catch (e: Exception)
         {

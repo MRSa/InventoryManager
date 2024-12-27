@@ -63,7 +63,7 @@ fun ListScreen(navController: NavHostController, viewModel : InventoryViewModel,
                         .fillMaxSize()
                         .padding(innerPadding)
                 ) {
-                    CommandPanel(viewModel, exporter)
+                    CommandPanel(navController, viewModel, exporter)
                     HorizontalDivider(thickness = 1.dp)
                     Spacer(Modifier.size(padding))
                     ReceivedContentList(navController, viewModel)
@@ -99,11 +99,22 @@ fun MainTopBar(navController: NavHostController)
 }
 
 @Composable
-fun CommandPanel(dataListModel : InventoryViewModel, exporter: DataExporter)
+fun CommandPanel(navController: NavHostController, dataListModel : InventoryViewModel, exporter: DataExporter)
 {
     val exporting = dataListModel.dataExporting.observeAsState()
     Row()
     {
+        IconButton(
+            enabled = true,
+            modifier = Modifier,
+            onClick = { navController.popBackStack() })
+        {
+            Icon(
+                painter = painterResource(R.drawable.baseline_arrow_back_24),
+                contentDescription = "back to main screen")
+        }
+        // Spacer(modifier = Modifier.weight(1f))
+
 /*
         IconButton(
             enabled = false,

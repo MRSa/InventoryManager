@@ -7,7 +7,6 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Build
-import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
 import jp.osdn.gokigen.inventorymanager.AppSingleton
@@ -99,46 +98,33 @@ class InOutExportImage(private val context : Context)
     /**
      *   イメージファイルを読めるところにコピーする。
      */
-    fun exportImage(id: Long, fileName: String, callback: IImageAccessor?)
+    fun exportJpegFile(id: Long, fileName: String, destinationBaseDirectory: String) : Boolean
     {
         try
         {
-            Log.v(TAG, "exportImage($id, $fileName)")
-            Thread {
-                try
-                {
-                    val image = getImageLocal(id, fileName)
-                    if (image == null)
-                    {
-                        Log.v(TAG, "exportImage($id, $fileName) : image get failure")
-                        callback?.resultReport(false, "image get failure($id/$fileName)")
-                    }
-                    else
-                    {
-                        exportToFile("${id}_$fileName.jpeg", image)
-                        callback?.resultReport(true, "image exported : $id/$fileName")
-                    }
-                }
-                catch (t: Throwable)
-                {
-                    t.printStackTrace()
-                    callback?.resultReport(false, "ERR>Unknown: ${t.localizedMessage}")
-                }
-            }.start()
+            Log.v(TAG, "exportImageFile($id, $fileName) to $destinationBaseDirectory")
+            val image = getImageLocal(id, fileName)
+            if (image == null)
+            {
+                Log.v(TAG, "exportImageFile($id, $fileName) : image get failure")
+                return (false)
+            }
+            return (exportJpegFileImpl(image, destinationBaseDirectory, fileName))
         }
         catch (e: Exception)
         {
             e.printStackTrace()
         }
+        return (false)
     }
 
-    private fun exportToFile(fileName: String, targetImage: Bitmap): String
+    private fun exportJpegFileImpl(targetImage: Bitmap, outputDir :String, fileName: String): Boolean
     {
         //  ----- ビットマップデータを(JPEG形式で)保管する。
-        var resultMessage = ""
+        var result = false
         try
         {
-            val outputDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).path + "/" + AppSingleton.APP_NAMESPACE + "/"
+            //val outputDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).path + "/" + AppSingleton.APP_NAMESPACE + "/"
             val resolver = context.contentResolver
             var outputStream: OutputStream? = null
             val extStorageUri: Uri
@@ -168,7 +154,6 @@ class InOutExportImage(private val context : Context)
                         catch (e: Exception)
                         {
                             e.printStackTrace()
-                            resultMessage = e.message ?:""
                         }
                     }
                     ////////////////////////////////////////////////////////////////
@@ -221,14 +206,14 @@ class InOutExportImage(private val context : Context)
                     lastExportedUri = imageUri
                 }
             }
+            result = true
         }
         catch (t: Throwable)
         {
             t.printStackTrace()
-            resultMessage = t.message?: ""
             lastExportedUri = null
         }
-        return (resultMessage)
+        return (result)
     }
 
     companion object

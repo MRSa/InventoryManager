@@ -18,6 +18,7 @@
     <string name="label_error_read_text">Read Error</string>
 
     <string name="label_data_recorded">Recorded the data.</string>
+    <string name="label_data_updated">Updated the data. </string>
     <string name="label_data_not_entry">Ignore as no data entered.</string>
 
     <string name="label_switch_data_check_immediately">Fetch data using ISBN at registration action</string>
@@ -30,12 +31,14 @@
     <string name="data_empty">No data</string>
     <string name="no_data">No data</string>
     <string name="data_updating">Updating</string>
+    <string name="button_label_set">Set</string>
     <string name="button_label_edit">Edit</string>
     <string name="label_title">Title</string>
     <string name="label_subtitle">Sub title</string>
     <string name="label_author">Author</string>
     <string name="label_publisher">Publisher</string>
     <string name="label_isbn">ISBN</string>
+    <string name="label_category">Category</string>
     <string name="label_text_recognition">Text recognition</string>
     <string name="button_label_update">Update</string>
 

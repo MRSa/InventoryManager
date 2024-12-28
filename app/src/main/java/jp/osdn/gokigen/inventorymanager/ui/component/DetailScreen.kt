@@ -1,5 +1,6 @@
 package jp.osdn.gokigen.inventorymanager.ui.component
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -39,9 +40,10 @@ import jp.osdn.gokigen.inventorymanager.R
 import jp.osdn.gokigen.inventorymanager.export.InOutExportImage
 import jp.osdn.gokigen.inventorymanager.recognize.RecognizeFromIsbn
 import jp.osdn.gokigen.inventorymanager.ui.model.DetailInventoryViewModel
+import java.util.Date
 
 enum class TextFieldId {
-    TITLE, SUBTITLE, AUTHOR, PUBLISHER, ISBN, TEXT
+    TITLE, SUBTITLE, AUTHOR, PUBLISHER, ISBN, CATEGORY, TEXT
 }
 
 @Composable
@@ -112,6 +114,13 @@ fun DetailScreen(navController: NavHostController, viewModel : DetailInventoryVi
                     true,
                 )
                 Spacer(Modifier.size(padding))
+                ShowTextInputData(
+                    TextFieldId.CATEGORY,
+                    stringResource(R.string.label_category),
+                    detail.value?.category ?: "",
+                    true,
+                )
+                Spacer(Modifier.size(padding))
                 if ((detail.value?.note ?: "").isNotEmpty()) {
                     HorizontalDivider(thickness = 1.dp)
                     Spacer(Modifier.size(padding))
@@ -137,7 +146,11 @@ fun DetailScreen(navController: NavHostController, viewModel : DetailInventoryVi
                         enabled = canQuery.value?: true,
                         modifier = Modifier,
                         onClick = {
-                            viewModel.startQueryUsingIsbn() // 応答あるまでボタンは無効化
+                            // 応答あるまでボタンは無効化
+                            viewModel.updateButtonEnable(
+                                isEnableUpdate = false,
+                                isEnableQuery = false
+                            )
                             AppSingleton.vibrator.vibrate(context, IVibrator.VibratePattern.SIMPLE_SHORT)
                             recognizer.doRecognizeFromIsbn(id, viewModel)
                         })
@@ -152,13 +165,45 @@ fun DetailScreen(navController: NavHostController, viewModel : DetailInventoryVi
                     )
                     Spacer(modifier = Modifier.weight(4.0f))
 
-                    // --- 「更新」ボタン
+                    // --- 「更新」ボタンを押すと、更新する
                     val isUpdate = viewModel.dataIsUpdate.observeAsState()
+                    val dataUpdatedMessage = stringResource(R.string.label_data_updated)
                     Button(
                         enabled = isUpdate.value ?: false,
                         onClick = {
-                            AppSingleton.vibrator.vibrate(context, IVibrator.VibratePattern.SIMPLE_MIDDLE)
+                            viewModel.updateButtonEnable(
+                                isEnableUpdate = false,
+                                isEnableQuery = true
+                            )
 
+                            val title = detail.value?.title ?: ""
+                            val subTitle = detail.value?.subTitle ?: ""
+                            val author = detail.value?.author ?: ""
+                            val publisher = detail.value?.publisher ?: ""
+                            val isbn = detail.value?.isbn ?: ""
+                            val category = detail.value?.category ?: ""
+                            val currentDate = Date()
+                            Thread {
+                                try
+                                {
+                                    AppSingleton.db.storageDao().updateContentWithIsbn(
+                                        id = id,
+                                        title = title,
+                                        subTitle = subTitle,
+                                        author = author,
+                                        publisher = publisher,
+                                        isbn = isbn,
+                                        category = category,
+                                        updateDate = currentDate
+                                    )
+                                }
+                                catch (e: Exception)
+                                {
+                                    e.printStackTrace()
+                                }
+                            }.start()
+                            AppSingleton.vibrator.vibrate(context, IVibrator.VibratePattern.SIMPLE_MIDDLE)
+                            Toast.makeText(context, "$dataUpdatedMessage : $title", Toast.LENGTH_SHORT).show()
                         },
                         modifier = Modifier.align(Alignment.Bottom)
                     ) {
@@ -199,6 +244,7 @@ fun ShowTextInputData(itemId: TextFieldId, label: String, value: String, isSingl
                 TextFieldId.AUTHOR -> { false }
                 TextFieldId.PUBLISHER -> {false }
                 TextFieldId.ISBN -> { false }
+                TextFieldId.CATEGORY -> { false }
                 TextFieldId.TEXT -> { false }
             },
             onClick = {
@@ -209,6 +255,7 @@ fun ShowTextInputData(itemId: TextFieldId, label: String, value: String, isSingl
                     TextFieldId.AUTHOR -> { }
                     TextFieldId.PUBLISHER -> { }
                     TextFieldId.ISBN -> { }
+                    TextFieldId.CATEGORY -> { }
                     TextFieldId.TEXT -> { }
                 }
             },

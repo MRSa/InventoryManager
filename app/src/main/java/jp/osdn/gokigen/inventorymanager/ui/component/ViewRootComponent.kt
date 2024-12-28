@@ -80,7 +80,7 @@ fun NavigationMain(navController: NavHostController, cameraControl: ICameraContr
             composable("MainScreen") { MainScreen(navController = navController, cameraControl = cameraControl) }
             composable("RegistScreen") { RegistScreen(navController = navController, cameraControl = cameraControl, viewModel = registViewModel, onTouchListener = onTouchListener, anotherDrawer = anotherDrawer) }
             composable("ListScreen") {
-                prefsModel.refresh()
+                // prefsModel.refresh()
                 ListScreen(navController = navController, viewModel = prefsModel, exporter = exporter, recognizer = recognizer)
             }
             composable("DetailScreen/{id}", listOf(navArgument("id") { type = NavType.LongType })) { backStackEntry ->

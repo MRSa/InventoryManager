@@ -66,7 +66,7 @@ class MainActivity : AppCompatActivity()
             myViewModel = ViewModelProvider(this)[InventoryViewModel::class.java]
 
             myDetailViewModel = ViewModelProvider(this)[DetailInventoryViewModel::class.java]
-            myDetailViewModel.initializeViewModel(this)
+            myDetailViewModel.initializeViewModel()
 
             ///////// SET ROOT VIEW /////////
             rootComponent = ViewRootComponent(applicationContext)

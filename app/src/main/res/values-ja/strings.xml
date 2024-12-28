@@ -18,6 +18,7 @@
     <string name="label_error_read_text">読み込み失敗</string>
 
     <string name="label_data_recorded">記録しました。 </string>
+    <string name="label_data_updated">データを更新しました。 </string>
     <string name="label_data_not_entry">データがありません。</string>
 
     <string name="label_switch_data_check_immediately">データ登録時にISBNから情報を取得する</string>
@@ -30,12 +31,14 @@
     <string name="data_empty">データ未登録</string>
     <string name="no_data">データなし</string>
     <string name="data_updating">データ更新中</string>
+    <string name="button_label_set">確定</string>
     <string name="button_label_edit">編集</string>
     <string name="label_title">題名</string>
     <string name="label_subtitle">副題</string>
     <string name="label_author">作者</string>
     <string name="label_publisher">会社</string>
     <string name="label_isbn">ISBN</string>
+    <string name="label_category">カテゴリ</string>
     <string name="label_text_recognition">文字認識</string>
     <string name="button_label_update">データ更新</string>
 

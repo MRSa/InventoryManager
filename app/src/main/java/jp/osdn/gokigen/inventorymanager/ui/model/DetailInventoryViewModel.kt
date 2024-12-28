@@ -1,6 +1,5 @@
 package jp.osdn.gokigen.inventorymanager.ui.model
 
-import android.content.Context
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -24,7 +23,7 @@ class DetailInventoryViewModel: ViewModel(), RecognizeFromIsbnCallback
     private val isQueryEnable : MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val isEnableQuery: LiveData<Boolean> = isQueryEnable
 
-    fun initializeViewModel(context: Context)
+    fun initializeViewModel()
     {
         try
         {
@@ -60,9 +59,10 @@ class DetailInventoryViewModel: ViewModel(), RecognizeFromIsbnCallback
         }
     }
 
-    fun startQueryUsingIsbn()
+    fun updateButtonEnable(isEnableUpdate: Boolean, isEnableQuery: Boolean)
     {
-        isQueryEnable.value = false
+        this.isUpdate.value = isEnableUpdate
+        this.isQueryEnable.value = isEnableQuery
     }
 
     override fun finishRecognizedDataFromIsbn(needUpdate: Boolean)

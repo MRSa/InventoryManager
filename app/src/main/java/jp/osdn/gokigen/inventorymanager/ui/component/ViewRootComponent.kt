@@ -21,6 +21,7 @@ import jp.osdn.gokigen.gokigenassets.liveview.LiveViewOnTouchListener
 import jp.osdn.gokigen.inventorymanager.export.DataExporter
 import jp.osdn.gokigen.inventorymanager.liaison.CameraLiaison
 import jp.osdn.gokigen.inventorymanager.recognize.RecognizeFromIsbn
+import jp.osdn.gokigen.inventorymanager.ui.model.DetailInventoryViewModel
 import jp.osdn.gokigen.inventorymanager.ui.model.InventoryViewModel
 import jp.osdn.gokigen.inventorymanager.ui.model.PreferenceViewModel
 import jp.osdn.gokigen.inventorymanager.ui.model.RegisterInformationViewModel
@@ -30,16 +31,18 @@ class ViewRootComponent @JvmOverloads constructor(context: Context, attrs: Attri
     private lateinit var myViewModel : InventoryViewModel
     private lateinit var myRegistViewModel : RegisterInformationViewModel
     private lateinit var myPreferenceViewModel : PreferenceViewModel
+    private lateinit var myDetailViewModel : DetailInventoryViewModel
     private lateinit var myLiaison : CameraLiaison
     private lateinit var myExporter : DataExporter
     private lateinit var myRecognizer : RecognizeFromIsbn
 
 
-    fun setLiaisons(viewModel : InventoryViewModel, registScreenViewModel: RegisterInformationViewModel, preferenceViewModel: PreferenceViewModel, liaison : CameraLiaison, exporter: DataExporter, recognizer: RecognizeFromIsbn)
+    fun setLiaisons(viewModel : InventoryViewModel, registScreenViewModel: RegisterInformationViewModel, preferenceViewModel: PreferenceViewModel, detailViewModel: DetailInventoryViewModel, liaison : CameraLiaison, exporter: DataExporter, recognizer: RecognizeFromIsbn)
     {
         this.myViewModel = viewModel
         this.myRegistViewModel = registScreenViewModel
         this.myPreferenceViewModel = preferenceViewModel
+        this.myDetailViewModel = detailViewModel
         this.myLiaison = liaison
         this.myExporter = exporter
         this.myRecognizer = recognizer
@@ -54,7 +57,7 @@ class ViewRootComponent @JvmOverloads constructor(context: Context, attrs: Attri
         //Surface(Modifier.systemBarsPadding()) {   // これも paddingサイズが大きすぎる...
         Surface {
             val cameraControl = this.myLiaison.getCameraControl()
-            NavigationMain(navController, cameraControl, this.myRegistViewModel, this.myViewModel, this.myPreferenceViewModel, LiveViewOnTouchListener(cameraControl), this.myLiaison.getAnotherDrawer(), this.myExporter, this.myRecognizer)
+            NavigationMain(navController, cameraControl, this.myRegistViewModel, this.myViewModel, this.myPreferenceViewModel, this.myDetailViewModel, LiveViewOnTouchListener(cameraControl), this.myLiaison.getAnotherDrawer(), this.myExporter, this.myRecognizer)
         }
         Log.v(TAG, " ...NavigationRootComponent...")
     }
@@ -66,7 +69,7 @@ class ViewRootComponent @JvmOverloads constructor(context: Context, attrs: Attri
 }
 
 @Composable
-fun NavigationMain(navController: NavHostController, cameraControl: ICameraControl, registViewModel : RegisterInformationViewModel, prefsModel : InventoryViewModel, preferenceViewModel: PreferenceViewModel, onTouchListener: LiveViewOnTouchListener, anotherDrawer: IAnotherDrawer?, exporter: DataExporter, recognizer: RecognizeFromIsbn)
+fun NavigationMain(navController: NavHostController, cameraControl: ICameraControl, registViewModel : RegisterInformationViewModel, prefsModel : InventoryViewModel, preferenceViewModel: PreferenceViewModel, detailViewModel: DetailInventoryViewModel, onTouchListener: LiveViewOnTouchListener, anotherDrawer: IAnotherDrawer?, exporter: DataExporter, recognizer: RecognizeFromIsbn)
 {
     MaterialTheme {
         NavHost(
@@ -82,7 +85,7 @@ fun NavigationMain(navController: NavHostController, cameraControl: ICameraContr
             }
             composable("DetailScreen/{id}", listOf(navArgument("id") { type = NavType.LongType })) { backStackEntry ->
                 val id = backStackEntry.arguments?.getLong("id") ?: 0
-                DetailScreen(navController = navController, viewModel = prefsModel, id = id)
+                DetailScreen(navController = navController, viewModel = detailViewModel, id = id, recognizer = recognizer)
             }
             composable("PreferenceScreen") { PreferenceScreen(navController = navController, prefsModel = preferenceViewModel) }
         }

@@ -240,7 +240,6 @@ class RegisterInformationViewModel: ViewModel(), ICameraStatusReceiver, ICameraS
                         return
                     }
                     val inputImage = InputImage.fromBitmap(image, 0)
-                    //val result =
                     recognizer.process(inputImage)
                         .addOnSuccessListener { recognitionData -> recognizedText(recognitionData) }
                         .addOnFailureListener { infoData.value = "Failure Text Recognition..." }
@@ -327,6 +326,7 @@ class RegisterInformationViewModel: ViewModel(), ICameraStatusReceiver, ICameraS
             }
             labelData6.value = readData
             infoData.value = "read Barcode : ${barcodes.size}"
+
         }
         catch (e: Exception)
         {

@@ -8,6 +8,7 @@ import android.provider.MediaStore
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import jp.osdn.gokigen.gokigenassets.scene.IVibrator
 import jp.osdn.gokigen.inventorymanager.AppSingleton
 import jp.osdn.gokigen.inventorymanager.R
 import jp.osdn.gokigen.inventorymanager.storage.DateConverter
@@ -22,13 +23,23 @@ import java.util.Locale
 class DataExporter(private val activity: AppCompatActivity)
 {
     private val storageDao = AppSingleton.db.storageDao()
+    private var isExporting = false
 
     fun doExport(baseDirectory: String = "inventory", fileName: String = "inventoryDataExport.json")
     {
         try
         {
+            if (isExporting)
+            {
+                // ----- 既に実行中なので、実行しない
+                activity.runOnUiThread {
+                    Toast.makeText(activity, activity.getString(R.string.export_is_started), Toast.LENGTH_SHORT).show()
+                    AppSingleton.vibrator.vibrate(activity, IVibrator.VibratePattern.SIMPLE_MIDDLE)
+                }
+                return
+            }
             val directory = "$baseDirectory${SimpleDateFormat(FILENAME_FORMAT, Locale.US).format(System.currentTimeMillis())}"
-
+            isExporting = true
             Thread { exportImpl(directory, fileName) }.start()
         }
         catch (e: Exception)
@@ -43,9 +54,11 @@ class DataExporter(private val activity: AppCompatActivity)
 
         try
         {
+            // ----- エクスポート開始を通知する
             Log.v(TAG, " Export: $directory/$fileName  START")
             activity.runOnUiThread {
                 Toast.makeText(activity, "${activity.getString(R.string.label_data_start_export)} : $directory/$fileName", Toast.LENGTH_SHORT).show()
+                AppSingleton.vibrator.vibrate(activity, IVibrator.VibratePattern.SIMPLE_MIDDLE)
             }
 
             // ----- 出力するデータをここで確保。
@@ -101,18 +114,22 @@ class DataExporter(private val activity: AppCompatActivity)
                 }
             }
             exportFilesMain(directory, fileName, exportTarget)
-            exportImageFilesMain(directory, exportImageFileList)
+            val failureCount = exportImageFilesMain(directory, exportImageFileList)
+            val outputCount = exportImageFileList.size
 
             Log.v(TAG, " Export: $directory/$fileName  FINISHED.")
 
+            // ----- エクスポート終了を通知する
             activity.runOnUiThread {
-                Toast.makeText(activity, "${activity.getString(R.string.label_data_exported)} : $directory/$fileName", Toast.LENGTH_SHORT).show()
+                Toast.makeText(activity, "${activity.getString(R.string.label_data_exported)} : $directory/$fileName  ${activity.getString(R.string.label_output_image_files)}: $outputCount (${activity.getString(R.string.label_output_image_failures)}: $failureCount)", Toast.LENGTH_SHORT).show()
+                AppSingleton.vibrator.vibrate(activity, IVibrator.VibratePattern.SIMPLE_LONG)
             }
         }
         catch (e: Exception)
         {
             e.printStackTrace()
         }
+        isExporting = false
     }
 
     private fun exportFilesMain(directory: String, exportedFileName: String, dataContent: List<DataContentSerializable>): Boolean
@@ -182,14 +199,15 @@ class DataExporter(private val activity: AppCompatActivity)
         return (false)
     }
 
-    private fun exportImageFilesMain(baseDirectory: String, imageFileList: ArrayList<ExportImageFileList>)
+    private fun exportImageFilesMain(baseDirectory: String, imageFileList: ArrayList<ExportImageFileList>) : Int
     {
+        var resultOk = 0
+        var resultNg = 0
+
         // 保管した画像ファイルを一括出力する...
         Log.v(TAG, "exportImageFilesMain() : $baseDirectory, ${imageFileList.size} images.")
         try
         {
-            var resultOk = 0
-            var resultNg = 0
             val exporter = InOutExportImage(activity)
             for (item in imageFileList)
             {
@@ -209,6 +227,7 @@ class DataExporter(private val activity: AppCompatActivity)
         {
             e.printStackTrace()
         }
+        return (resultNg)
     }
 
     companion object

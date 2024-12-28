@@ -28,6 +28,7 @@
 
     <string name="label_return_to_main_screen">Return to Main</string>
     <string name="data_empty">No data</string>
+    <string name="no_data">No data</string>
     <string name="data_updating">Updating</string>
     <string name="button_label_edit">Edit</string>
     <string name="label_title">Title</string>
@@ -36,10 +37,14 @@
     <string name="label_publisher">Publisher</string>
     <string name="label_isbn">ISBN</string>
     <string name="label_text_recognition">Text recognition</string>
+    <string name="button_label_update">Update</string>
 
     <string name="label_data_start_export">Start data export… </string>
     <string name="label_data_exporting">Data exporting… </string>
     <string name="label_data_exported">Data exported </string>
+    <string name="label_output_image_files">Output Image </string>
+    <string name="label_output_image_failures">Failure </string>
+    <string name="export_is_started">The export process has already been executed.</string>
 
     <string name="label_data_start_update_record">Start update record from ISBN Number… </string>
     <string name="label_data_updating_record">Updating records… </string>

@@ -24,6 +24,7 @@ import jp.osdn.gokigen.inventorymanager.export.DataExporter
 import jp.osdn.gokigen.inventorymanager.recognize.RecognizeFromIsbn
 import jp.osdn.gokigen.inventorymanager.storage.DataContent
 import jp.osdn.gokigen.inventorymanager.storage.InventoryDataHolder
+import jp.osdn.gokigen.inventorymanager.ui.model.DetailInventoryViewModel
 import jp.osdn.gokigen.inventorymanager.ui.model.PreferenceViewModel
 import jp.osdn.gokigen.inventorymanager.ui.model.RegisterInformationViewModel
 
@@ -34,6 +35,7 @@ class MainActivity : AppCompatActivity()
     private lateinit var myViewModel : InventoryViewModel
     private lateinit var myRegistViewModel : RegisterInformationViewModel
     private lateinit var myPreferenceViewModel : PreferenceViewModel
+    private lateinit var myDetailViewModel : DetailInventoryViewModel
     private lateinit var liaison : CameraLiaison
     private val dataExporter =  DataExporter(this)
     private val isbnRecognizer = RecognizeFromIsbn(this)
@@ -63,9 +65,12 @@ class MainActivity : AppCompatActivity()
 
             myViewModel = ViewModelProvider(this)[InventoryViewModel::class.java]
 
+            myDetailViewModel = ViewModelProvider(this)[DetailInventoryViewModel::class.java]
+            myDetailViewModel.initializeViewModel(this)
+
             ///////// SET ROOT VIEW /////////
             rootComponent = ViewRootComponent(applicationContext)
-            rootComponent.setLiaisons(myViewModel, myRegistViewModel, myPreferenceViewModel, liaison, dataExporter, isbnRecognizer)
+            rootComponent.setLiaisons(myViewModel, myRegistViewModel, myPreferenceViewModel, myDetailViewModel, liaison, dataExporter, isbnRecognizer)
             setContent {
                 //Box(Modifier.safeDrawingPadding()) {
                     rootComponent.Content()

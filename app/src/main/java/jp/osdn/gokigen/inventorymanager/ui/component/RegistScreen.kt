@@ -43,6 +43,8 @@ import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraControl
 import jp.osdn.gokigen.gokigenassets.liveview.IAnotherDrawer
 import jp.osdn.gokigen.gokigenassets.liveview.LiveImageView
 import jp.osdn.gokigen.gokigenassets.liveview.LiveViewOnTouchListener
+import jp.osdn.gokigen.gokigenassets.scene.IVibrator
+import jp.osdn.gokigen.inventorymanager.AppSingleton
 import jp.osdn.gokigen.inventorymanager.R
 import jp.osdn.gokigen.inventorymanager.liaison.InventoryDataAccessor
 import jp.osdn.gokigen.inventorymanager.ui.model.RegisterInformationViewModel
@@ -302,7 +304,8 @@ fun RegistScreen(navController: NavHostController, cameraControl: ICameraControl
                 ) {
                     Text(
                         text = stringResource(R.string.label_register_text),
-                        modifier = Modifier.weight(1f).height(48.dp)
+                        modifier = Modifier.weight(1f),
+                        fontSize = 14.sp
                     )
                     TextField(
                         enabled = false,
@@ -319,7 +322,8 @@ fun RegistScreen(navController: NavHostController, cameraControl: ICameraControl
                 ) {
                     Text(
                         text = stringResource(R.string.label_register_bcr),
-                        modifier = Modifier.weight(1f)
+                        modifier = Modifier.weight(1f),
+                        fontSize = 14.sp
                     )
                     TextField(
                         enabled = false,
@@ -337,8 +341,13 @@ fun RegistScreen(navController: NavHostController, cameraControl: ICameraControl
             )
             {
                 val context = LocalContext.current
-                IconButton(onClick = { viewModel.resetData(context = context) }, enabled = true)
-                {
+                IconButton(
+                    onClick = {
+                        viewModel.resetData(context = context)
+                        AppSingleton.vibrator.vibrate(context, IVibrator.VibratePattern.SIMPLE_LONG)
+                    },
+                    enabled = true
+                ) {
                     //  入力中データをクリアするボタン
                     Icon(
                         painter = painterResource(id = R.drawable.baseline_crop_free_24),
@@ -364,7 +373,10 @@ fun RegistScreen(navController: NavHostController, cameraControl: ICameraControl
 
                 // ----- 画像１撮影
                 IconButton(
-                    onClick = { cameraControl.getCameraShutter(1)?.doShutter(1) },
+                    onClick = {
+                        cameraControl.getCameraShutter(1)?.doShutter(1)
+                        AppSingleton.vibrator.vibrate(context, IVibrator.VibratePattern.SIMPLE_SHORT)
+                    },
                     enabled = true
                 ) {
                     Icon(
@@ -374,7 +386,10 @@ fun RegistScreen(navController: NavHostController, cameraControl: ICameraControl
                 }
                 // ----- 画像２撮影
                 IconButton(
-                    onClick = { cameraControl.getCameraShutter(2)?.doShutter(2) },
+                    onClick = {
+                        cameraControl.getCameraShutter(2)?.doShutter(2)
+                        AppSingleton.vibrator.vibrate(context, IVibrator.VibratePattern.SIMPLE_SHORT)
+                    },
                     enabled = true
                 ) {
                     Icon(
@@ -384,7 +399,10 @@ fun RegistScreen(navController: NavHostController, cameraControl: ICameraControl
                 }
                 // ----- 画像３撮影
                 IconButton(
-                    onClick = { cameraControl.getCameraShutter(3)?.doShutter(3) },
+                    onClick = {
+                        cameraControl.getCameraShutter(3)?.doShutter(3)
+                        AppSingleton.vibrator.vibrate(context, IVibrator.VibratePattern.SIMPLE_SHORT)
+                    },
                     enabled = true
                 ) {
                     Icon(
@@ -394,7 +412,13 @@ fun RegistScreen(navController: NavHostController, cameraControl: ICameraControl
                 }
                 Spacer(modifier = Modifier.weight(1.0f))
                 // ----- 文字認識
-                IconButton(onClick = { cameraControl.getCameraShutter(4)?.doShutter(4) }, enabled = true) {
+                IconButton(
+                    onClick = {
+                        cameraControl.getCameraShutter(4)?.doShutter(4)
+                        AppSingleton.vibrator.vibrate(context, IVibrator.VibratePattern.SIMPLE_SHORT)
+                    },
+                    enabled = true
+                ) {
                     Icon(
                         painter = painterResource(id = R.drawable.baseline_text_fields_24),
                         contentDescription = "Text Recognition"
@@ -403,7 +427,10 @@ fun RegistScreen(navController: NavHostController, cameraControl: ICameraControl
                 Spacer(modifier = Modifier.weight(1.0f))
                 // ----- バーコード認識
                 IconButton(
-                    onClick = { cameraControl.getCameraShutter(5)?.doShutter(5) },
+                    onClick = {
+                        cameraControl.getCameraShutter(5)?.doShutter(5)
+                        AppSingleton.vibrator.vibrate(context, IVibrator.VibratePattern.SIMPLE_SHORT)
+                    },
                     enabled = true
                 ) {
                     Icon(
@@ -458,6 +485,9 @@ fun RegistScreen(navController: NavHostController, cameraControl: ICameraControl
 
                         // ----- データ入力フィールドをクリアする
                         viewModel.resetData(context = context)
+
+                        // ----- バイブレーションでデータ登録を通知
+                        AppSingleton.vibrator.vibrate(context, IVibrator.VibratePattern.SIMPLE_MIDDLE)
                     },
                     modifier = Modifier.align(Alignment.Bottom)
                 ) {

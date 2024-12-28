@@ -1,6 +1,7 @@
 package jp.osdn.gokigen.inventorymanager.ui.component
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -15,10 +16,12 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
@@ -30,23 +33,29 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import jp.osdn.gokigen.gokigenassets.scene.IVibrator
+import jp.osdn.gokigen.inventorymanager.AppSingleton
 import jp.osdn.gokigen.inventorymanager.R
 import jp.osdn.gokigen.inventorymanager.export.InOutExportImage
-import jp.osdn.gokigen.inventorymanager.liaison.DetailModel
-import jp.osdn.gokigen.inventorymanager.ui.model.InventoryViewModel
+import jp.osdn.gokigen.inventorymanager.recognize.RecognizeFromIsbn
+import jp.osdn.gokigen.inventorymanager.ui.model.DetailInventoryViewModel
+
+enum class TextFieldId {
+    TITLE, SUBTITLE, AUTHOR, PUBLISHER, ISBN, TEXT
+}
 
 @Composable
-fun DetailScreen(navController: NavHostController, viewModel : InventoryViewModel, id : Long)
+fun DetailScreen(navController: NavHostController, viewModel : DetailInventoryViewModel, id : Long, recognizer: RecognizeFromIsbn)
 {
-    val model = DetailModel(id)
+    viewModel.initializeData(id)
+    val detail = viewModel.detailData.observeAsState()
     val padding = 6.dp
 
     MaterialTheme {
-        val data = model.getData()
-        if (data == null)
+        if (detail.value == null)
         {
             Text(
-                text = "{stringResource(id = R.string.data_empty)} (id:$id)",
+                text = "{stringResource(id = R.string.no_data)} (id:$id)",
                 fontSize = 20.sp,
                 textAlign = TextAlign.Center,
             )
@@ -63,53 +72,106 @@ fun DetailScreen(navController: NavHostController, viewModel : InventoryViewMode
                 Spacer(Modifier.size(padding))
                 // HorizontalDivider(thickness = 1.dp)
 
-                val imageFile1 = data.imageFile1 ?: ""
-                val imageFile2 = data.imageFile2 ?: ""
-                val imageFile3 = data.imageFile3 ?: ""
+                val imageFile1 = detail.value?.imageFile1 ?: ""
+                val imageFile2 = detail.value?.imageFile2 ?: ""
+                val imageFile3 = detail.value?.imageFile3 ?: ""
                 if ((imageFile1.isNotEmpty()) || (imageFile2.isNotEmpty()) || (imageFile3.isNotEmpty())) {
                     ShowCapturedImage(id, imageFile1, imageFile2, imageFile3)
                 }
                 Spacer(Modifier.size(padding))
-                ShowTextInputData(stringResource(R.string.label_title), data.title ?: "", true)
+                ShowTextInputData(
+                    TextFieldId.TITLE,
+                    stringResource(R.string.label_title),
+                    detail.value?.title ?: "",
+                    true)
                 Spacer(Modifier.size(padding))
                 ShowTextInputData(
+                    TextFieldId.SUBTITLE,
                     stringResource(R.string.label_subtitle),
-                    data.subTitle ?: "",
+                    detail.value?.subTitle ?: "",
                     true,
                 )
                 Spacer(Modifier.size(padding))
-                ShowTextInputData(stringResource(R.string.label_author), data.author ?: "", true)
+                ShowTextInputData(
+                    TextFieldId.AUTHOR,
+                    stringResource(R.string.label_author),
+                    detail.value?.author ?: "",
+                    true)
                 Spacer(Modifier.size(padding))
                 ShowTextInputData(
+                    TextFieldId.PUBLISHER,
                     stringResource(R.string.label_publisher),
-                    data.publisher ?: "",
+                    detail.value?.publisher ?: "",
                     true,
                 )
                 Spacer(Modifier.size(padding))
                 ShowTextInputData(
+                    TextFieldId.ISBN,
                     stringResource(R.string.label_isbn),
-                    data.isbn ?: "",
+                    detail.value?.isbn ?: "",
                     true,
                 )
                 Spacer(Modifier.size(padding))
-                if ((data.note ?: "").isNotEmpty()) {
+                if ((detail.value?.note ?: "").isNotEmpty()) {
                     HorizontalDivider(thickness = 1.dp)
                     Spacer(Modifier.size(padding))
                     ShowTextInputData(
+                        TextFieldId.TEXT,
                         stringResource(R.string.label_text_recognition),
-                        data.note ?: "",
+                        detail.value?.note ?: "",
                         false,
                     )
                     Spacer(Modifier.size(padding))
+                }
+                Spacer(Modifier.size(padding))
+                Spacer(Modifier.size(padding))
+
+                val context = LocalContext.current
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(all = 8.dp),
+                    horizontalArrangement = Arrangement.End,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    val canQuery = viewModel.isEnableQuery.observeAsState()
+                    IconButton(
+                        enabled = canQuery.value?: true,
+                        modifier = Modifier,
+                        onClick = {
+                            viewModel.startQueryUsingIsbn() // 応答あるまでボタンは無効化
+                            AppSingleton.vibrator.vibrate(context, IVibrator.VibratePattern.SIMPLE_SHORT)
+                            recognizer.doRecognizeFromIsbn(id, viewModel)
+                        })
+                    {
+                        Icon(
+                            painter = painterResource(R.drawable.baseline_menu_book_24),
+                            contentDescription = "Update from ISBN")
+                    }
+                    Spacer(modifier = Modifier.weight(4.0f))
+                    Text(
+                        text = ""
+                    )
+                    Spacer(modifier = Modifier.weight(4.0f))
+
+                    // --- 「更新」ボタン
+                    val isUpdate = viewModel.dataIsUpdate.observeAsState()
+                    Button(
+                        enabled = isUpdate.value ?: false,
+                        onClick = {
+                            AppSingleton.vibrator.vibrate(context, IVibrator.VibratePattern.SIMPLE_MIDDLE)
+
+                        },
+                        modifier = Modifier.align(Alignment.Bottom)
+                    ) {
+                        Text(stringResource(R.string.button_label_update))
+                    }
                 }
             }
         }
     }
 }
 
-
 @Composable
-fun ShowTextInputData(label: String, value: String, isSingleLine: Boolean, isEditEnable: Boolean = false)
+fun ShowTextInputData(itemId: TextFieldId, label: String, value: String, isSingleLine: Boolean, isEditEnable: Boolean = false)
 {
     Row(
         modifier = Modifier.fillMaxWidth().height(50.dp).padding(horizontal = 4.dp),
@@ -118,7 +180,7 @@ fun ShowTextInputData(label: String, value: String, isSingleLine: Boolean, isEdi
         Text(
             text = label,
             modifier = Modifier.weight(1f),
-            fontSize = 16.sp
+            fontSize = 14.sp
         )
         TextField(
             enabled = isEditEnable,
@@ -130,9 +192,26 @@ fun ShowTextInputData(label: String, value: String, isSingleLine: Boolean, isEdi
         )
         Spacer(modifier = Modifier.padding(4.dp))
         Button(
-            contentPadding = PaddingValues(6.dp),
-            enabled = false,
-            onClick = { },
+            contentPadding = PaddingValues(8.dp),
+            enabled = when (itemId) {
+                TextFieldId.TITLE -> { false }
+                TextFieldId.SUBTITLE -> { false }
+                TextFieldId.AUTHOR -> { false }
+                TextFieldId.PUBLISHER -> {false }
+                TextFieldId.ISBN -> { false }
+                TextFieldId.TEXT -> { false }
+            },
+            onClick = {
+                when (itemId)
+                {
+                    TextFieldId.TITLE -> { }
+                    TextFieldId.SUBTITLE -> { }
+                    TextFieldId.AUTHOR -> { }
+                    TextFieldId.PUBLISHER -> { }
+                    TextFieldId.ISBN -> { }
+                    TextFieldId.TEXT -> { }
+                }
+            },
         )
         {
             Text(stringResource(R.string.button_label_edit))

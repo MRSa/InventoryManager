@@ -7,7 +7,7 @@
     <string name="button_label_list">Inventory List</string>
     <string name="button_label_register">Register</string>
     <string name="button_label_preference">Preferences</string>
-
+    <string name="title_label_preference">Preferences</string>
     <string name="screen_title_registry">Register Information</string>
     <string name="button_label_register_next">Next</string>
     <string name="label_explain_register_next">Store the text, image and/or OCR it.</string>

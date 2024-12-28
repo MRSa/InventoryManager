@@ -3,9 +3,11 @@ package jp.osdn.gokigen.inventorymanager.ui.component
 import android.content.Context
 import android.util.AttributeSet
 import android.util.Log
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.AbstractComposeView
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -48,6 +50,8 @@ class ViewRootComponent @JvmOverloads constructor(context: Context, attrs: Attri
     override fun Content()
     {
         val navController: NavHostController = rememberNavController()
+        //Surface(Modifier.safeDrawingPadding()) {  // これだと paddingサイズが大きすぎる...
+        //Surface(Modifier.systemBarsPadding()) {   // これも paddingサイズが大きすぎる...
         Surface {
             val cameraControl = this.myLiaison.getCameraControl()
             NavigationMain(navController, cameraControl, this.myRegistViewModel, this.myViewModel, this.myPreferenceViewModel, LiveViewOnTouchListener(cameraControl), this.myLiaison.getAnotherDrawer(), this.myExporter, this.myRecognizer)
@@ -65,7 +69,11 @@ class ViewRootComponent @JvmOverloads constructor(context: Context, attrs: Attri
 fun NavigationMain(navController: NavHostController, cameraControl: ICameraControl, registViewModel : RegisterInformationViewModel, prefsModel : InventoryViewModel, preferenceViewModel: PreferenceViewModel, onTouchListener: LiveViewOnTouchListener, anotherDrawer: IAnotherDrawer?, exporter: DataExporter, recognizer: RecognizeFromIsbn)
 {
     MaterialTheme {
-        NavHost(navController = navController, startDestination = "MainScreen") {
+        NavHost(
+            modifier = Modifier.systemBarsPadding(),
+            navController = navController,
+            startDestination = "MainScreen"
+        ) {
             composable("MainScreen") { MainScreen(navController = navController, cameraControl = cameraControl) }
             composable("RegistScreen") { RegistScreen(navController = navController, cameraControl = cameraControl, viewModel = registViewModel, onTouchListener = onTouchListener, anotherDrawer = anotherDrawer) }
             composable("ListScreen") {

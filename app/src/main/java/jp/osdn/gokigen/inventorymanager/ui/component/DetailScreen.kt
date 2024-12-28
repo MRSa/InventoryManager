@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -53,7 +54,11 @@ fun DetailScreen(navController: NavHostController, viewModel : InventoryViewMode
         else
         {
             val scrollState = rememberScrollState()
-            Column(modifier = Modifier.verticalScroll(scrollState)) {
+            Column(modifier = Modifier
+                //.systemBarsPadding()
+                .fillMaxSize()
+                .verticalScroll(scrollState)
+            ) {
                 ReturnToMainScreen(navController)
                 Spacer(Modifier.size(padding))
                 // HorizontalDivider(thickness = 1.dp)

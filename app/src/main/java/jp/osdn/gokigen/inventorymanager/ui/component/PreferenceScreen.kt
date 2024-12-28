@@ -7,9 +7,10 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -36,10 +37,17 @@ fun PreferenceScreen(navController: NavHostController, prefsModel: PreferenceVie
     val padding = 6.dp
 
     MaterialTheme {
+        val scrollState = rememberScrollState()
         Column(
-            modifier = Modifier.fillMaxSize().safeDrawingPadding()
+            //modifier = Modifier.systemBarsPadding().fillMaxSize().verticalScroll(scrollState)
+            modifier = Modifier
+                // .padding(top = 48.dp)  // ベタすぎる...
+                //.systemBarsPadding()    // 1回目の描画ではこの指定が効いていないみたい...
+                .fillMaxSize()
+                .verticalScroll(scrollState)
         )
         {
+            //Spacer(Modifier.size(padding))
             HorizontalDivider(thickness = 1.dp)
             ReturnToMainScreen(navController)
             Spacer(Modifier.size(padding))
@@ -82,7 +90,8 @@ fun ReturnToMainScreen(navController: NavHostController)
     Row(verticalAlignment = Alignment.CenterVertically) {
         Icon(
             painter = painterResource(id = R.drawable.baseline_arrow_back_24),
-            contentDescription = "Back"
+            contentDescription = "Back",
+            modifier = Modifier.clickable( onClick = { navController.popBackStack() })
         )
         Text(text = stringResource(R.string.label_return_to_main_screen),
             fontSize = with(density) { 18.dp.toSp() },

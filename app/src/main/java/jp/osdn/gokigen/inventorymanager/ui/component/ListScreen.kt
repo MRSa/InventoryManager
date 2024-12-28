@@ -1,10 +1,9 @@
 package jp.osdn.gokigen.inventorymanager.ui.component
 
-import android.content.Intent
-import android.net.Uri
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,27 +14,20 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.key
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -53,12 +45,14 @@ fun ListScreen(navController: NavHostController, viewModel : InventoryViewModel,
     val padding = 6.dp
 
     MaterialTheme {
+/*
         Scaffold(
             topBar = { MainTopBar(navController) },
             modifier = Modifier
                 .fillMaxSize(),
                 // .padding(),
                 //.background(MaterialTheme.colorScheme.background),
+            //contentWindowInsets = WindowInsets.Companion.systemBars,
             content = { innerPadding ->
                 Column(
                     modifier = Modifier
@@ -72,9 +66,19 @@ fun ListScreen(navController: NavHostController, viewModel : InventoryViewModel,
                 }
             }
         )
+*/
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+        ) {
+            CommandPanel(navController, viewModel, exporter, recognizer)
+            HorizontalDivider(thickness = 1.dp)
+            Spacer(Modifier.size(padding))
+            ReceivedContentList(navController, viewModel)
+        }
     }
 }
-
+/*
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainTopBar(navController: NavHostController)
@@ -100,6 +104,7 @@ fun MainTopBar(navController: NavHostController)
         }
     )
 }
+*/
 
 @Composable
 fun CommandPanel(navController: NavHostController, dataListModel : InventoryViewModel, exporter: DataExporter, recognizer: RecognizeFromIsbn)
@@ -217,18 +222,6 @@ fun ReceivedContentList(navController: NavHostController, dataListModel: Invento
             )
         }
     }
-    LazyColumn(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Top,
-        state = listState
-    ) {
-        this.items(dataListModel.dataList) { data ->
-            key(data.id) {
-                DataItem(navController, data)
-            }
-            HorizontalDivider(thickness = 1.dp)
-        }
-    }
     if (dataListModel.dataList.isEmpty()) {
         Column(
             modifier = Modifier.fillMaxSize(),
@@ -241,6 +234,22 @@ fun ReceivedContentList(navController: NavHostController, dataListModel: Invento
                 fontSize = 20.sp,
                 textAlign = TextAlign.Center,
             )
+        }
+    }
+    else
+    {
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Top,
+            contentPadding = PaddingValues(bottom = 80.dp), // 末尾に 80dpの余白を設ける
+            state = listState
+        ) {
+            this.items(dataListModel.dataList) { data ->
+                key(data.id) {
+                    DataItem(navController, data)
+                }
+                HorizontalDivider(thickness = 1.dp)
+            }
         }
     }
 }

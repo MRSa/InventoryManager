@@ -24,6 +24,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.key
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
@@ -34,6 +35,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import jp.osdn.gokigen.inventorymanager.R
 import jp.osdn.gokigen.inventorymanager.export.DataExporter
 import jp.osdn.gokigen.inventorymanager.recognize.RecognizeFromIsbn
@@ -42,8 +44,13 @@ import jp.osdn.gokigen.inventorymanager.ui.model.InventoryViewModel
 @Composable
 fun ListScreen(navController: NavHostController, viewModel : InventoryViewModel, exporter: DataExporter, recognizer: RecognizeFromIsbn)
 {
-    val padding = 6.dp
+    // 画面遷移時にデータを取得
+    rememberNavController()
+    LaunchedEffect(key1 = Unit) {
+        viewModel.refresh()
+    }
 
+    val padding = 6.dp
     MaterialTheme {
 /*
         Scaffold(

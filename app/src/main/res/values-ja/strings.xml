@@ -53,6 +53,8 @@
     <string name="label_data_updating_record">情報更新中… </string>
     <string name="label_data_finish_update_record">情報更新を終了しました。</string>
     <string name="label_data_finish_update_record_counts"> 件</string>
+    <string name="label_data_updated_from_isbn">情報を反映しました。</string>
+    <string name="label_no_data_from_isbn">データは変更していません。</string>
 
     <!--  Use for xml/preference_main.xml -->
     <string name="pref_cat_application_control">A01f 制御</string>

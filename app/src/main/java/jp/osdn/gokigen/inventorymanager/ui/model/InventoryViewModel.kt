@@ -26,11 +26,6 @@ class InventoryViewModel: ViewModel()
     private val exportingFile : MutableLiveData<String> by lazy { MutableLiveData<String>() }
     val exportingFileName: LiveData<String> = exportingFile
 
-    init
-    {
-        update()
-    }
-
     private fun update()
     {
         CoroutineScope(Dispatchers.Main).launch {
@@ -53,6 +48,7 @@ class InventoryViewModel: ViewModel()
     {
         try
         {
+            Log.v(TAG, "START REFRESH...")
             val refresh = isRefreshing.value ?: false
             if (!refresh)
             {

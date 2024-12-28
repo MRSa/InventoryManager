@@ -69,7 +69,7 @@ class ViewRootComponent @JvmOverloads constructor(context: Context, attrs: Attri
 }
 
 @Composable
-fun NavigationMain(navController: NavHostController, cameraControl: ICameraControl, registViewModel : RegisterInformationViewModel, prefsModel : InventoryViewModel, preferenceViewModel: PreferenceViewModel, detailViewModel: DetailInventoryViewModel, onTouchListener: LiveViewOnTouchListener, anotherDrawer: IAnotherDrawer?, exporter: DataExporter, recognizer: RecognizeFromIsbn)
+fun NavigationMain(navController: NavHostController, cameraControl: ICameraControl, registViewModel : RegisterInformationViewModel, listModel : InventoryViewModel, preferenceViewModel: PreferenceViewModel, detailViewModel: DetailInventoryViewModel, onTouchListener: LiveViewOnTouchListener, anotherDrawer: IAnotherDrawer?, exporter: DataExporter, recognizer: RecognizeFromIsbn)
 {
     MaterialTheme {
         NavHost(
@@ -80,8 +80,8 @@ fun NavigationMain(navController: NavHostController, cameraControl: ICameraContr
             composable("MainScreen") { MainScreen(navController = navController, cameraControl = cameraControl) }
             composable("RegistScreen") { RegistScreen(navController = navController, cameraControl = cameraControl, viewModel = registViewModel, onTouchListener = onTouchListener, anotherDrawer = anotherDrawer) }
             composable("ListScreen") {
-                // prefsModel.refresh()
-                ListScreen(navController = navController, viewModel = prefsModel, exporter = exporter, recognizer = recognizer)
+                // listModel.refresh()
+                ListScreen(navController = navController, viewModel = listModel, exporter = exporter, recognizer = recognizer)
             }
             composable("DetailScreen/{id}", listOf(navArgument("id") { type = NavType.LongType })) { backStackEntry ->
                 val id = backStackEntry.arguments?.getLong("id") ?: 0

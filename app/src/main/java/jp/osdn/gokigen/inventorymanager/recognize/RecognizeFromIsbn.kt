@@ -62,7 +62,7 @@ class RecognizeFromIsbn(private val activity: AppCompatActivity)
     {
         try
         {
-            Log.v(TAG, "recognizeFromIsbn($isOverwrite) : start")
+            Log.v(TAG, "recognizeFromIsbn(id: $id, isOverwrite: $isOverwrite) : start")
             val data = storageDao.findById(id)
 
             // ----- サーバからデータを取得する
@@ -136,6 +136,24 @@ class RecognizeFromIsbn(private val activity: AppCompatActivity)
                 activity.runOnUiThread {
                     // ----- 処理の終了を通知する
                     callback.finishRecognizedDataFromIsbn(needUpdate)
+
+                    // ----- 更新結果をToast表示
+                    val resultMessage = if (needUpdate) {
+                        activity.getString(R.string.label_data_updated_from_isbn)
+                    } else {
+                        activity.getString(R.string.label_no_data_from_isbn)
+                    }
+                    Toast.makeText(activity, resultMessage, Toast.LENGTH_SHORT).show()
+                }
+            }
+            else
+            {
+                // --- データは何もないので、何もない、という。
+                activity.runOnUiThread {
+                    // ----- 処理の終了を通知する
+                    callback.finishRecognizedDataFromIsbn(false)
+
+                    Toast.makeText(activity, activity.getString(R.string.label_no_data_from_isbn), Toast.LENGTH_SHORT).show()
                 }
             }
         }

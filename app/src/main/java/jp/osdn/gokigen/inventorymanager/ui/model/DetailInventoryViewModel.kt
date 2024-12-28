@@ -12,35 +12,32 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class DetailInventoryViewModel: ViewModel(), RecognizeFromIsbnCallback
-{
-    private val content : MutableLiveData<DataContent> by lazy { MutableLiveData<DataContent>() }
+class DetailInventoryViewModel: ViewModel(), RecognizeFromIsbnCallback {
+    private val content: MutableLiveData<DataContent> by lazy { MutableLiveData<DataContent>() }
     val detailData: LiveData<DataContent> = content
 
-    private val isUpdate : MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
+    private val isUpdate: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val dataIsUpdate: LiveData<Boolean> = isUpdate
 
-    private val isQueryEnable : MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
+    private val isQueryEnable: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val isEnableQuery: LiveData<Boolean> = isQueryEnable
 
-    fun initializeViewModel()
-    {
-        try
-        {
+    private val isIsbnEdit: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
+    val isIsbnEditing: LiveData<Boolean> = isIsbnEdit
+
+    fun initializeViewModel() {
+        try {
             Log.v(TAG, "DetailInventoryViewModel::initializeViewModel()")
             isUpdate.value = false
             isQueryEnable.value = true
-        }
-        catch (e: Exception)
-        {
+            isIsbnEdit.value = false
+        } catch (e: Exception) {
             e.printStackTrace()
         }
     }
 
-    fun initializeData(id: Long)
-    {
-        try
-        {
+    fun initializeData(id: Long) {
+        try {
             val coroutineScope = CoroutineScope(Dispatchers.Main)
             Thread {
                 val storageDao = AppSingleton.db.storageDao()
@@ -52,10 +49,18 @@ class DetailInventoryViewModel: ViewModel(), RecognizeFromIsbnCallback
                 }
                 Log.v(TAG, "Update Detail Data : $id")
             }.start()
-        }
-        catch (e: Exception)
-        {
+        } catch (e: Exception) {
             e.printStackTrace()
+        }
+    }
+
+    fun toggleIsbnEditButtonStatus(isEnable: Boolean)
+    {
+        isIsbnEdit.value = !isEnable
+        if (isEnable)
+        {
+            isUpdate.value = true
+            isQueryEnable.value = false
         }
     }
 
@@ -63,6 +68,44 @@ class DetailInventoryViewModel: ViewModel(), RecognizeFromIsbnCallback
     {
         this.isUpdate.value = isEnableUpdate
         this.isQueryEnable.value = isEnableQuery
+    }
+
+    fun updateIsbn(id: Long, isbn: String)
+    {
+        try
+        {
+            val newContent = DataContent(
+                id = id,
+                title = content.value?.title,
+                subTitle = content.value?.subTitle,
+                author = content.value?.author,
+                publisher = content.value?.publisher,
+                description = content.value?.description,
+                isbn = isbn,
+                productId = content.value?.productId,
+                urlStr = content.value?.urlStr,
+                bcrText = content.value?.bcrText,
+                note = content.value?.note,
+                category = content.value?.category,
+                imageFile1 = content.value?.imageFile1,
+                imageFile2 = content.value?.imageFile2,
+                imageFile3 = content.value?.imageFile3,
+                imageFile4 = content.value?.imageFile4,
+                imageFile5 = content.value?.imageFile5,
+                checked = content.value?.checked ?: false,
+                informMessage = content.value?.informMessage,
+                informDate = content.value?.informDate,
+                isDelete = content.value?.isDelete ?: false,
+                deleteDate = content.value?.deleteDate,
+                updateDate = content.value?.updateDate,
+                createDate = content.value?.createDate
+            )
+            content.value = newContent
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
     }
 
     override fun finishRecognizedDataFromIsbn(needUpdate: Boolean)

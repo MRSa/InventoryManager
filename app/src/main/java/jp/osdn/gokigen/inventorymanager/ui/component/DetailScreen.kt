@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.HorizontalDivider
@@ -30,6 +31,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -82,53 +85,63 @@ fun DetailScreen(navController: NavHostController, viewModel : DetailInventoryVi
                 }
                 Spacer(Modifier.size(padding))
                 ShowTextInputData(
+                    id,
                     TextFieldId.TITLE,
                     stringResource(R.string.label_title),
                     detail.value?.title ?: "",
-                    true)
+                    true,
+                    viewModel)
                 Spacer(Modifier.size(padding))
                 ShowTextInputData(
+                    id,
                     TextFieldId.SUBTITLE,
                     stringResource(R.string.label_subtitle),
                     detail.value?.subTitle ?: "",
                     true,
-                )
+                    viewModel)
                 Spacer(Modifier.size(padding))
                 ShowTextInputData(
+                    id,
                     TextFieldId.AUTHOR,
                     stringResource(R.string.label_author),
                     detail.value?.author ?: "",
-                    true)
+                    true,
+                    viewModel)
                 Spacer(Modifier.size(padding))
                 ShowTextInputData(
+                    id,
                     TextFieldId.PUBLISHER,
                     stringResource(R.string.label_publisher),
                     detail.value?.publisher ?: "",
                     true,
-                )
+                    viewModel)
                 Spacer(Modifier.size(padding))
                 ShowTextInputData(
+                    id,
                     TextFieldId.ISBN,
                     stringResource(R.string.label_isbn),
                     detail.value?.isbn ?: "",
                     true,
-                )
+                    viewModel)
                 Spacer(Modifier.size(padding))
                 ShowTextInputData(
+                    id,
                     TextFieldId.CATEGORY,
                     stringResource(R.string.label_category),
                     detail.value?.category ?: "",
                     true,
-                )
+                    viewModel)
                 Spacer(Modifier.size(padding))
                 if ((detail.value?.note ?: "").isNotEmpty()) {
                     HorizontalDivider(thickness = 1.dp)
                     Spacer(Modifier.size(padding))
                     ShowTextInputData(
+                        id,
                         TextFieldId.TEXT,
                         stringResource(R.string.label_text_recognition),
                         detail.value?.note ?: "",
                         false,
+                        viewModel
                     )
                     Spacer(Modifier.size(padding))
                 }
@@ -216,8 +229,9 @@ fun DetailScreen(navController: NavHostController, viewModel : DetailInventoryVi
 }
 
 @Composable
-fun ShowTextInputData(itemId: TextFieldId, label: String, value: String, isSingleLine: Boolean, isEditEnable: Boolean = false)
+fun ShowTextInputData(id: Long, itemId: TextFieldId, label: String, value: String, isSingleLine: Boolean, viewModel : DetailInventoryViewModel)
 {
+    val isIsbnEditing = viewModel.isIsbnEditing.observeAsState()
     Row(
         modifier = Modifier.fillMaxWidth().height(50.dp).padding(horizontal = 4.dp),
         verticalAlignment = Alignment.CenterVertically
@@ -228,12 +242,35 @@ fun ShowTextInputData(itemId: TextFieldId, label: String, value: String, isSingl
             fontSize = 14.sp
         )
         TextField(
-            enabled = isEditEnable,
+            enabled = when (itemId) {
+                TextFieldId.TITLE -> { false }
+                TextFieldId.SUBTITLE -> { false }
+                TextFieldId.AUTHOR -> { false }
+                TextFieldId.PUBLISHER -> {false }
+                TextFieldId.ISBN -> { isIsbnEditing.value ?: false }
+                TextFieldId.CATEGORY -> { false }
+                TextFieldId.TEXT -> { false }
+            },
             value = value,
             singleLine = isSingleLine,
-            onValueChange = { },
+            onValueChange = {
+                when (itemId) {
+                    TextFieldId.TITLE -> {  }
+                    TextFieldId.SUBTITLE -> {  }
+                    TextFieldId.AUTHOR -> {  }
+                    TextFieldId.PUBLISHER -> { }
+                    TextFieldId.ISBN -> { viewModel.updateIsbn(id, it) }
+                    TextFieldId.CATEGORY -> {  }
+                    TextFieldId.TEXT -> {  }
+                }
+            },
             modifier = Modifier.weight(5.0f),
             textStyle = TextStyle(fontSize = 16.sp),
+            keyboardOptions = when (itemId) {
+                TextFieldId.ISBN -> { KeyboardOptions(keyboardType = KeyboardType.Number) }
+                else -> { KeyboardOptions() }
+            },
+            visualTransformation = VisualTransformation.None
         )
         Spacer(modifier = Modifier.padding(4.dp))
         Button(
@@ -242,8 +279,8 @@ fun ShowTextInputData(itemId: TextFieldId, label: String, value: String, isSingl
                 TextFieldId.TITLE -> { false }
                 TextFieldId.SUBTITLE -> { false }
                 TextFieldId.AUTHOR -> { false }
-                TextFieldId.PUBLISHER -> {false }
-                TextFieldId.ISBN -> { false }
+                TextFieldId.PUBLISHER -> { false }
+                TextFieldId.ISBN -> { true }
                 TextFieldId.CATEGORY -> { false }
                 TextFieldId.TEXT -> { false }
             },
@@ -254,14 +291,38 @@ fun ShowTextInputData(itemId: TextFieldId, label: String, value: String, isSingl
                     TextFieldId.SUBTITLE -> { }
                     TextFieldId.AUTHOR -> { }
                     TextFieldId.PUBLISHER -> { }
-                    TextFieldId.ISBN -> { }
+                    TextFieldId.ISBN -> {
+                        viewModel.toggleIsbnEditButtonStatus(isIsbnEditing.value ?: false)
+                    }
                     TextFieldId.CATEGORY -> { }
                     TextFieldId.TEXT -> { }
                 }
             },
         )
         {
-            Text(stringResource(R.string.button_label_edit))
+            Text(
+                when (itemId)
+                {
+                    TextFieldId.TITLE -> { stringResource(R.string.button_label_edit)  }
+                    TextFieldId.SUBTITLE -> { stringResource(R.string.button_label_edit) }
+                    TextFieldId.AUTHOR -> { stringResource(R.string.button_label_edit) }
+                    TextFieldId.PUBLISHER -> {stringResource(R.string.button_label_edit)  }
+                    TextFieldId.ISBN -> {
+                        if (isIsbnEditing.value == true)
+                        {
+                            // --- 編集中の時には、ボタンを「確定」にする
+                            stringResource(R.string.button_label_set)
+                        }
+                        else
+                        {
+                            // --- 通常は、「編集」ボタン
+                            stringResource(R.string.button_label_edit)
+                        }
+                    }
+                    TextFieldId.CATEGORY -> { stringResource(R.string.button_label_edit) }
+                    TextFieldId.TEXT -> { stringResource(R.string.button_label_edit) }
+                }
+            )
         }
         //Spacer(modifier = Modifier.padding(2.dp))
     }

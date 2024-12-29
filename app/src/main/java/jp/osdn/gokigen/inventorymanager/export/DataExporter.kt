@@ -18,9 +18,12 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.encodeToString
 import java.io.File
 import java.io.FileOutputStream
+import java.io.OutputStream
 import java.io.OutputStreamWriter
 import java.text.SimpleDateFormat
 import java.util.Locale
+import java.util.zip.ZipEntry
+import java.util.zip.ZipOutputStream
 
 class DataExporter(private val activity: AppCompatActivity)
 {
@@ -47,7 +50,9 @@ class DataExporter(private val activity: AppCompatActivity)
             }
             val directory = "$baseDirectory${SimpleDateFormat(FILENAME_FORMAT, Locale.US).format(System.currentTimeMillis())}"
             isExporting = true
-            Thread { exportImpl(directory, fileName, archiveOnlyOneFile, callback) }.start()
+            Thread {
+                exportImpl(directory, fileName, callback, archiveOnlyOneFile)
+            }.start()
         }
         catch (e: Exception)
         {
@@ -55,9 +60,9 @@ class DataExporter(private val activity: AppCompatActivity)
         }
     }
 
-    private fun exportImpl(directory: String, fileName: String, archiveOnlyOneFile: Boolean, callback : IExportProgressCallback?)
+    private fun exportImpl(directory: String, fileName: String, callback : IExportProgressCallback?, archiveOnlyOneFile: Boolean)
     {
-        Log.v(TAG, "DataExporter::export $directory/$fileName (one file: $archiveOnlyOneFile)")
+        Log.v(TAG, "DataExporter::export $directory/$fileName (isSingle: $archiveOnlyOneFile)")
 
         var failureCount = 0
         var outputCount = 0
@@ -89,11 +94,11 @@ class DataExporter(private val activity: AppCompatActivity)
                     bcrText = data.bcrText,
                     note = data.note,
                     category = data.category,
-                    imageFile1 = if ((data.imageFile1?:"").isNotEmpty()) { "${data.id}/${data.imageFile1}" } else { data.imageFile1 },
-                    imageFile2 = if ((data.imageFile2?:"").isNotEmpty()) { "${data.id}/${data.imageFile2}" } else { data.imageFile2 },
-                    imageFile3 = if ((data.imageFile3?:"").isNotEmpty()) { "${data.id}/${data.imageFile3}" } else { data.imageFile3 },
-                    imageFile4 = if ((data.imageFile4?:"").isNotEmpty()) { "${data.id}/${data.imageFile4}" } else { data.imageFile4 },
-                    imageFile5 = if ((data.imageFile5?:"").isNotEmpty()) { "${data.id}/${data.imageFile5}" } else { data.imageFile5 },
+                    imageFile1 = if ((data.imageFile1?:"").isNotEmpty()) { if (archiveOnlyOneFile) { "${data.imageFile1}" } else { "${data.id}/${data.imageFile1}" } } else { data.imageFile1 },
+                    imageFile2 = if ((data.imageFile2?:"").isNotEmpty()) { if (archiveOnlyOneFile) { "${data.imageFile2}" } else { "${data.id}/${data.imageFile2}" } } else { data.imageFile2 },
+                    imageFile3 = if ((data.imageFile3?:"").isNotEmpty()) { if (archiveOnlyOneFile) { "${data.imageFile3}" } else { "${data.id}/${data.imageFile3}" } } else { data.imageFile3 },
+                    imageFile4 = if ((data.imageFile4?:"").isNotEmpty()) { if (archiveOnlyOneFile) { "${data.imageFile4}" } else { "${data.id}/${data.imageFile4}" } } else { data.imageFile4 },
+                    imageFile5 = if ((data.imageFile5?:"").isNotEmpty()) { if (archiveOnlyOneFile) { "${data.imageFile5}" } else { "${data.id}/${data.imageFile5}" } } else { data.imageFile5 },
                     checked = data.checked,
                     informMessage = data.informMessage,
                     informDate = dateConverter.fromDateToLong(data.informDate),
@@ -126,9 +131,18 @@ class DataExporter(private val activity: AppCompatActivity)
             activity.runOnUiThread {
                 callback?.progressExportFile(0, ((exportImageFileList.size) + 1))
             }
-            exportFilesMain(directory, fileName, exportTarget)
-            failureCount = exportImageFilesMain(directory, exportImageFileList, callback)
+
             outputCount = exportImageFileList.size
+            if (archiveOnlyOneFile)
+            {
+                exportJsonFileLocal(fileName, exportTarget)
+                failureCount = createArchiveFile(directory, fileName, exportImageFileList, callback)
+            }
+            else
+            {
+                exportJsonFileExternal(directory, fileName, exportTarget)
+                failureCount = exportImageFilesMain(directory, exportImageFileList, callback)
+            }
 
             Log.v(TAG, " Export: $directory/$fileName  FINISHED.")
 
@@ -148,7 +162,7 @@ class DataExporter(private val activity: AppCompatActivity)
         }
     }
 
-    private fun exportFilesMain(directory: String, exportedFileName: String, dataContent: List<DataContentSerializable>): Boolean
+    private fun exportJsonFileExternal(directory: String, exportedFileName: String, dataContent: List<DataContentSerializable>): Boolean
     {
         try
         {
@@ -215,6 +229,43 @@ class DataExporter(private val activity: AppCompatActivity)
         return (false)
     }
 
+    private fun exportJsonFileLocal(exportedFileName: String, dataContent: List<DataContentSerializable>): Boolean
+    {
+        try
+        {
+            val baseDir = activity.getExternalFilesDir(null)
+            val filePath = "${baseDir?.absolutePath}/$exportedFileName"
+            val targetFile = File(filePath)
+            if (targetFile.exists())
+            {
+                try
+                {
+                    // ファイルが存在する場合、一度削除する
+                    targetFile.delete()
+                }
+                catch (e: Exception)
+                {
+                    e.printStackTrace()
+                }
+            }
+            val outputStream = FileOutputStream(targetFile)
+            val writer = OutputStreamWriter(outputStream)
+
+            // -------
+            // データをJSONに変換してローカルストレージに出力する
+            writer.write(Json.encodeToString(DataContentListSerializer(dataContent)))
+            writer.flush()
+            writer.close()
+
+            return (true)
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
+        return (false)
+    }
+
     private fun exportImageFilesMain(baseDirectory: String, imageFileList: ArrayList<ExportImageFileList>, callback : IExportProgressCallback?) : Int
     {
         var resultOk = 0
@@ -252,6 +303,114 @@ class DataExporter(private val activity: AppCompatActivity)
             e.printStackTrace()
         }
         return (resultNg)
+    }
+
+    private fun createArchiveFile(destinationDirectory: String, fileName: String, imageFileList: ArrayList<ExportImageFileList>, callback : IExportProgressCallback?) : Int
+    {
+        var nofErrorFile = 0
+        var nofProcessedFile = 0
+        val targetFileList = ArrayList<File>()
+        val baseDir = activity.getExternalFilesDir(null)
+        val totalFileCount = imageFileList.size + 1
+        val archiveZipFileName = "$fileName.zip"
+        try
+        {
+            targetFileList.add(File("${baseDir?.absolutePath}/$fileName"))
+            for (imageFile in imageFileList)
+            {
+                targetFileList.add(File("${baseDir?.absolutePath}/${imageFile.id}/${imageFile.imageFileName}"))
+            }
+
+            var documentUri: Uri? = null
+            val outputDir = "${Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).path}/$destinationDirectory/"
+            val resolver = activity.contentResolver
+            val extStorageUri: Uri
+            val values = ContentValues()
+
+            values.put(MediaStore.Downloads.TITLE, archiveZipFileName)
+            values.put(MediaStore.Downloads.DISPLAY_NAME, archiveZipFileName)
+            values.put(MediaStore.Downloads.MIME_TYPE, "application/zip")
+
+            val outputStream : OutputStream?
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                values.put(MediaStore.Downloads.RELATIVE_PATH, "Download/$destinationDirectory")
+                values.put(MediaStore.Downloads.IS_PENDING, true)
+                extStorageUri = MediaStore.Downloads.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
+                Log.v(TAG, "---------- $archiveZipFileName $values")
+
+                documentUri = resolver.insert(extStorageUri, values)
+                if (documentUri != null)
+                {
+                    val uriData : Uri = documentUri
+                    outputStream = resolver.openOutputStream(uriData, "wa")
+                }
+                else
+                {
+                    outputStream = null
+                }
+            }
+            else
+            {
+                val path = File(outputDir)
+                path.mkdir()
+                values.put(MediaStore.Downloads.DATA, path.absolutePath + File.separator + archiveZipFileName)
+                val targetFile = File(outputDir + File.separator + archiveZipFileName)
+                outputStream = FileOutputStream(targetFile)
+            }
+
+            if (outputStream != null)
+            {
+                ZipOutputStream(outputStream).use { zipOutputStream ->
+                    targetFileList.forEach { sourceFile ->
+                        try
+                        {
+                            val zipEntry = ZipEntry(sourceFile.name)
+                            zipOutputStream.putNextEntry(zipEntry)
+                            sourceFile.inputStream().use { inputStream ->
+                                inputStream.copyTo(zipOutputStream)
+                            }
+                            zipOutputStream.closeEntry()
+                            nofProcessedFile++
+                            if (nofProcessedFile % 10 == 0)
+                            {
+                                activity.runOnUiThread {
+                                    callback?.progressExportFile(nofProcessedFile, totalFileCount)  // ----- 進捗を報告する
+                                }
+                            }
+                        }
+                        catch (e: Exception)
+                        {
+                            e.printStackTrace()
+                            nofErrorFile++
+                        }
+                    }
+                }
+            }
+            else
+            {
+                nofErrorFile = imageFileList.size + 1
+            }
+            outputStream?.flush()
+            outputStream?.close()
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
+            {
+                values.put(MediaStore.Downloads.IS_PENDING, false)
+                if (documentUri != null)
+                {
+                    val myUri: Uri = documentUri
+                    resolver.update(myUri, values, null, null)
+                }
+            }
+            activity.runOnUiThread {
+                callback?.progressExportFile(nofProcessedFile, totalFileCount)  // ----- 進捗を報告する
+            }
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
+        return (nofErrorFile)
     }
 
     interface IExportProgressCallback

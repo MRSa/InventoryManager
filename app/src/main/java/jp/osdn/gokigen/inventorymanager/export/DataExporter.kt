@@ -67,7 +67,7 @@ class DataExporter(private val activity: AppCompatActivity)
             Log.v(TAG, " Export: $directory/$fileName  START")
             activity.runOnUiThread {
                 callback?.startExportFile("$directory/$fileName")
-                Toast.makeText(activity, "${activity.getString(R.string.label_data_start_export)} : $directory/$fileName", Toast.LENGTH_SHORT).show()
+                // Toast.makeText(activity, "${activity.getString(R.string.label_data_start_export)} : $directory/$fileName", Toast.LENGTH_SHORT).show()
                 AppSingleton.vibrator.vibrate(activity, IVibrator.VibratePattern.SIMPLE_MIDDLE)
             }
 

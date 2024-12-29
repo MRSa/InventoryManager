@@ -64,6 +64,7 @@ class MainActivity : AppCompatActivity()
             liaison = CameraLiaison(this, myRegistViewModel, myRegistViewModel, myRegistViewModel)
 
             myViewModel = ViewModelProvider(this)[InventoryViewModel::class.java]
+            myViewModel.initializeViewModel()
 
             myDetailViewModel = ViewModelProvider(this)[DetailInventoryViewModel::class.java]
             myDetailViewModel.initializeViewModel()

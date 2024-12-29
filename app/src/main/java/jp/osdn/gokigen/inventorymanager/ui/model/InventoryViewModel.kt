@@ -24,8 +24,26 @@ class InventoryViewModel: ViewModel(), DataExporter.IExportProgressCallback
     private val isExporting : MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val dataExporting: LiveData<Boolean> = isExporting
 
-    private val exportingFile : MutableLiveData<String> by lazy { MutableLiveData<String>() }
-    val exportingFileName: LiveData<String> = exportingFile
+    private val exportingProgress : MutableLiveData<Float> by lazy { MutableLiveData<Float>() }
+    val exportingProgressPercent: LiveData<Float> = exportingProgress
+
+    private val lastExportedFileCount : MutableLiveData<Int> by lazy { MutableLiveData<Int>() }
+    val lastExportFileCount: LiveData<Int> = lastExportedFileCount
+
+    fun initializeViewModel()
+    {
+        try
+        {
+            isRefreshing.value = false
+            isExporting.value = false
+            exportingProgress.value = 0.0f
+            lastExportedFileCount.value = 0
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
+    }
 
     private fun update()
     {
@@ -65,11 +83,15 @@ class InventoryViewModel: ViewModel(), DataExporter.IExportProgressCallback
 
     override fun startExportFile(fileName: String) {
         Log.v(TAG, "startExportFile(): $fileName")
+        isExporting.value = true
+        exportingProgress.value = 0.0f
     }
 
     override fun progressExportFile(currentFileCount: Int, totalFileCount: Int) {
         val percent = (currentFileCount.toFloat() / totalFileCount.toFloat()) * 100.0f
         Log.v(TAG, " progressExportFile() $currentFileCount/$totalFileCount (${String.format("%.1f", percent)} %)")
+        exportingProgress.value = percent
+        lastExportedFileCount.value = currentFileCount
     }
 
     override fun finishExportFile(
@@ -79,6 +101,16 @@ class InventoryViewModel: ViewModel(), DataExporter.IExportProgressCallback
         archiveOnlyOneFile: Boolean
     ) {
         Log.v(TAG, "finishExportFile : $fileName, NG:$exportNG (total:$totalFile) one file: $archiveOnlyOneFile")
+        try
+        {
+            isExporting.value = false
+            exportingProgress.value = 0.0f
+            lastExportedFileCount.value = totalFile - exportNG
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
     }
 
     companion object

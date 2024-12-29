@@ -1,5 +1,6 @@
 package jp.osdn.gokigen.inventorymanager.ui.component
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -40,6 +41,7 @@ import jp.osdn.gokigen.inventorymanager.R
 import jp.osdn.gokigen.inventorymanager.export.DataExporter
 import jp.osdn.gokigen.inventorymanager.recognize.RecognizeFromIsbn
 import jp.osdn.gokigen.inventorymanager.ui.model.InventoryViewModel
+import java.util.Locale.US
 
 @Composable
 fun ListScreen(navController: NavHostController, viewModel : InventoryViewModel, exporter: DataExporter, recognizer: RecognizeFromIsbn)
@@ -187,9 +189,9 @@ fun CommandPanel(navController: NavHostController, dataListModel : InventoryView
         }
     }
 
+    // ----- エクスポート中ダイアログを表示する
     if (exporting.value == true)
     {
-        // ----- ビジーダイアログを表示する
         ShowExportingDialog(dataListModel)
     }
 }
@@ -197,18 +199,24 @@ fun CommandPanel(navController: NavHostController, dataListModel : InventoryView
 @Composable
 fun ShowExportingDialog(dataListModel: InventoryViewModel)
 {
-    val fileName = dataListModel.exportingFileName.observeAsState()
-    AlertDialog(
-        onDismissRequest = {  },
-        title = { Text("${stringResource(R.string.label_data_exporting)} ${fileName.value}") },
-        text = {
-            Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-                CircularProgressIndicator()
-            }
-        },
-        confirmButton = {  },
-        dismissButton = null
-    )
+    val exporting = dataListModel.dataExporting.observeAsState()
+    val percent = dataListModel.exportingProgressPercent.observeAsState()
+    val fileCount = dataListModel.lastExportFileCount.observeAsState()
+    val message = "${stringResource(R.string.label_data_exporting)} \n   ${fileCount.value} (${String.format(US, "%.1f", percent.value)} %)"
+    if (exporting.value == true)
+    {
+        AlertDialog(
+            onDismissRequest = { },
+            title = { Text(message) },
+            text = {
+                Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                    CircularProgressIndicator()
+                }
+            },
+            confirmButton = { },
+            dismissButton = null
+        )
+    }
 }
 
 @Composable

@@ -58,6 +58,9 @@ fun PreferenceScreen(navController: NavHostController, prefsModel: PreferenceVie
             SwitchOverwriteInformationFromIsbn(prefsModel)
             Spacer(Modifier.size(padding))
             HorizontalDivider(thickness = 1.dp)
+            SwitchArchiveOnlyOneFile(prefsModel)
+            Spacer(Modifier.size(padding))
+            HorizontalDivider(thickness = 1.dp)
             ShowAboutGokigen()
             Spacer(Modifier.size(padding))
             HorizontalDivider(thickness = 1.dp)
@@ -153,6 +156,34 @@ fun SwitchOverwriteInformationFromIsbn(prefsModel: PreferenceViewModel)
         )
     }
     Text(text = stringResource(R.string.description_switch_overwrite_information_from_isbn),
+        color = MaterialTheme.colorScheme.secondary,
+        fontSize = with(density) { 14.dp.toSp() },)
+}
+
+@Composable
+fun SwitchArchiveOnlyOneFile(prefsModel: PreferenceViewModel)
+{
+    val density = LocalDensity.current
+    val scope = rememberCoroutineScope()
+    val archiveFileInfo = prefsModel.archiveOneFile.observeAsState()
+    Row (verticalAlignment = Alignment.CenterVertically) {
+        Switch(
+            checked = archiveFileInfo.value?: false,
+            onCheckedChange = {
+                scope.launch {
+                    prefsModel.setArchiveOneFile(!(archiveFileInfo.value?: false))
+                }
+            })
+        Spacer(modifier = Modifier.width(8.dp))
+        Text(text = stringResource(R.string.label_switch_exports_only_one_file),
+            fontSize = with(density) { 18.dp.toSp() },
+            color = MaterialTheme.colorScheme.primary,
+            modifier = Modifier.clickable( onClick = {
+                scope.launch { prefsModel.setArchiveOneFile(!(archiveFileInfo.value?: false)) }
+            })
+        )
+    }
+    Text(text = stringResource(R.string.description_switch_exports_only_one_file),
         color = MaterialTheme.colorScheme.secondary,
         fontSize = with(density) { 14.dp.toSp() },)
 }

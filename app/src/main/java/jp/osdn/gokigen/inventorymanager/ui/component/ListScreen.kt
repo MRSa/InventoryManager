@@ -178,7 +178,7 @@ fun CommandPanel(navController: NavHostController, dataListModel : InventoryView
         IconButton(
             modifier = Modifier,
             onClick = {
-                exporter.doExport()
+                exporter.doExport(callback = dataListModel)
             })
         {
             Icon(

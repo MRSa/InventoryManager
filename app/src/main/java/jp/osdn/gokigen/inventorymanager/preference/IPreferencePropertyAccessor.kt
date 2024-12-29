@@ -12,6 +12,9 @@ interface IPreferencePropertyAccessor
         const val PREFERENCE_OVERWRITE_FROM_ISBN_TO_TITLE = "overwrite_title_from_isbn"
         const val PREFERENCE_OVERWRITE_FROM_ISBN_TO_TITLE_DEFAULT_VALUE = false
 
+        const val PREFERENCE_EXPORT_ARCHIVE_ONLY_ONE_FILE = "export_archive_one"
+        const val PREFERENCE_EXPORT_ARCHIVE_ONLY_ONE_FILE_DEFAULT_VALUE = true
+
         // --- CAMERA CONNECTION METHOD PREFERENCES
         const val PREFERENCE_CAMERA_METHOD_INDEX = "camera_method"
         const val PREFERENCE_CAMERA_METHOD_INDEX_DEFAULT_VALUE = "1"

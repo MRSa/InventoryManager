@@ -8,9 +8,11 @@ import android.provider.MediaStore
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.preference.PreferenceManager
 import jp.osdn.gokigen.gokigenassets.scene.IVibrator
 import jp.osdn.gokigen.inventorymanager.AppSingleton
 import jp.osdn.gokigen.inventorymanager.R
+import jp.osdn.gokigen.inventorymanager.preference.IPreferencePropertyAccessor
 import jp.osdn.gokigen.inventorymanager.storage.DateConverter
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.encodeToString
@@ -25,10 +27,15 @@ class DataExporter(private val activity: AppCompatActivity)
     private val storageDao = AppSingleton.db.storageDao()
     private var isExporting = false
 
-    fun doExport(baseDirectory: String = "inventory", fileName: String = "inventoryDataExport.json")
+    fun doExport(baseDirectory: String = "inventory", fileName: String = "inventoryDataExport.json", callback : IExportProgressCallback? = null)
     {
         try
         {
+            val archiveOnlyOneFile = PreferenceManager.getDefaultSharedPreferences(activity).getBoolean(
+                IPreferencePropertyAccessor.PREFERENCE_EXPORT_ARCHIVE_ONLY_ONE_FILE,
+                IPreferencePropertyAccessor.PREFERENCE_EXPORT_ARCHIVE_ONLY_ONE_FILE_DEFAULT_VALUE
+            )
+
             if (isExporting)
             {
                 // ----- 既に実行中なので、実行しない
@@ -40,7 +47,7 @@ class DataExporter(private val activity: AppCompatActivity)
             }
             val directory = "$baseDirectory${SimpleDateFormat(FILENAME_FORMAT, Locale.US).format(System.currentTimeMillis())}"
             isExporting = true
-            Thread { exportImpl(directory, fileName) }.start()
+            Thread { exportImpl(directory, fileName, archiveOnlyOneFile, callback) }.start()
         }
         catch (e: Exception)
         {
@@ -48,15 +55,18 @@ class DataExporter(private val activity: AppCompatActivity)
         }
     }
 
-    private fun exportImpl(directory: String, fileName: String)
+    private fun exportImpl(directory: String, fileName: String, archiveOnlyOneFile: Boolean, callback : IExportProgressCallback?)
     {
-        Log.v(TAG, "DataExporter::export $directory/$fileName")
+        Log.v(TAG, "DataExporter::export $directory/$fileName (one file: $archiveOnlyOneFile)")
 
+        var failureCount = 0
+        var outputCount = 0
         try
         {
             // ----- エクスポート開始を通知する
             Log.v(TAG, " Export: $directory/$fileName  START")
             activity.runOnUiThread {
+                callback?.startExportFile("$directory/$fileName")
                 Toast.makeText(activity, "${activity.getString(R.string.label_data_start_export)} : $directory/$fileName", Toast.LENGTH_SHORT).show()
                 AppSingleton.vibrator.vibrate(activity, IVibrator.VibratePattern.SIMPLE_MIDDLE)
             }
@@ -113,9 +123,12 @@ class DataExporter(private val activity: AppCompatActivity)
                     exportImageFileList.add(ExportImageFileList(data.id, data.imageFile5))
                 }
             }
+            activity.runOnUiThread {
+                callback?.progressExportFile(0, ((exportImageFileList.size) + 1))
+            }
             exportFilesMain(directory, fileName, exportTarget)
-            val failureCount = exportImageFilesMain(directory, exportImageFileList)
-            val outputCount = exportImageFileList.size
+            failureCount = exportImageFilesMain(directory, exportImageFileList, callback)
+            outputCount = exportImageFileList.size
 
             Log.v(TAG, " Export: $directory/$fileName  FINISHED.")
 
@@ -130,6 +143,9 @@ class DataExporter(private val activity: AppCompatActivity)
             e.printStackTrace()
         }
         isExporting = false
+        activity.runOnUiThread {
+            callback?.finishExportFile("$directory/$fileName", failureCount, outputCount, archiveOnlyOneFile)
+        }
     }
 
     private fun exportFilesMain(directory: String, exportedFileName: String, dataContent: List<DataContentSerializable>): Boolean
@@ -199,7 +215,7 @@ class DataExporter(private val activity: AppCompatActivity)
         return (false)
     }
 
-    private fun exportImageFilesMain(baseDirectory: String, imageFileList: ArrayList<ExportImageFileList>) : Int
+    private fun exportImageFilesMain(baseDirectory: String, imageFileList: ArrayList<ExportImageFileList>, callback : IExportProgressCallback?) : Int
     {
         var resultOk = 0
         var resultNg = 0
@@ -220,6 +236,14 @@ class DataExporter(private val activity: AppCompatActivity)
                 {
                     resultNg++
                 }
+
+                if (((resultOk + resultNg) % 10) == 0)
+                {
+                    activity.runOnUiThread {
+                        // ----- 進捗を報告する
+                        callback?.progressExportFile((resultOk + resultNg) + 1, ((imageFileList.size) + 1))
+                    }
+                }
             }
             Log.v(TAG, "Export Jpeg Images : Success:$resultOk  Failure:$resultNg")
         }
@@ -228,6 +252,13 @@ class DataExporter(private val activity: AppCompatActivity)
             e.printStackTrace()
         }
         return (resultNg)
+    }
+
+    interface IExportProgressCallback
+    {
+        fun startExportFile(fileName: String)
+        fun progressExportFile(currentFileCount: Int, totalFileCount: Int)
+        fun finishExportFile(fileName: String, exportNG: Int, totalFile: Int, archiveOnlyOneFile: Boolean)
     }
 
     companion object

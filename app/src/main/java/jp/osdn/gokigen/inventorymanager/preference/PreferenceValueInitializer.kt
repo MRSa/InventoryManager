@@ -32,6 +32,14 @@ class PreferenceValueInitializer
                 )
             }
 
+            if (!items.containsKey(IPreferencePropertyAccessor.PREFERENCE_EXPORT_ARCHIVE_ONLY_ONE_FILE))
+            {
+                editor.putBoolean(
+                    IPreferencePropertyAccessor.PREFERENCE_EXPORT_ARCHIVE_ONLY_ONE_FILE,
+                    IPreferencePropertyAccessor.PREFERENCE_EXPORT_ARCHIVE_ONLY_ONE_FILE_DEFAULT_VALUE
+                )
+            }
+
             if (!items.containsKey(IPreferencePropertyAccessor.PREFERENCE_CAMERA_METHOD_1))
             {
                 editor.putString(

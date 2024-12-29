@@ -21,11 +21,14 @@
     <string name="label_data_updated">Updated the data. </string>
     <string name="label_data_not_entry">Ignore as no data entered.</string>
 
-    <string name="label_switch_data_check_immediately">Fetch data using ISBN at registration action</string>
+    <string name="label_switch_data_check_immediately">Pull data using the ISBN at registration</string>
     <string name="description_switch_data_check_immediately">With this option enabled, book details will be retrieved from the National Diet Library API during data entry.</string>
 
     <string name="label_switch_overwrite_information_from_isbn">Overwrite existing data with ISBN information</string>
-    <string name="description_switch_overwrite_information_from_isbn">When turned on, this option will overwrite any existing data with information retrieved using the ISBN.</string>
+    <string name="description_switch_overwrite_information_from_isbn">When enabled, this option will overwrite existing data with ISBN lookup results.</string>
+
+    <string name="label_switch_exports_only_one_file">Exports all data into one file</string>
+    <string name="description_switch_exports_only_one_file">When enabled, all data will be exported as a single archive file.</string>
 
     <string name="label_return_to_main_screen">Return to Main</string>
     <string name="data_empty">No data</string>

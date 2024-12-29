@@ -16,6 +16,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -43,11 +44,8 @@ import jp.osdn.gokigen.inventorymanager.R
 import jp.osdn.gokigen.inventorymanager.export.InOutExportImage
 import jp.osdn.gokigen.inventorymanager.recognize.RecognizeFromIsbn
 import jp.osdn.gokigen.inventorymanager.ui.model.DetailInventoryViewModel
+import jp.osdn.gokigen.inventorymanager.ui.model.TextFieldId
 import java.util.Date
-
-enum class TextFieldId {
-    TITLE, SUBTITLE, AUTHOR, PUBLISHER, ISBN, CATEGORY, TEXT
-}
 
 @Composable
 fun DetailScreen(navController: NavHostController, viewModel : DetailInventoryViewModel, id : Long, recognizer: RecognizeFromIsbn)
@@ -59,6 +57,7 @@ fun DetailScreen(navController: NavHostController, viewModel : DetailInventoryVi
     MaterialTheme {
         if (detail.value == null)
         {
+            // ----- 「データがない」と表示する
             Text(
                 text = "{stringResource(id = R.string.no_data)} (id:$id)",
                 fontSize = 20.sp,
@@ -69,7 +68,6 @@ fun DetailScreen(navController: NavHostController, viewModel : DetailInventoryVi
         {
             val scrollState = rememberScrollState()
             Column(modifier = Modifier
-                //.systemBarsPadding()
                 .fillMaxSize()
                 .verticalScroll(scrollState)
             ) {
@@ -81,6 +79,7 @@ fun DetailScreen(navController: NavHostController, viewModel : DetailInventoryVi
                 val imageFile2 = detail.value?.imageFile2 ?: ""
                 val imageFile3 = detail.value?.imageFile3 ?: ""
                 if ((imageFile1.isNotEmpty()) || (imageFile2.isNotEmpty()) || (imageFile3.isNotEmpty())) {
+                    // 画像の表示
                     ShowCapturedImage(id, imageFile1, imageFile2, imageFile3)
                 }
                 Spacer(Modifier.size(padding))
@@ -178,17 +177,12 @@ fun DetailScreen(navController: NavHostController, viewModel : DetailInventoryVi
                     )
                     Spacer(modifier = Modifier.weight(4.0f))
 
-                    // --- 「更新」ボタンを押すと、更新する
                     val isUpdate = viewModel.dataIsUpdate.observeAsState()
                     val dataUpdatedMessage = stringResource(R.string.label_data_updated)
                     Button(
                         enabled = isUpdate.value ?: false,
                         onClick = {
-                            viewModel.updateButtonEnable(
-                                isEnableUpdate = false,
-                                isEnableQuery = true
-                            )
-
+                            // --- 「更新」ボタンを押すと、表示している内容でデータベースの中身を更新する
                             val title = detail.value?.title ?: ""
                             val subTitle = detail.value?.subTitle ?: ""
                             val author = detail.value?.author ?: ""
@@ -196,6 +190,10 @@ fun DetailScreen(navController: NavHostController, viewModel : DetailInventoryVi
                             val isbn = detail.value?.isbn ?: ""
                             val category = detail.value?.category ?: ""
                             val currentDate = Date()
+                            viewModel.updateButtonEnable(
+                                isEnableUpdate = false,
+                                isEnableQuery = true
+                            )
                             Thread {
                                 try
                                 {
@@ -231,7 +229,9 @@ fun DetailScreen(navController: NavHostController, viewModel : DetailInventoryVi
 @Composable
 fun ShowTextInputData(id: Long, itemId: TextFieldId, label: String, value: String, isSingleLine: Boolean, viewModel : DetailInventoryViewModel)
 {
+    val isSubtitleEditing = viewModel.isSubtitleEditing.observeAsState()
     val isIsbnEditing = viewModel.isIsbnEditing.observeAsState()
+    val isCategoryEditing = viewModel.isCategoryEditing.observeAsState()
     Row(
         modifier = Modifier.fillMaxWidth().height(50.dp).padding(horizontal = 4.dp),
         verticalAlignment = Alignment.CenterVertically
@@ -244,11 +244,11 @@ fun ShowTextInputData(id: Long, itemId: TextFieldId, label: String, value: Strin
         TextField(
             enabled = when (itemId) {
                 TextFieldId.TITLE -> { false }
-                TextFieldId.SUBTITLE -> { false }
+                TextFieldId.SUBTITLE -> { isSubtitleEditing.value ?: false }
                 TextFieldId.AUTHOR -> { false }
                 TextFieldId.PUBLISHER -> {false }
                 TextFieldId.ISBN -> { isIsbnEditing.value ?: false }
-                TextFieldId.CATEGORY -> { false }
+                TextFieldId.CATEGORY -> { isCategoryEditing.value ?: false }
                 TextFieldId.TEXT -> { false }
             },
             value = value,
@@ -256,18 +256,20 @@ fun ShowTextInputData(id: Long, itemId: TextFieldId, label: String, value: Strin
             onValueChange = {
                 when (itemId) {
                     TextFieldId.TITLE -> {  }
-                    TextFieldId.SUBTITLE -> {  }
+                    TextFieldId.SUBTITLE -> { viewModel.updateValueSingle(id, TextFieldId.SUBTITLE, it) }
                     TextFieldId.AUTHOR -> {  }
                     TextFieldId.PUBLISHER -> { }
-                    TextFieldId.ISBN -> { viewModel.updateIsbn(id, it) }
-                    TextFieldId.CATEGORY -> {  }
+                    TextFieldId.ISBN -> { viewModel.updateValueSingle(id, TextFieldId.ISBN, it) }
+                    TextFieldId.CATEGORY -> { viewModel.updateValueSingle(id, TextFieldId.CATEGORY, it) }
                     TextFieldId.TEXT -> {  }
                 }
             },
             modifier = Modifier.weight(5.0f),
             textStyle = TextStyle(fontSize = 16.sp),
             keyboardOptions = when (itemId) {
+                TextFieldId.SUBTITLE -> { KeyboardOptions(keyboardType = KeyboardType.Text) }
                 TextFieldId.ISBN -> { KeyboardOptions(keyboardType = KeyboardType.Number) }
+                TextFieldId.CATEGORY -> { KeyboardOptions(keyboardType = KeyboardType.Text) }
                 else -> { KeyboardOptions() }
             },
             visualTransformation = VisualTransformation.None
@@ -277,34 +279,92 @@ fun ShowTextInputData(id: Long, itemId: TextFieldId, label: String, value: Strin
             contentPadding = PaddingValues(8.dp),
             enabled = when (itemId) {
                 TextFieldId.TITLE -> { false }
-                TextFieldId.SUBTITLE -> { false }
+                TextFieldId.SUBTITLE -> { true }
                 TextFieldId.AUTHOR -> { false }
                 TextFieldId.PUBLISHER -> { false }
                 TextFieldId.ISBN -> { true }
-                TextFieldId.CATEGORY -> { false }
+                TextFieldId.CATEGORY -> { true }
                 TextFieldId.TEXT -> { false }
             },
             onClick = {
                 when (itemId)
                 {
                     TextFieldId.TITLE -> { }
-                    TextFieldId.SUBTITLE -> { }
+                    TextFieldId.SUBTITLE -> {
+                        viewModel.toggleEditButtonStatus(TextFieldId.SUBTITLE, isSubtitleEditing.value ?: false)
+                    }
                     TextFieldId.AUTHOR -> { }
                     TextFieldId.PUBLISHER -> { }
                     TextFieldId.ISBN -> {
-                        viewModel.toggleIsbnEditButtonStatus(isIsbnEditing.value ?: false)
+                        viewModel.toggleEditButtonStatus(TextFieldId.ISBN, isIsbnEditing.value ?: false)
                     }
-                    TextFieldId.CATEGORY -> { }
+                    TextFieldId.CATEGORY -> {
+                        viewModel.toggleEditButtonStatus(TextFieldId.CATEGORY, isCategoryEditing.value ?: false)
+                    }
                     TextFieldId.TEXT -> { }
                 }
             },
+            colors = when (itemId)
+            {
+                TextFieldId.SUBTITLE -> {
+                    if (isSubtitleEditing.value == true)
+                    {
+                        ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                            contentColor = MaterialTheme.colorScheme.onPrimary
+                        )
+                    }
+                    else
+                    {
+                        ButtonDefaults.buttonColors()
+                    }
+                }
+                TextFieldId.ISBN -> {
+                    if (isIsbnEditing.value == true)
+                    {
+                        ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                            contentColor = MaterialTheme.colorScheme.onPrimary
+                            )
+                    }
+                    else
+                    {
+                        ButtonDefaults.buttonColors()
+                    }
+                }
+                TextFieldId.CATEGORY -> {
+                    if (isCategoryEditing.value == true)
+                    {
+                        ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                            contentColor = MaterialTheme.colorScheme.onPrimary
+                        )
+                    }
+                    else
+                    {
+                        ButtonDefaults.buttonColors()
+                    }
+                }
+                else -> ButtonDefaults.buttonColors()
+            }
         )
         {
             Text(
                 when (itemId)
                 {
                     TextFieldId.TITLE -> { stringResource(R.string.button_label_edit)  }
-                    TextFieldId.SUBTITLE -> { stringResource(R.string.button_label_edit) }
+                    TextFieldId.SUBTITLE -> {
+                        if (isSubtitleEditing.value == true)
+                        {
+                            // --- 編集中の時には、ボタンを「確定」にする
+                            stringResource(R.string.button_label_set)
+                        }
+                        else
+                        {
+                            // --- 通常は、「編集」ボタン
+                            stringResource(R.string.button_label_edit)
+                        }
+                    }
                     TextFieldId.AUTHOR -> { stringResource(R.string.button_label_edit) }
                     TextFieldId.PUBLISHER -> {stringResource(R.string.button_label_edit)  }
                     TextFieldId.ISBN -> {
@@ -319,7 +379,18 @@ fun ShowTextInputData(id: Long, itemId: TextFieldId, label: String, value: Strin
                             stringResource(R.string.button_label_edit)
                         }
                     }
-                    TextFieldId.CATEGORY -> { stringResource(R.string.button_label_edit) }
+                    TextFieldId.CATEGORY -> {
+                        if (isCategoryEditing.value == true)
+                        {
+                            // --- 編集中の時には、ボタンを「確定」にする
+                            stringResource(R.string.button_label_set)
+                        }
+                        else
+                        {
+                            // --- 通常は、「編集」ボタン
+                            stringResource(R.string.button_label_edit)
+                        }
+                    }
                     TextFieldId.TEXT -> { stringResource(R.string.button_label_edit) }
                 }
             )

@@ -15,9 +15,11 @@ class PreferenceViewModel: ViewModel()
 
     private val readIsbnImmediately : MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     private val overwriteTitleFromIsbn : MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
+    private val archiveOnlyOneFile : MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
 
     val overwriteInfoFromIsbn: LiveData<Boolean> = overwriteTitleFromIsbn
     val checkIsbnImmediately: LiveData<Boolean> = readIsbnImmediately
+    val archiveOneFile: LiveData<Boolean> = archiveOnlyOneFile
 
     fun initializeViewModel(activity: AppCompatActivity)
     {
@@ -31,6 +33,11 @@ class PreferenceViewModel: ViewModel()
             overwriteTitleFromIsbn.value = preference.getBoolean(
                 IPreferencePropertyAccessor.PREFERENCE_OVERWRITE_FROM_ISBN_TO_TITLE,
                 IPreferencePropertyAccessor.PREFERENCE_OVERWRITE_FROM_ISBN_TO_TITLE_DEFAULT_VALUE
+            )
+
+            archiveOnlyOneFile.value = preference.getBoolean(
+                IPreferencePropertyAccessor.PREFERENCE_EXPORT_ARCHIVE_ONLY_ONE_FILE,
+                IPreferencePropertyAccessor.PREFERENCE_EXPORT_ARCHIVE_ONLY_ONE_FILE_DEFAULT_VALUE
             )
             Log.v(TAG, "PreferenceViewModel::initializeViewModel() isbn: ${readIsbnImmediately.value} overwriteTitle: ${overwriteTitleFromIsbn.value}")
         }
@@ -73,6 +80,26 @@ class PreferenceViewModel: ViewModel()
             editor.putBoolean(IPreferencePropertyAccessor.PREFERENCE_OVERWRITE_FROM_ISBN_TO_TITLE, value)
             editor.apply()
             overwriteTitleFromIsbn.value = value
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
+    }
+
+    fun setArchiveOneFile(value: Boolean)
+    {
+        try
+        {
+            if (!::preference.isInitialized)
+            {
+                Log.v(TAG, " Preference Manager is unknown...")
+                return
+            }
+            val editor = preference.edit()
+            editor.putBoolean(IPreferencePropertyAccessor.PREFERENCE_EXPORT_ARCHIVE_ONLY_ONE_FILE, value)
+            editor.apply()
+            archiveOnlyOneFile.value = value
         }
         catch (e: Exception)
         {

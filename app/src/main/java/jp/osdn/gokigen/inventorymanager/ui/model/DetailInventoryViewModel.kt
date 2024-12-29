@@ -22,22 +22,34 @@ class DetailInventoryViewModel: ViewModel(), RecognizeFromIsbnCallback {
     private val isQueryEnable: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val isEnableQuery: LiveData<Boolean> = isQueryEnable
 
+    private val isSubtitleEdit: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
+    val isSubtitleEditing: LiveData<Boolean> = isSubtitleEdit
+
     private val isIsbnEdit: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val isIsbnEditing: LiveData<Boolean> = isIsbnEdit
+
+    private val isCategoryEdit: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
+    val isCategoryEditing: LiveData<Boolean> = isCategoryEdit
 
     fun initializeViewModel() {
         try {
             Log.v(TAG, "DetailInventoryViewModel::initializeViewModel()")
             isUpdate.value = false
             isQueryEnable.value = true
+            isSubtitleEdit.value = false
             isIsbnEdit.value = false
-        } catch (e: Exception) {
+            isCategoryEdit.value = false
+        }
+        catch (e: Exception)
+        {
             e.printStackTrace()
         }
     }
 
-    fun initializeData(id: Long) {
-        try {
+    fun initializeData(id: Long)
+    {
+        try
+        {
             val coroutineScope = CoroutineScope(Dispatchers.Main)
             Thread {
                 val storageDao = AppSingleton.db.storageDao()
@@ -49,19 +61,36 @@ class DetailInventoryViewModel: ViewModel(), RecognizeFromIsbnCallback {
                 }
                 Log.v(TAG, "Update Detail Data : $id")
             }.start()
-        } catch (e: Exception) {
+        }
+        catch (e: Exception)
+        {
             e.printStackTrace()
         }
     }
 
-    fun toggleIsbnEditButtonStatus(isEnable: Boolean)
+    fun toggleEditButtonStatus(textFieldId: TextFieldId, isEnable: Boolean)
     {
-        isIsbnEdit.value = !isEnable
-        if (isEnable)
+        var update = false
+        when (textFieldId)
         {
-            isUpdate.value = true
-            isQueryEnable.value = false
+            TextFieldId.SUBTITLE -> {
+                isSubtitleEdit.value = !isEnable
+                update = true
+            }
+            TextFieldId.ISBN -> {
+                isIsbnEdit.value = !isEnable
+                update = true
+            }
+            TextFieldId.CATEGORY -> {
+                isCategoryEdit.value = !isEnable
+                update = true
+            }
+            else -> { }
         }
+
+        // ----- 編集ボタンを押したら、ISBNでの情報更新は無効にする
+        isUpdate.value = update
+        isQueryEnable.value = false
     }
 
     fun updateButtonEnable(isEnableUpdate: Boolean, isEnableQuery: Boolean)
@@ -70,23 +99,23 @@ class DetailInventoryViewModel: ViewModel(), RecognizeFromIsbnCallback {
         this.isQueryEnable.value = isEnableQuery
     }
 
-    fun updateIsbn(id: Long, isbn: String)
+    fun updateValueSingle(id: Long, textFieldId: TextFieldId, value: String)
     {
         try
         {
             val newContent = DataContent(
                 id = id,
-                title = content.value?.title,
-                subTitle = content.value?.subTitle,
-                author = content.value?.author,
-                publisher = content.value?.publisher,
+                title = if (textFieldId == TextFieldId.TITLE) { value } else { content.value?.title },
+                subTitle = if (textFieldId == TextFieldId.SUBTITLE) { value } else { content.value?.subTitle },
+                author = if (textFieldId == TextFieldId.AUTHOR) { value } else { content.value?.author },
+                publisher = if (textFieldId == TextFieldId.PUBLISHER) { value } else { content.value?.publisher },
                 description = content.value?.description,
-                isbn = isbn,
+                isbn = if (textFieldId == TextFieldId.ISBN) { value } else { content.value?.isbn },
                 productId = content.value?.productId,
                 urlStr = content.value?.urlStr,
                 bcrText = content.value?.bcrText,
-                note = content.value?.note,
-                category = content.value?.category,
+                note = if (textFieldId == TextFieldId.TEXT) { value } else { content.value?.note },
+                category = if (textFieldId == TextFieldId.CATEGORY) { value } else { content.value?.category },
                 imageFile1 = content.value?.imageFile1,
                 imageFile2 = content.value?.imageFile2,
                 imageFile3 = content.value?.imageFile3,
@@ -156,6 +185,5 @@ class DetailInventoryViewModel: ViewModel(), RecognizeFromIsbnCallback {
     {
         private val TAG = DetailInventoryViewModel::class.java.simpleName
     }
-
 
 }

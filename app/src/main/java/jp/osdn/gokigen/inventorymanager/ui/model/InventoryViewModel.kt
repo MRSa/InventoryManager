@@ -6,13 +6,14 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import jp.osdn.gokigen.inventorymanager.AppSingleton
+import jp.osdn.gokigen.inventorymanager.export.DataExporter
 import jp.osdn.gokigen.inventorymanager.storage.DataContent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class InventoryViewModel: ViewModel()
+class InventoryViewModel: ViewModel(), DataExporter.IExportProgressCallback
 {
     private val storageDao = AppSingleton.db.storageDao()
     val dataList = mutableStateListOf<DataContent>()
@@ -60,6 +61,24 @@ class InventoryViewModel: ViewModel()
         {
             e.printStackTrace()
         }
+    }
+
+    override fun startExportFile(fileName: String) {
+        Log.v(TAG, "startExportFile(): $fileName")
+    }
+
+    override fun progressExportFile(currentFileCount: Int, totalFileCount: Int) {
+        val percent = (currentFileCount.toFloat() / totalFileCount.toFloat()) * 100.0f
+        Log.v(TAG, " progressExportFile() $currentFileCount/$totalFileCount (${String.format("%.1f", percent)} %)")
+    }
+
+    override fun finishExportFile(
+        fileName: String,
+        exportNG: Int,
+        totalFile: Int,
+        archiveOnlyOneFile: Boolean
+    ) {
+        Log.v(TAG, "finishExportFile : $fileName, NG:$exportNG (total:$totalFile) one file: $archiveOnlyOneFile")
     }
 
     companion object

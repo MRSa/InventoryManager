@@ -22,7 +22,7 @@ class RecognizeFromIsbn(private val activity: AppCompatActivity)
 {
     private val storageDao = AppSingleton.db.storageDao()
 
-    fun doRecognizeAllFromIsbn()
+    fun doRecognizeAllFromIsbn(callback: RecognizeDataFromIsbnCallback?)
     {
         try
         {
@@ -32,7 +32,7 @@ class RecognizeFromIsbn(private val activity: AppCompatActivity)
                 IPreferencePropertyAccessor.PREFERENCE_OVERWRITE_FROM_ISBN_TO_TITLE_DEFAULT_VALUE
             )
             Log.v(TAG, "doRecognizeAllFromIsbn($isOverwrite)")
-            Thread { recognizeAllFromIsbn(isOverwrite) }.start()
+            Thread { recognizeAllFromIsbn(isOverwrite, callback) }.start()
         }
         catch (e: Exception)
         {
@@ -163,11 +163,12 @@ class RecognizeFromIsbn(private val activity: AppCompatActivity)
         }
     }
 
-    private fun recognizeAllFromIsbn(isOverwrite: Boolean)
+    private fun recognizeAllFromIsbn(isOverwrite: Boolean, callback: RecognizeDataFromIsbnCallback?)
     {
         try
         {
             activity.runOnUiThread {
+                callback?.startRecognizeFromIsbn()
                 Toast.makeText(activity, activity.getString(R.string.label_data_start_update_record), Toast.LENGTH_SHORT).show()
             }
 
@@ -258,6 +259,7 @@ class RecognizeFromIsbn(private val activity: AppCompatActivity)
             Log.v(TAG, " ----- recognizeFromIsbn() : update ${updateRecordList.size} records Done.")
 
             activity.runOnUiThread {
+                callback?.finishRecognizeFromIsbn()
                 Toast.makeText(activity, "${activity.getString(R.string.label_data_finish_update_record)} ${updateRecordList.size} ${activity.getString(R.string.label_data_finish_update_record_counts)}", Toast.LENGTH_SHORT).show()
             }
         }
@@ -265,6 +267,12 @@ class RecognizeFromIsbn(private val activity: AppCompatActivity)
         {
             e.printStackTrace()
         }
+    }
+
+    interface RecognizeDataFromIsbnCallback
+    {
+        fun startRecognizeFromIsbn()
+        fun finishRecognizeFromIsbn()
     }
 
     companion object

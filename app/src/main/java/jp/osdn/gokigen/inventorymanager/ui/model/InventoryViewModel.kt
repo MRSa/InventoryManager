@@ -7,16 +7,20 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import jp.osdn.gokigen.inventorymanager.AppSingleton
 import jp.osdn.gokigen.inventorymanager.export.DataExporter
+import jp.osdn.gokigen.inventorymanager.recognize.RecognizeFromIsbn
 import jp.osdn.gokigen.inventorymanager.storage.DataContent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class InventoryViewModel: ViewModel(), DataExporter.IExportProgressCallback
+class InventoryViewModel: ViewModel(), DataExporter.IExportProgressCallback, RecognizeFromIsbn.RecognizeDataFromIsbnCallback
 {
     private val storageDao = AppSingleton.db.storageDao()
     val dataList = mutableStateListOf<DataContent>()
+
+    private val isUpdatingFromIsbn : MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
+    val isUpdatingDataFromIsbn: LiveData<Boolean> = isUpdatingFromIsbn
 
     private val isRefreshing : MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val refreshingData: LiveData<Boolean> = isRefreshing
@@ -30,14 +34,19 @@ class InventoryViewModel: ViewModel(), DataExporter.IExportProgressCallback
     private val lastExportedFileCount : MutableLiveData<Int> by lazy { MutableLiveData<Int>() }
     val lastExportFileCount: LiveData<Int> = lastExportedFileCount
 
+    private val lastTotalExportedFileCount : MutableLiveData<Int> by lazy { MutableLiveData<Int>() }
+    val lastExportTotalFileCount: LiveData<Int> = lastTotalExportedFileCount
+
     fun initializeViewModel()
     {
         try
         {
+            isUpdatingFromIsbn.value = false
             isRefreshing.value = false
             isExporting.value = false
             exportingProgress.value = 0.0f
             lastExportedFileCount.value = 0
+            lastTotalExportedFileCount.value = 0
         }
         catch (e: Exception)
         {
@@ -92,6 +101,7 @@ class InventoryViewModel: ViewModel(), DataExporter.IExportProgressCallback
         Log.v(TAG, " progressExportFile() $currentFileCount/$totalFileCount (${String.format("%.1f", percent)} %)")
         exportingProgress.value = percent
         lastExportedFileCount.value = currentFileCount
+        lastTotalExportedFileCount.value = totalFileCount
     }
 
     override fun finishExportFile(
@@ -105,12 +115,23 @@ class InventoryViewModel: ViewModel(), DataExporter.IExportProgressCallback
         {
             isExporting.value = false
             exportingProgress.value = 0.0f
+            lastTotalExportedFileCount.value = totalFile
             lastExportedFileCount.value = totalFile - exportNG
         }
         catch (e: Exception)
         {
             e.printStackTrace()
         }
+    }
+
+    override fun startRecognizeFromIsbn()
+    {
+        isUpdatingFromIsbn.value = true
+    }
+
+    override fun finishRecognizeFromIsbn()
+    {
+        isUpdatingFromIsbn.value = false
     }
 
     companion object

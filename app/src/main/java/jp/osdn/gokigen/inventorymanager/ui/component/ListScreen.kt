@@ -1,6 +1,5 @@
 package jp.osdn.gokigen.inventorymanager.ui.component
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -9,14 +8,12 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
@@ -84,9 +81,11 @@ fun ListScreen(navController: NavHostController, viewModel : InventoryViewModel,
             HorizontalDivider(thickness = 1.dp)
             Spacer(Modifier.size(padding))
             ReceivedContentList(navController, viewModel)
+            ShowBusyDialogsAtListScreen(viewModel)
         }
     }
 }
+
 /*
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -118,7 +117,7 @@ fun MainTopBar(navController: NavHostController)
 @Composable
 fun CommandPanel(navController: NavHostController, dataListModel : InventoryViewModel, exporter: DataExporter, recognizer: RecognizeFromIsbn)
 {
-    val exporting = dataListModel.dataExporting.observeAsState()
+
     Row()
     {
         IconButton(
@@ -155,7 +154,7 @@ fun CommandPanel(navController: NavHostController, dataListModel : InventoryView
         IconButton(
             modifier = Modifier,
             onClick = {
-                recognizer.doRecognizeAllFromIsbn()
+                recognizer.doRecognizeAllFromIsbn(dataListModel)
             })
         {
             Icon(
@@ -188,55 +187,74 @@ fun CommandPanel(navController: NavHostController, dataListModel : InventoryView
                 contentDescription = "export")
         }
     }
-
-    // ----- エクスポート中ダイアログを表示する
-    if (exporting.value == true)
-    {
-        ShowExportingDialog(dataListModel)
-    }
 }
 
 @Composable
 fun ShowExportingDialog(dataListModel: InventoryViewModel)
 {
-    val exporting = dataListModel.dataExporting.observeAsState()
     val percent = dataListModel.exportingProgressPercent.observeAsState()
     val fileCount = dataListModel.lastExportFileCount.observeAsState()
-    val message = "${stringResource(R.string.label_data_exporting)} \n   ${fileCount.value} (${String.format(US, "%.1f", percent.value)} %)"
+    val totalCount = dataListModel.lastExportTotalFileCount.observeAsState()
+    val message = "${stringResource(R.string.label_data_exporting)} \n   ${fileCount.value}/${totalCount.value} (${String.format(US, "%.1f", percent.value)} %)"
+    AlertDialog(
+        onDismissRequest = { },
+        title = { Text(message) },
+        text = {
+            Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                CircularProgressIndicator()
+            }
+        },
+        confirmButton = { },
+        dismissButton = null
+    )
+}
+
+@Composable
+fun ShowUpdatingDialog(message: String)
+{
+    AlertDialog(
+        onDismissRequest = { },
+        title = { Text(message) },
+        text = {
+            Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                CircularProgressIndicator()
+            }
+        },
+        confirmButton = { },
+        dismissButton = null
+    )
+}
+
+@Composable
+fun ShowBusyDialogsAtListScreen(dataListModel: InventoryViewModel)
+{
+    // ----- エクスポート中ダイアログを表示する
+    val exporting = dataListModel.dataExporting.observeAsState()
     if (exporting.value == true)
     {
-        AlertDialog(
-            onDismissRequest = { },
-            title = { Text(message) },
-            text = {
-                Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-                    CircularProgressIndicator()
-                }
-            },
-            confirmButton = { },
-            dismissButton = null
-        )
+        ShowExportingDialog(dataListModel)
+    }
+
+    // ----- 更新中ダイアログを表示する (ISBNを使ってインターネット経由で更新）
+    val updateContentFromIsbn = dataListModel.isUpdatingDataFromIsbn.observeAsState()
+    if (updateContentFromIsbn.value == true)
+    {
+        ShowUpdatingDialog(stringResource(R.string.label_data_updating_record))
+    }
+
+    // ----- データ更新中ダイアログを表示する （データベースを取得する）
+    val information = dataListModel.refreshingData.observeAsState()
+    if (information.value == true)
+    {
+        ShowUpdatingDialog(stringResource(R.string.data_updating))
     }
 }
+
 
 @Composable
 fun ReceivedContentList(navController: NavHostController, dataListModel: InventoryViewModel)
 {
-    val information = dataListModel.refreshingData.observeAsState()
     val listState = rememberLazyListState()
-    if (information.value == true)
-    {
-        Row()
-        {
-            Icon(Icons.Default.Warning, "Warning", tint = MaterialTheme.colorScheme.onTertiary)
-            Text(
-                fontSize = 14.sp,
-                text = stringResource(R.string.data_updating),
-                color = MaterialTheme.colorScheme.onTertiary,
-                modifier = Modifier.fillMaxWidth().padding(bottom = 2.dp)
-            )
-        }
-    }
     if (dataListModel.dataList.isEmpty()) {
         Column(
             modifier = Modifier.fillMaxSize(),

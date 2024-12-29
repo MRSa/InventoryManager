@@ -40,6 +40,9 @@ class DetailInventoryViewModel: ViewModel(), RecognizeFromIsbnCallback {
     private val isCategoryEdit: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val isCategoryEditing: LiveData<Boolean> = isCategoryEdit
 
+    private val isNoteEdit: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
+    val isNoteEditing: LiveData<Boolean> = isNoteEdit
+
     fun initializeViewModel()
     {
         try
@@ -53,6 +56,7 @@ class DetailInventoryViewModel: ViewModel(), RecognizeFromIsbnCallback {
             isTitleEdit.value = false
             isAuthorEdit.value = false
             isPublisherEdit.value = false
+            isNoteEdit.value = false
         }
         catch (e: Exception)
         {
@@ -72,6 +76,15 @@ class DetailInventoryViewModel: ViewModel(), RecognizeFromIsbnCallback {
                     content.value = value
                     isUpdate.value = false
                     isQueryEnable.value = true
+
+                    // ----- 編集モードはいったんリセット
+                    isSubtitleEdit.value = false
+                    isIsbnEdit.value = false
+                    isCategoryEdit.value = false
+                    isTitleEdit.value = false
+                    isAuthorEdit.value = false
+                    isPublisherEdit.value = false
+                    isNoteEdit.value = false
                 }
                 Log.v(TAG, "Update Detail Data : $id")
             }.start()
@@ -111,7 +124,21 @@ class DetailInventoryViewModel: ViewModel(), RecognizeFromIsbnCallback {
                 isCategoryEdit.value = !isEnable
                 update = true
             }
-            else -> { }
+            TextFieldId.TEXT -> {
+                isNoteEdit.value = !isEnable
+                update = true
+            }
+        }
+        if ((update)&&((isTitleEdit.value == true)||
+                    (isSubtitleEdit.value == true)||
+                    (isAuthorEdit.value == true)||
+                    (isPublisherEdit.value == true)||
+                    (isIsbnEdit.value == true)||
+                    (isCategoryEdit.value == true)||
+                    (isNoteEdit.value == true)))
+        {
+            // データのどれかが編集中の時は、更新ボタンは有効にしない
+            update = false
         }
 
         // ----- 編集ボタンを押したら、ISBNでの情報更新は無効にする

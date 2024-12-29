@@ -61,8 +61,8 @@ interface DataContentDao
     @Query("UPDATE contents SET title = :title, sub_title = :subTitle, author = :author, publisher = :publisher, category = :category, update_date = :updateDate WHERE id = :id")
     fun updateContent(id: Long, title: String, subTitle: String, author: String, publisher: String, category: String, updateDate: Date)
 
-    @Query("UPDATE contents SET title = :title, sub_title = :subTitle, author = :author, publisher = :publisher, isbn = :isbn, category = :category, update_date = :updateDate WHERE id = :id")
-    fun updateContentWithIsbn(id: Long, title: String, subTitle: String, author: String, publisher: String, isbn: String, category: String, updateDate: Date)
+    @Query("UPDATE contents SET title = :title, sub_title = :subTitle, author = :author, publisher = :publisher, isbn = :isbn, category = :category, note = :note, update_date = :updateDate WHERE id = :id")
+    fun updateContentWithIsbn(id: Long, title: String, subTitle: String, author: String, publisher: String, isbn: String, category: String, note: String, updateDate: Date)
 
     @Query("UPDATE contents SET image_file_1_name = :imageFile1, image_file_2_name = :imageFile2, image_file_3_name = :imageFile3, image_file_4_name = :imageFile4, image_file_5_name = :imageFile5, update_date = :updateDate WHERE id = :id")
     fun setImageFileName(id: Long, imageFile1: String, imageFile2: String, imageFile3: String, imageFile4: String, imageFile5: String, updateDate: Date)

@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -189,6 +188,7 @@ fun DetailScreen(navController: NavHostController, viewModel : DetailInventoryVi
                             val publisher = detail.value?.publisher ?: ""
                             val isbn = detail.value?.isbn ?: ""
                             val category = detail.value?.category ?: ""
+                            val note = detail.value?.note ?: ""
                             val currentDate = Date()
                             viewModel.updateButtonEnable(
                                 isEnableUpdate = false,
@@ -205,6 +205,7 @@ fun DetailScreen(navController: NavHostController, viewModel : DetailInventoryVi
                                         publisher = publisher,
                                         isbn = isbn,
                                         category = category,
+                                        note = note,
                                         updateDate = currentDate
                                     )
                                 }
@@ -236,9 +237,10 @@ fun ShowTextInputData(id: Long, itemId: TextFieldId, label: String, value: Strin
     val isTitleEditing = viewModel.isTitleEditing.observeAsState()
     val isAuthorEditing = viewModel.isAuthorEditing.observeAsState()
     val isPublisherEditing = viewModel.isPublisherEditing.observeAsState()
+    val isNoteEditing = viewModel.isNoteEditing.observeAsState()
 
     Row(
-        modifier = Modifier.fillMaxWidth().height(50.dp).padding(horizontal = 4.dp),
+        modifier = Modifier.fillMaxWidth().padding(horizontal = 4.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
@@ -254,7 +256,7 @@ fun ShowTextInputData(id: Long, itemId: TextFieldId, label: String, value: Strin
                 TextFieldId.PUBLISHER -> { isPublisherEditing.value ?: false }
                 TextFieldId.ISBN -> { isIsbnEditing.value ?: false }
                 TextFieldId.CATEGORY -> { isCategoryEditing.value ?: false }
-                TextFieldId.TEXT -> { false }
+                TextFieldId.TEXT -> { isNoteEditing.value ?: false }
             },
             value = value,
             singleLine = isSingleLine,
@@ -266,7 +268,7 @@ fun ShowTextInputData(id: Long, itemId: TextFieldId, label: String, value: Strin
                     TextFieldId.PUBLISHER -> { viewModel.updateValueSingle(id, TextFieldId.PUBLISHER, it) }
                     TextFieldId.ISBN -> { viewModel.updateValueSingle(id, TextFieldId.ISBN, it) }
                     TextFieldId.CATEGORY -> { viewModel.updateValueSingle(id, TextFieldId.CATEGORY, it) }
-                    TextFieldId.TEXT -> {  }
+                    TextFieldId.TEXT -> { viewModel.updateValueSingle(id, TextFieldId.TEXT, it) }
                 }
             },
             modifier = Modifier.weight(5.0f),
@@ -278,7 +280,7 @@ fun ShowTextInputData(id: Long, itemId: TextFieldId, label: String, value: Strin
                 TextFieldId.PUBLISHER -> { KeyboardOptions(keyboardType = KeyboardType.Text) }
                 TextFieldId.ISBN -> { KeyboardOptions(keyboardType = KeyboardType.Number) }
                 TextFieldId.CATEGORY -> { KeyboardOptions(keyboardType = KeyboardType.Text) }
-                else -> { KeyboardOptions() }
+                TextFieldId.TEXT -> { KeyboardOptions() }
             },
             visualTransformation = VisualTransformation.None
         )
@@ -292,7 +294,7 @@ fun ShowTextInputData(id: Long, itemId: TextFieldId, label: String, value: Strin
                 TextFieldId.PUBLISHER -> { true }
                 TextFieldId.ISBN -> { true }
                 TextFieldId.CATEGORY -> { true }
-                TextFieldId.TEXT -> { false }
+                TextFieldId.TEXT -> { true }
             },
             onClick = {
                 when (itemId)
@@ -315,7 +317,9 @@ fun ShowTextInputData(id: Long, itemId: TextFieldId, label: String, value: Strin
                     TextFieldId.CATEGORY -> {
                         viewModel.toggleEditButtonStatus(TextFieldId.CATEGORY, isCategoryEditing.value ?: false)
                     }
-                    TextFieldId.TEXT -> { }
+                    TextFieldId.TEXT -> {
+                        viewModel.toggleEditButtonStatus(TextFieldId.TEXT, isNoteEditing.value ?: false)
+                    }
                 }
             },
             colors = when (itemId)
@@ -398,28 +402,61 @@ fun ShowTextInputData(id: Long, itemId: TextFieldId, label: String, value: Strin
                         ButtonDefaults.buttonColors()
                     }
                 }
-                else -> ButtonDefaults.buttonColors()
+                TextFieldId.TEXT -> {
+                    if (isNoteEditing.value == true)
+                    {
+                        ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                            contentColor = MaterialTheme.colorScheme.onPrimary
+                        )
+                    }
+                    else
+                    {
+                        ButtonDefaults.buttonColors()
+                    }
+                }
             }
         )
         {
             Text(
                 when (itemId)
                 {
-                    TextFieldId.TITLE -> { stringResource(R.string.button_label_edit)  }
-                    TextFieldId.SUBTITLE -> {
-                        if (isSubtitleEditing.value == true)
-                        {
+                    TextFieldId.TITLE -> {
+                        if (isTitleEditing.value == true) {
                             // --- 編集中の時には、ボタンを「確定」にする
                             stringResource(R.string.button_label_set)
-                        }
-                        else
-                        {
+                        } else {
                             // --- 通常は、「編集」ボタン
                             stringResource(R.string.button_label_edit)
                         }
                     }
-                    TextFieldId.AUTHOR -> { stringResource(R.string.button_label_edit) }
-                    TextFieldId.PUBLISHER -> {stringResource(R.string.button_label_edit)  }
+                    TextFieldId.SUBTITLE -> {
+                        if (isSubtitleEditing.value == true) {
+                            // --- 編集中の時には、ボタンを「確定」にする
+                            stringResource(R.string.button_label_set)
+                        } else {
+                            // --- 通常は、「編集」ボタン
+                            stringResource(R.string.button_label_edit)
+                        }
+                    }
+                    TextFieldId.AUTHOR -> {
+                        if (isAuthorEditing.value == true) {
+                            // --- 編集中の時には、ボタンを「確定」にする
+                            stringResource(R.string.button_label_set)
+                        } else {
+                            // --- 通常は、「編集」ボタン
+                            stringResource(R.string.button_label_edit)
+                        }
+                    }
+                    TextFieldId.PUBLISHER -> {
+                        if (isPublisherEditing.value == true) {
+                            // --- 編集中の時には、ボタンを「確定」にする
+                            stringResource(R.string.button_label_set)
+                        } else {
+                            // --- 通常は、「編集」ボタン
+                            stringResource(R.string.button_label_edit)
+                        }
+                    }
                     TextFieldId.ISBN -> {
                         if (isIsbnEditing.value == true)
                         {
@@ -444,7 +481,15 @@ fun ShowTextInputData(id: Long, itemId: TextFieldId, label: String, value: Strin
                             stringResource(R.string.button_label_edit)
                         }
                     }
-                    TextFieldId.TEXT -> { stringResource(R.string.button_label_edit) }
+                    TextFieldId.TEXT -> {
+                        if (isNoteEditing.value == true) {
+                            // --- 編集中の時には、ボタンを「確定」にする
+                            stringResource(R.string.button_label_set)
+                        } else {
+                            // --- 通常は、「編集」ボタン
+                            stringResource(R.string.button_label_edit)
+                        }
+                    }
                 }
             )
         }

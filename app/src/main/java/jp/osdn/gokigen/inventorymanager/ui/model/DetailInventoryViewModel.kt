@@ -22,6 +22,15 @@ class DetailInventoryViewModel: ViewModel(), RecognizeFromIsbnCallback {
     private val isQueryEnable: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val isEnableQuery: LiveData<Boolean> = isQueryEnable
 
+    private val isTitleEdit: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
+    val isTitleEditing: LiveData<Boolean> = isTitleEdit
+
+    private val isAuthorEdit: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
+    val isAuthorEditing: LiveData<Boolean> = isAuthorEdit
+
+    private val isPublisherEdit: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
+    val isPublisherEditing: LiveData<Boolean> = isPublisherEdit
+
     private val isSubtitleEdit: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val isSubtitleEditing: LiveData<Boolean> = isSubtitleEdit
 
@@ -31,14 +40,19 @@ class DetailInventoryViewModel: ViewModel(), RecognizeFromIsbnCallback {
     private val isCategoryEdit: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val isCategoryEditing: LiveData<Boolean> = isCategoryEdit
 
-    fun initializeViewModel() {
-        try {
+    fun initializeViewModel()
+    {
+        try
+        {
             Log.v(TAG, "DetailInventoryViewModel::initializeViewModel()")
             isUpdate.value = false
             isQueryEnable.value = true
             isSubtitleEdit.value = false
             isIsbnEdit.value = false
             isCategoryEdit.value = false
+            isTitleEdit.value = false
+            isAuthorEdit.value = false
+            isPublisherEdit.value = false
         }
         catch (e: Exception)
         {
@@ -73,8 +87,20 @@ class DetailInventoryViewModel: ViewModel(), RecognizeFromIsbnCallback {
         var update = false
         when (textFieldId)
         {
+            TextFieldId.TITLE -> {
+                isTitleEdit.value = !isEnable
+                update = true
+            }
             TextFieldId.SUBTITLE -> {
                 isSubtitleEdit.value = !isEnable
+                update = true
+            }
+            TextFieldId.AUTHOR -> {
+                isAuthorEdit.value = !isEnable
+                update = true
+            }
+            TextFieldId.PUBLISHER -> {
+                isPublisherEdit.value = !isEnable
                 update = true
             }
             TextFieldId.ISBN -> {

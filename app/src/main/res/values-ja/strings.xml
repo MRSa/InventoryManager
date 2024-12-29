@@ -27,7 +27,7 @@
     <string name="label_switch_overwrite_information_from_isbn">ISBNで取得した情報でデータを上書きする</string>
     <string name="description_switch_overwrite_information_from_isbn">ONにすると、既に情報が記入されていてもISBNで取得したデータで上書きします。</string>
 
-    <string name="label_switch_exports_only_one_file">エクスポートデータを1つのファイルにまとめる</string>
+    <string name="label_switch_exports_only_one_file">1つのファイルにまとめてエクスポート</string>
     <string name="description_switch_exports_only_one_file">ONにすると、データを１つのファイルにまとめてエクスポートします。</string>
 
     <string name="label_return_to_main_screen">メイン画面に戻る</string>

@@ -232,6 +232,11 @@ fun ShowTextInputData(id: Long, itemId: TextFieldId, label: String, value: Strin
     val isSubtitleEditing = viewModel.isSubtitleEditing.observeAsState()
     val isIsbnEditing = viewModel.isIsbnEditing.observeAsState()
     val isCategoryEditing = viewModel.isCategoryEditing.observeAsState()
+
+    val isTitleEditing = viewModel.isTitleEditing.observeAsState()
+    val isAuthorEditing = viewModel.isAuthorEditing.observeAsState()
+    val isPublisherEditing = viewModel.isPublisherEditing.observeAsState()
+
     Row(
         modifier = Modifier.fillMaxWidth().height(50.dp).padding(horizontal = 4.dp),
         verticalAlignment = Alignment.CenterVertically
@@ -243,10 +248,10 @@ fun ShowTextInputData(id: Long, itemId: TextFieldId, label: String, value: Strin
         )
         TextField(
             enabled = when (itemId) {
-                TextFieldId.TITLE -> { false }
+                TextFieldId.TITLE -> { isTitleEditing.value ?: false }
                 TextFieldId.SUBTITLE -> { isSubtitleEditing.value ?: false }
-                TextFieldId.AUTHOR -> { false }
-                TextFieldId.PUBLISHER -> {false }
+                TextFieldId.AUTHOR -> { isAuthorEditing.value ?: false }
+                TextFieldId.PUBLISHER -> { isPublisherEditing.value ?: false }
                 TextFieldId.ISBN -> { isIsbnEditing.value ?: false }
                 TextFieldId.CATEGORY -> { isCategoryEditing.value ?: false }
                 TextFieldId.TEXT -> { false }
@@ -255,10 +260,10 @@ fun ShowTextInputData(id: Long, itemId: TextFieldId, label: String, value: Strin
             singleLine = isSingleLine,
             onValueChange = {
                 when (itemId) {
-                    TextFieldId.TITLE -> {  }
+                    TextFieldId.TITLE -> { viewModel.updateValueSingle(id, TextFieldId.TITLE, it) }
                     TextFieldId.SUBTITLE -> { viewModel.updateValueSingle(id, TextFieldId.SUBTITLE, it) }
-                    TextFieldId.AUTHOR -> {  }
-                    TextFieldId.PUBLISHER -> { }
+                    TextFieldId.AUTHOR -> { viewModel.updateValueSingle(id, TextFieldId.AUTHOR, it)  }
+                    TextFieldId.PUBLISHER -> { viewModel.updateValueSingle(id, TextFieldId.PUBLISHER, it) }
                     TextFieldId.ISBN -> { viewModel.updateValueSingle(id, TextFieldId.ISBN, it) }
                     TextFieldId.CATEGORY -> { viewModel.updateValueSingle(id, TextFieldId.CATEGORY, it) }
                     TextFieldId.TEXT -> {  }
@@ -267,7 +272,10 @@ fun ShowTextInputData(id: Long, itemId: TextFieldId, label: String, value: Strin
             modifier = Modifier.weight(5.0f),
             textStyle = TextStyle(fontSize = 16.sp),
             keyboardOptions = when (itemId) {
+                TextFieldId.TITLE -> { KeyboardOptions(keyboardType = KeyboardType.Text) }
                 TextFieldId.SUBTITLE -> { KeyboardOptions(keyboardType = KeyboardType.Text) }
+                TextFieldId.AUTHOR -> { KeyboardOptions(keyboardType = KeyboardType.Text) }
+                TextFieldId.PUBLISHER -> { KeyboardOptions(keyboardType = KeyboardType.Text) }
                 TextFieldId.ISBN -> { KeyboardOptions(keyboardType = KeyboardType.Number) }
                 TextFieldId.CATEGORY -> { KeyboardOptions(keyboardType = KeyboardType.Text) }
                 else -> { KeyboardOptions() }
@@ -278,10 +286,10 @@ fun ShowTextInputData(id: Long, itemId: TextFieldId, label: String, value: Strin
         Button(
             contentPadding = PaddingValues(8.dp),
             enabled = when (itemId) {
-                TextFieldId.TITLE -> { false }
+                TextFieldId.TITLE -> { true }
                 TextFieldId.SUBTITLE -> { true }
-                TextFieldId.AUTHOR -> { false }
-                TextFieldId.PUBLISHER -> { false }
+                TextFieldId.AUTHOR -> { true }
+                TextFieldId.PUBLISHER -> { true }
                 TextFieldId.ISBN -> { true }
                 TextFieldId.CATEGORY -> { true }
                 TextFieldId.TEXT -> { false }
@@ -289,12 +297,18 @@ fun ShowTextInputData(id: Long, itemId: TextFieldId, label: String, value: Strin
             onClick = {
                 when (itemId)
                 {
-                    TextFieldId.TITLE -> { }
+                    TextFieldId.TITLE -> {
+                        viewModel.toggleEditButtonStatus(TextFieldId.TITLE, isTitleEditing.value ?: false)
+                    }
                     TextFieldId.SUBTITLE -> {
                         viewModel.toggleEditButtonStatus(TextFieldId.SUBTITLE, isSubtitleEditing.value ?: false)
                     }
-                    TextFieldId.AUTHOR -> { }
-                    TextFieldId.PUBLISHER -> { }
+                    TextFieldId.AUTHOR -> {
+                        viewModel.toggleEditButtonStatus(TextFieldId.AUTHOR, isAuthorEditing.value ?: false)
+                    }
+                    TextFieldId.PUBLISHER -> {
+                        viewModel.toggleEditButtonStatus(TextFieldId.PUBLISHER, isPublisherEditing.value ?: false)
+                    }
                     TextFieldId.ISBN -> {
                         viewModel.toggleEditButtonStatus(TextFieldId.ISBN, isIsbnEditing.value ?: false)
                     }
@@ -306,8 +320,47 @@ fun ShowTextInputData(id: Long, itemId: TextFieldId, label: String, value: Strin
             },
             colors = when (itemId)
             {
+                TextFieldId.TITLE -> {
+                    if (isTitleEditing.value == true)
+                    {
+                        ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                            contentColor = MaterialTheme.colorScheme.onPrimary
+                        )
+                    }
+                    else
+                    {
+                        ButtonDefaults.buttonColors()
+                    }
+                }
                 TextFieldId.SUBTITLE -> {
                     if (isSubtitleEditing.value == true)
+                    {
+                        ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                            contentColor = MaterialTheme.colorScheme.onPrimary
+                        )
+                    }
+                    else
+                    {
+                        ButtonDefaults.buttonColors()
+                    }
+                }
+                TextFieldId.AUTHOR -> {
+                    if (isAuthorEditing.value == true)
+                    {
+                        ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                            contentColor = MaterialTheme.colorScheme.onPrimary
+                        )
+                    }
+                    else
+                    {
+                        ButtonDefaults.buttonColors()
+                    }
+                }
+                TextFieldId.PUBLISHER -> {
+                    if (isPublisherEditing.value == true)
                     {
                         ButtonDefaults.buttonColors(
                             containerColor = MaterialTheme.colorScheme.onPrimaryContainer,

@@ -51,7 +51,16 @@
     <string name="label_import_file_name">File Name: </string>
     <string name="label_no_import_file_name">(no Select)</string>
     <string name="label_select_file">Select… </string>
-    <string name="label_analyze_file">Analyze…</string>
+    <string name="label_analyze_file">Check…</string>
+    <string name="failure_file_not_find">Cannot open the specified file.</string>
+    <string name="label_check_zip_file">Check the content in the archive file… </string>
+    <string name="failure_import_no_data">Cannot open the import file.</string>
+    <string name="dialog_title_start_import">Start Import</string>
+    <string name="dialog_button_ok">OK</string>
+    <string name="dialog_button_cancel">Cancel</string>
+    <string name="dialog_message_start_import_1">Do you want to import </string>
+    <string name="dialog_message_start_import_2"> data items? </string>
+    <string name="dialog_progress_proceed">Executing…</string>
 
     <string name="label_data_start_export">Start data export… </string>
     <string name="label_data_exporting">Data exporting… </string>

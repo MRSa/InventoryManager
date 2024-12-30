@@ -110,7 +110,10 @@ fun SwitchCheckInformationImmediately(prefsModel: PreferenceViewModel)
     val density = LocalDensity.current
     val scope = rememberCoroutineScope()
     val checkImmediately = prefsModel.checkIsbnImmediately.observeAsState()
-    Row (verticalAlignment = Alignment.CenterVertically) {
+    Row (
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.padding(horizontal = 4.dp, )
+    ) {
         Switch(
             checked = checkImmediately.value?: false,
             onCheckedChange = {
@@ -138,7 +141,10 @@ fun SwitchOverwriteInformationFromIsbn(prefsModel: PreferenceViewModel)
     val density = LocalDensity.current
     val scope = rememberCoroutineScope()
     val overwriteInfo = prefsModel.overwriteInfoFromIsbn.observeAsState()
-    Row (verticalAlignment = Alignment.CenterVertically) {
+    Row (
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.padding(horizontal = 4.dp)
+    ) {
         Switch(
             checked = overwriteInfo.value?: false,
             onCheckedChange = {
@@ -166,7 +172,10 @@ fun SwitchArchiveOnlyOneFile(prefsModel: PreferenceViewModel)
     val density = LocalDensity.current
     val scope = rememberCoroutineScope()
     val archiveFileInfo = prefsModel.archiveOneFile.observeAsState()
-    Row (verticalAlignment = Alignment.CenterVertically) {
+    Row (
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.padding(horizontal = 4.dp)
+    ) {
         Switch(
             checked = archiveFileInfo.value?: false,
             onCheckedChange = {

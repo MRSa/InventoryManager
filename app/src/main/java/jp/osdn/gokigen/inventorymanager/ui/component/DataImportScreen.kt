@@ -3,13 +3,18 @@ package jp.osdn.gokigen.inventorymanager.ui.component
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -33,21 +38,24 @@ import jp.osdn.gokigen.inventorymanager.import.GetPickFilePermission
 import jp.osdn.gokigen.inventorymanager.ui.model.DataImportViewModel
 import kotlinx.coroutines.launch
 import java.io.File
+import java.util.Locale.US
 
 @Composable
 fun DataImportScreen(navController: NavHostController, viewModel: DataImportViewModel, dataImporter: DataImporter)
 {
+    val scrollState = rememberScrollState()
     MaterialTheme {
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .verticalScroll(scrollState)
         ) {
+            HorizontalDivider(thickness = 1.dp)
             DataImportCommandPanel(navController, viewModel, dataImporter)
+            HorizontalDivider(thickness = 1.dp)
+            FilePickerForTargetFile(viewModel, dataImporter)
             Spacer(modifier = Modifier.weight(1.0f))
-            Spacer(modifier = Modifier.weight(1.0f))
-            FilePickerForTargetFile(viewModel)
-            Spacer(modifier = Modifier.weight(1.0f))
-            UnderConstructionMessage()  // 仮に表示する
+            ShowImportReadyDialog(viewModel, dataImporter)
         }
     }
 }
@@ -71,17 +79,23 @@ fun DataImportCommandPanel(navController: NavHostController, viewModel: DataImpo
         //Spacer(modifier = Modifier.weight(1f))
         Text(
             text = stringResource(id = R.string.button_label_data_import),
-            fontSize = 24.sp,
+            fontSize = 22.sp,
             textAlign = TextAlign.Center,
-            modifier = Modifier.align(Alignment.CenterVertically)
-                .clickable { navController.popBackStack() }
+            color = MaterialTheme.colorScheme.primary,
+            modifier = Modifier
+                .align(Alignment.CenterVertically)
+                .clickable {
+                    if (buttonEnable) {
+                        navController.popBackStack()
+                    }
+                }
         )
     }
 }
 
 
 @Composable
-fun FilePickerForTargetFile(viewModel: DataImportViewModel)
+fun FilePickerForTargetFile(viewModel: DataImportViewModel, dataImporter: DataImporter)
 {
     val density = LocalDensity.current
     val scope = rememberCoroutineScope()
@@ -132,10 +146,65 @@ fun FilePickerForTargetFile(viewModel: DataImportViewModel)
         Button(
             enabled = (targetUri.value != null),
             modifier = Modifier.padding(vertical = 4.dp, horizontal = 16.dp),
-            onClick = {  }
+            onClick = {
+                Thread { dataImporter.extractZipFileIntoLocal(targetUri.value, viewModel) }.start()
+            }
         ) {
             Text(stringResource(R.string.label_analyze_file))
         }
         // Spacer(modifier = Modifier.weight(1f))
+    }
+}
+
+@Composable
+fun ShowImportReadyDialog(viewModel: DataImportViewModel, dataImporter: DataImporter)
+{
+    val isReadyToImport = viewModel.readyToImport.observeAsState()
+    val dataCount = viewModel.importDataCount.observeAsState()
+    if (isReadyToImport.value == true)
+    {
+        AlertDialog(
+            onDismissRequest = { viewModel.cancelImport() },
+            title = { Text(text = stringResource(R.string.dialog_title_start_import)) },
+            text = { Text(text = "${stringResource(R.string.dialog_message_start_import_1)} ${dataCount.value} ${stringResource(R.string.dialog_message_start_import_2)}") },
+            confirmButton = {
+                Button(onClick = { Thread { dataImporter.doImport(viewModel) }.start() }) {
+                    Text(text = stringResource(R.string.dialog_button_ok))
+                }
+            },
+            dismissButton = {
+                Button(onClick = { viewModel.cancelImport() } ) {
+                    Text(text = stringResource(R.string.dialog_button_cancel))
+                }
+            }
+        )
+    }
+
+    val isImporting = viewModel.dataImporting.observeAsState()
+    val currentImportCount = viewModel.currentImportCount.observeAsState()
+    val totalCount = dataCount.value ?: 0
+    val currentCount = currentImportCount.value ?: 0
+    if (isImporting.value == true)
+    {
+        // ---- 実行中ダイアログの表示
+        val message = if ((currentCount == 0)||(totalCount == 0)) {
+            // ----- 処理カウントがゼロの場合は、「実行中」のみ表示
+            stringResource(R.string.dialog_progress_proceed)
+        } else {
+            // ----- カウントがわかる場合は、カウント表示を行う
+            val progressPercent = (currentCount.toFloat() / totalCount.toFloat()) * 100.0f
+            "${stringResource(R.string.dialog_progress_proceed)} $currentCount / $totalCount (${String.format(US, "%.1f", progressPercent)})"
+        }
+        AlertDialog(
+            onDismissRequest = { },
+            title = { Text(message) },
+            text = {
+                Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                    CircularProgressIndicator()
+                }
+            },
+            confirmButton = { },
+            dismissButton = null
+        )
     }
 }

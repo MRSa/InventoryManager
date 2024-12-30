@@ -51,7 +51,15 @@
     <string name="label_import_file_name">ファイル名： </string>
     <string name="label_no_import_file_name">(未選択)</string>
     <string name="label_select_file">選択… </string>
-    <string name="label_analyze_file">分析…</string>
+    <string name="label_analyze_file">確認…</string>
+    <string name="failure_file_not_find">指定したファイルが開けません</string>
+    <string name="label_check_zip_file">指定したファイルを確認します… </string>
+    <string name="failure_import_no_data">インポート対象ファイルが開けません</string>
+    <string name="dialog_title_start_import">インポートの開始</string>
+    <string name="dialog_message_start_import_1">Do you want to import </string>
+    <string name="dialog_message_start_import_2"> data items? </string>
+    <string name="dialog_button_ok">OK</string>
+    <string name="dialog_button_cancel">Cancel</string>
 
     <string name="label_data_start_export">エクスポートを開始… </string>
     <string name="label_data_exporting">データエクスポート中… </string>

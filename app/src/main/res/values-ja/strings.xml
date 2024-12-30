@@ -3,9 +3,10 @@
     <string name="permission_not_granted">必要な権限が有効ではありません。有効にしてください。</string>
 
     <string name="main_title_label_message">メイン</string>
-    <string name="label_main_screen_message">選択してください</string>
+    <string name="label_main_screen_message">下記より操作を選択してください</string>
     <string name="button_label_list">一覧</string>
     <string name="button_label_register">情報の登録</string>
+    <string name="button_label_data_import">情報の一括取り込み（インポート）</string>
     <string name="button_label_preference">設定</string>
     <string name="title_label_preference">設定</string>
     <string name="screen_title_registry">情報の登録</string>
@@ -20,6 +21,8 @@
     <string name="label_data_recorded">記録しました。 </string>
     <string name="label_data_updated">データを更新しました。 </string>
     <string name="label_data_not_entry">データがありません。</string>
+    <string name="label_data_count">件数： </string>
+    <string name="under_construction">(実装検討中)</string>
 
     <string name="label_switch_data_check_immediately">データ登録時にISBNから情報を取得する</string>
     <string name="description_switch_data_check_immediately">ONにすると、データ登録時に国会図書館のAPIで情報を取得します。</string>

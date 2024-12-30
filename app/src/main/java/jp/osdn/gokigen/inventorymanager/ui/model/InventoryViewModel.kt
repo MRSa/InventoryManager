@@ -37,6 +37,12 @@ class InventoryViewModel: ViewModel(), DataExporter.IExportProgressCallback, Rec
     private val lastTotalExportedFileCount : MutableLiveData<Int> by lazy { MutableLiveData<Int>() }
     val lastExportTotalFileCount: LiveData<Int> = lastTotalExportedFileCount
 
+    private val listCount : MutableLiveData<Int> by lazy { MutableLiveData<Int>() }
+    val dataListCount: LiveData<Int> = listCount
+
+    private val filterInformation : MutableLiveData<String> by lazy { MutableLiveData<String>() }
+    val listFilterInformation: LiveData<String> = filterInformation
+
     fun initializeViewModel()
     {
         try
@@ -47,6 +53,8 @@ class InventoryViewModel: ViewModel(), DataExporter.IExportProgressCallback, Rec
             exportingProgress.value = 0.0f
             lastExportedFileCount.value = 0
             lastTotalExportedFileCount.value = 0
+            listCount.value = 0
+            filterInformation.value = ""
         }
         catch (e: Exception)
         {
@@ -69,6 +77,7 @@ class InventoryViewModel: ViewModel(), DataExporter.IExportProgressCallback, Rec
                 }
                 isRefreshing.value = false
             }
+            listCount.value = dataList.size
         }
     }
 

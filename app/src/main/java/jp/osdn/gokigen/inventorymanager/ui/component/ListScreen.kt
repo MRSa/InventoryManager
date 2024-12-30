@@ -51,28 +51,6 @@ fun ListScreen(navController: NavHostController, viewModel : InventoryViewModel,
 
     val padding = 6.dp
     MaterialTheme {
-/*
-        Scaffold(
-            topBar = { MainTopBar(navController) },
-            modifier = Modifier
-                .fillMaxSize(),
-                // .padding(),
-                //.background(MaterialTheme.colorScheme.background),
-            //contentWindowInsets = WindowInsets.Companion.systemBars,
-            content = { innerPadding ->
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(innerPadding)
-                ) {
-                    CommandPanel(navController, viewModel, exporter, recognizer)
-                    HorizontalDivider(thickness = 1.dp)
-                    Spacer(Modifier.size(padding))
-                    ReceivedContentList(navController, viewModel)
-                }
-            }
-        )
-*/
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -86,40 +64,23 @@ fun ListScreen(navController: NavHostController, viewModel : InventoryViewModel,
     }
 }
 
-/*
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun MainTopBar(navController: NavHostController)
-{
-    val context = LocalContext.current
-    val intent = remember { Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/MRSa/InventoryManager/blob/master/docs/Readme.md")) }
-    TopAppBar(
-        title = {
-            Text(stringResource(id = R.string.app_name))
-        },
-        //modifier = Modifier.padding(top = WindowInsets.systemBars.top),
-        actions = {
-            IconButton(
-                enabled = false,
-                onClick = { navController.navigate("PreferenceScreen") }) {
-                Icon(Icons.Default.Settings, contentDescription = "Settings")
-            }
-            IconButton(
-                onClick = { context.startActivity(intent) /* Open the Web Page */ })
-            {
-                Icon(Icons.Filled.Info, contentDescription = "Information")
-            }
-        }
-    )
-}
-*/
-
 @Composable
 fun CommandPanel(navController: NavHostController, dataListModel : InventoryViewModel, exporter: DataExporter, recognizer: RecognizeFromIsbn)
 {
+    // ----- 表示メッセージを生成する
+    val listCount = dataListModel.dataListCount.observeAsState()
+    val filterInfo = dataListModel.listFilterInformation.observeAsState()
 
+    val message = if ((filterInfo.value?.length ?: 0) > 0) {
+        "${stringResource(R.string.label_data_count)} ${listCount.value} (${filterInfo.value})"
+    }
+    else
+    {
+        "${stringResource(R.string.label_data_count)} ${listCount.value} "
+    }
     Row()
     {
+        // ----- 前画面に戻る
         IconButton(
             enabled = true,
             modifier = Modifier,
@@ -129,9 +90,14 @@ fun CommandPanel(navController: NavHostController, dataListModel : InventoryView
                 painter = painterResource(R.drawable.baseline_arrow_back_24),
                 contentDescription = "back to main screen")
         }
-        // Spacer(modifier = Modifier.weight(1f))
 
-/*
+        // ----- 件数等の表示
+        Text(
+            text = message,
+            modifier = Modifier.align(Alignment.CenterVertically)
+        )
+
+        // ----- 検索用フィルタ（設定）
         IconButton(
             enabled = false,
             modifier = Modifier,
@@ -141,16 +107,18 @@ fun CommandPanel(navController: NavHostController, dataListModel : InventoryView
                 painter = painterResource(R.drawable.baseline_filter_alt_24),
                 contentDescription = "filter")
         }
-*/
-        Spacer(modifier = Modifier.weight(1f))
         IconButton(
             modifier = Modifier,
             onClick = { dataListModel.refresh() })
         {
             Icon(Icons.Filled.Refresh, contentDescription = "Information")
         }
+
+        // ----- ちょっとすきまをあける
+        Spacer(modifier = Modifier.weight(1f))
         Spacer(modifier = Modifier.weight(1f))
 
+        // ----- ISBNデータから題名等を取得
         IconButton(
             modifier = Modifier,
             onClick = {
@@ -163,19 +131,7 @@ fun CommandPanel(navController: NavHostController, dataListModel : InventoryView
         }
         Spacer(modifier = Modifier.weight(1f))
 
-        /*
-                IconButton(
-                    enabled = false,
-                    modifier = Modifier,
-                    onClick = { })
-                {
-                    Icon(
-                        painter = painterResource(R.drawable.baseline_import_export_24),
-                        contentDescription = "import/export")
-                }
-        */
-        Spacer(modifier = Modifier.weight(1f))
-
+        // ----- 表示データのエクスポート
         IconButton(
             modifier = Modifier,
             onClick = {

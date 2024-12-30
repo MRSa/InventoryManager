@@ -65,6 +65,12 @@ fun MainScreen(navController: NavHostController, cameraControl: ICameraControl)
             }
             Button(
                 modifier = Modifier.padding(vertical = 8.dp, horizontal = 24.dp).fillMaxWidth(),
+                onClick = { navController.navigate("DataImportScreen") }
+            ) {
+                Text(stringResource(R.string.button_label_data_import))
+            }
+            Button(
+                modifier = Modifier.padding(vertical = 8.dp, horizontal = 24.dp).fillMaxWidth(),
                 onClick = { navController.navigate("PreferenceScreen") }
             ) {
                 Text(stringResource(R.string.button_label_preference))

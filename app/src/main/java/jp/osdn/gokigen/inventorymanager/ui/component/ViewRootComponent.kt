@@ -19,8 +19,10 @@ import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraControl
 import jp.osdn.gokigen.gokigenassets.liveview.IAnotherDrawer
 import jp.osdn.gokigen.gokigenassets.liveview.LiveViewOnTouchListener
 import jp.osdn.gokigen.inventorymanager.export.DataExporter
+import jp.osdn.gokigen.inventorymanager.import.DataImporter
 import jp.osdn.gokigen.inventorymanager.liaison.CameraLiaison
 import jp.osdn.gokigen.inventorymanager.recognize.RecognizeFromIsbn
+import jp.osdn.gokigen.inventorymanager.ui.model.DataImportViewModel
 import jp.osdn.gokigen.inventorymanager.ui.model.DetailInventoryViewModel
 import jp.osdn.gokigen.inventorymanager.ui.model.InventoryViewModel
 import jp.osdn.gokigen.inventorymanager.ui.model.PreferenceViewModel
@@ -32,19 +34,31 @@ class ViewRootComponent @JvmOverloads constructor(context: Context, attrs: Attri
     private lateinit var myRegistViewModel : RegisterInformationViewModel
     private lateinit var myPreferenceViewModel : PreferenceViewModel
     private lateinit var myDetailViewModel : DetailInventoryViewModel
+    private lateinit var myDataImportViewModel : DataImportViewModel
     private lateinit var myLiaison : CameraLiaison
     private lateinit var myExporter : DataExporter
+    private lateinit var myImporter : DataImporter
     private lateinit var myRecognizer : RecognizeFromIsbn
 
-
-    fun setLiaisons(viewModel : InventoryViewModel, registScreenViewModel: RegisterInformationViewModel, preferenceViewModel: PreferenceViewModel, detailViewModel: DetailInventoryViewModel, liaison : CameraLiaison, exporter: DataExporter, recognizer: RecognizeFromIsbn)
+    fun setLiaisons(
+        viewModel : InventoryViewModel,
+        registScreenViewModel: RegisterInformationViewModel,
+        preferenceViewModel: PreferenceViewModel,
+        detailViewModel: DetailInventoryViewModel,
+        dataImportViewModel: DataImportViewModel,
+        liaison: CameraLiaison,
+        exporter: DataExporter,
+        importer: DataImporter,
+        recognizer: RecognizeFromIsbn)
     {
         this.myViewModel = viewModel
         this.myRegistViewModel = registScreenViewModel
         this.myPreferenceViewModel = preferenceViewModel
         this.myDetailViewModel = detailViewModel
+        this.myDataImportViewModel = dataImportViewModel
         this.myLiaison = liaison
         this.myExporter = exporter
+        this.myImporter = importer
         this.myRecognizer = recognizer
         Log.v(TAG, " ...setLiaisons...")
     }
@@ -57,7 +71,19 @@ class ViewRootComponent @JvmOverloads constructor(context: Context, attrs: Attri
         //Surface(Modifier.systemBarsPadding()) {   // これも paddingサイズが大きすぎる...
         Surface {
             val cameraControl = this.myLiaison.getCameraControl()
-            NavigationMain(navController, cameraControl, this.myRegistViewModel, this.myViewModel, this.myPreferenceViewModel, this.myDetailViewModel, LiveViewOnTouchListener(cameraControl), this.myLiaison.getAnotherDrawer(), this.myExporter, this.myRecognizer)
+            NavigationMain(
+                navController = navController,
+                cameraControl = cameraControl,
+                registViewModel = this.myRegistViewModel,
+                listModel = this.myViewModel,
+                preferenceViewModel = this.myPreferenceViewModel,
+                detailViewModel = this.myDetailViewModel,
+                dataImportViewModel = myDataImportViewModel,
+                onTouchListener = LiveViewOnTouchListener(cameraControl),
+                anotherDrawer = this.myLiaison.getAnotherDrawer(),
+                exporter = this.myExporter,
+                importer = this.myImporter,
+                recognizer = this.myRecognizer)
         }
         Log.v(TAG, " ...NavigationRootComponent...")
     }
@@ -69,7 +95,19 @@ class ViewRootComponent @JvmOverloads constructor(context: Context, attrs: Attri
 }
 
 @Composable
-fun NavigationMain(navController: NavHostController, cameraControl: ICameraControl, registViewModel : RegisterInformationViewModel, listModel : InventoryViewModel, preferenceViewModel: PreferenceViewModel, detailViewModel: DetailInventoryViewModel, onTouchListener: LiveViewOnTouchListener, anotherDrawer: IAnotherDrawer?, exporter: DataExporter, recognizer: RecognizeFromIsbn)
+fun NavigationMain(
+    navController: NavHostController,
+    cameraControl: ICameraControl,
+    registViewModel : RegisterInformationViewModel,
+    listModel : InventoryViewModel,
+    preferenceViewModel: PreferenceViewModel,
+    detailViewModel: DetailInventoryViewModel,
+    dataImportViewModel: DataImportViewModel,
+    onTouchListener: LiveViewOnTouchListener,
+    anotherDrawer: IAnotherDrawer?,
+    exporter: DataExporter,
+    importer: DataImporter,
+    recognizer: RecognizeFromIsbn)
 {
     MaterialTheme {
         NavHost(
@@ -77,17 +115,25 @@ fun NavigationMain(navController: NavHostController, cameraControl: ICameraContr
             navController = navController,
             startDestination = "MainScreen"
         ) {
-            composable("MainScreen") { MainScreen(navController = navController, cameraControl = cameraControl) }
-            composable("RegistScreen") { RegistScreen(navController = navController, cameraControl = cameraControl, viewModel = registViewModel, onTouchListener = onTouchListener, anotherDrawer = anotherDrawer) }
+            composable("MainScreen") {
+                MainScreen(navController = navController, cameraControl = cameraControl)
+            }
+            composable("RegistScreen") {
+                RegistScreen(navController = navController, cameraControl = cameraControl, viewModel = registViewModel, onTouchListener = onTouchListener, anotherDrawer = anotherDrawer)
+            }
             composable("ListScreen") {
-                // listModel.refresh()
                 ListScreen(navController = navController, viewModel = listModel, exporter = exporter, recognizer = recognizer)
             }
             composable("DetailScreen/{id}", listOf(navArgument("id") { type = NavType.LongType })) { backStackEntry ->
                 val id = backStackEntry.arguments?.getLong("id") ?: 0
                 DetailScreen(navController = navController, viewModel = detailViewModel, id = id, recognizer = recognizer)
             }
-            composable("PreferenceScreen") { PreferenceScreen(navController = navController, prefsModel = preferenceViewModel) }
+            composable("PreferenceScreen") {
+                PreferenceScreen(navController = navController, prefsModel = preferenceViewModel)
+            }
+            composable("DataImportScreen") {
+                DataImportScreen(navController = navController, viewModel = dataImportViewModel, dataImporter = importer)
+            }
         }
     }
 }

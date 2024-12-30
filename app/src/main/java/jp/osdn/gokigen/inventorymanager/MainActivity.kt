@@ -21,9 +21,11 @@ import jp.osdn.gokigen.inventorymanager.ui.component.ViewRootComponent
 import jp.osdn.gokigen.inventorymanager.ui.model.InventoryViewModel
 import jp.osdn.gokigen.gokigenassets.scene.IVibrator
 import jp.osdn.gokigen.inventorymanager.export.DataExporter
+import jp.osdn.gokigen.inventorymanager.import.DataImporter
 import jp.osdn.gokigen.inventorymanager.recognize.RecognizeFromIsbn
 import jp.osdn.gokigen.inventorymanager.storage.DataContent
 import jp.osdn.gokigen.inventorymanager.storage.InventoryDataHolder
+import jp.osdn.gokigen.inventorymanager.ui.model.DataImportViewModel
 import jp.osdn.gokigen.inventorymanager.ui.model.DetailInventoryViewModel
 import jp.osdn.gokigen.inventorymanager.ui.model.PreferenceViewModel
 import jp.osdn.gokigen.inventorymanager.ui.model.RegisterInformationViewModel
@@ -36,8 +38,10 @@ class MainActivity : AppCompatActivity()
     private lateinit var myRegistViewModel : RegisterInformationViewModel
     private lateinit var myPreferenceViewModel : PreferenceViewModel
     private lateinit var myDetailViewModel : DetailInventoryViewModel
+    private lateinit var myDataImportViewModel : DataImportViewModel
     private lateinit var liaison : CameraLiaison
     private val dataExporter =  DataExporter(this)
+    private val dataImporter =  DataImporter(this)
     private val isbnRecognizer = RecognizeFromIsbn(this)
 
     override fun onCreate(savedInstanceState: Bundle?)
@@ -69,9 +73,22 @@ class MainActivity : AppCompatActivity()
             myDetailViewModel = ViewModelProvider(this)[DetailInventoryViewModel::class.java]
             myDetailViewModel.initializeViewModel()
 
+            myDataImportViewModel = ViewModelProvider(this)[DataImportViewModel::class.java]
+            myDataImportViewModel.initializeViewModel()
+
             ///////// SET ROOT VIEW /////////
             rootComponent = ViewRootComponent(applicationContext)
-            rootComponent.setLiaisons(myViewModel, myRegistViewModel, myPreferenceViewModel, myDetailViewModel, liaison, dataExporter, isbnRecognizer)
+            rootComponent.setLiaisons(
+                viewModel = myViewModel,
+                registScreenViewModel = myRegistViewModel,
+                preferenceViewModel = myPreferenceViewModel,
+                detailViewModel = myDetailViewModel,
+                dataImportViewModel = myDataImportViewModel,
+                liaison = liaison,
+                exporter = dataExporter,
+                importer = dataImporter,
+                recognizer = isbnRecognizer)
+
             setContent {
                 //Box(Modifier.safeDrawingPadding()) {
                     rootComponent.Content()
@@ -196,9 +213,9 @@ class MainActivity : AppCompatActivity()
         private val REQUIRED_PERMISSIONS = arrayOf(
             Manifest.permission.CAMERA,
             Manifest.permission.VIBRATE,
+            Manifest.permission.INTERNET,
             Manifest.permission.WRITE_EXTERNAL_STORAGE,
             Manifest.permission.READ_EXTERNAL_STORAGE,
-            Manifest.permission.INTERNET,
             //Manifest.permission.ACCESS_NETWORK_STATE,
             //Manifest.permission.ACCESS_WIFI_STATE,
             //Manifest.permission.CHANGE_WIFI_MULTICAST_STATE,

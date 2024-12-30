@@ -74,7 +74,7 @@ class MainActivity : AppCompatActivity()
             myDetailViewModel.initializeViewModel()
 
             myDataImportViewModel = ViewModelProvider(this)[DataImportViewModel::class.java]
-            myDataImportViewModel.initializeViewModel()
+            myDataImportViewModel.initializeViewModel(this)
 
             ///////// SET ROOT VIEW /////////
             rootComponent = ViewRootComponent(applicationContext)

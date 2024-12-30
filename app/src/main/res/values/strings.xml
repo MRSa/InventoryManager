@@ -48,6 +48,11 @@
     <string name="label_text_recognition">Text recognition</string>
     <string name="button_label_update">Update</string>
 
+    <string name="label_import_file_name">File Name: </string>
+    <string name="label_no_import_file_name">(no Select)</string>
+    <string name="label_select_file">Select… </string>
+    <string name="label_analyze_file">Analyze…</string>
+
     <string name="label_data_start_export">Start data export… </string>
     <string name="label_data_exporting">Data exporting… </string>
     <string name="label_data_exported">Data exported </string>

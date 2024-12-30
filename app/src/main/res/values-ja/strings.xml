@@ -56,10 +56,11 @@
     <string name="label_check_zip_file">指定したファイルを確認します… </string>
     <string name="failure_import_no_data">インポート対象ファイルが開けません</string>
     <string name="dialog_title_start_import">インポートの開始</string>
-    <string name="dialog_message_start_import_1">Do you want to import </string>
-    <string name="dialog_message_start_import_2"> data items? </string>
     <string name="dialog_button_ok">OK</string>
     <string name="dialog_button_cancel">Cancel</string>
+    <string name="dialog_message_start_import_1">データのインポートを </string>
+    <string name="dialog_message_start_import_2"> 件行います。\nよろしいですか？</string>
+    <string name="dialog_progress_proceed">実行中です…</string>
 
     <string name="label_data_start_export">エクスポートを開始… </string>
     <string name="label_data_exporting">データエクスポート中… </string>

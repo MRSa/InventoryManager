@@ -411,6 +411,7 @@ fun RegisterOperationPanel(cameraControl: ICameraControl, viewModel: RegisterInf
     // val area6 = viewModel.registerInformationLabel06.observeAsState()
     val isbnArea = viewModel.registerInformationIsbn.observeAsState()
 
+    val isEditing = viewModel.isDataEdited.observeAsState()
 
     // 操作ボタンを配置する部分 (その１）
     Row(
@@ -531,6 +532,7 @@ fun RegisterOperationPanel(cameraControl: ICameraControl, viewModel: RegisterInf
         // --- 「登録して次へ」ボタン
         val context = LocalContext.current
         Button(
+            enabled = isEditing.value ?: false,
             onClick = {
                 // ----- データをデーターベースに登録して、次に進む
                 val categoryValue = category.value ?: ""

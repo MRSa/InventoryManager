@@ -16,6 +16,9 @@ interface DataContentDao
     @Query("SELECT * FROM contents WHERE id IN (:ids)")
     fun getAllByIds(ids: LongArray): List<DataContent>
 
+    @Query("SELECT DISTINCT category FROM contents")
+    fun getCategories(): List<String>
+
     @Query("SELECT * FROM contents WHERE id = :id LIMIT 1")
     fun findById(id: Long): DataContent?
 

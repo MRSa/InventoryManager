@@ -45,6 +45,9 @@ class RegisterInformationViewModel: ViewModel(), ICameraStatusReceiver, ICameraS
     private val connectionStatus : MutableLiveData<ICameraConnectionStatus.CameraConnectionStatus> by lazy { MutableLiveData<ICameraConnectionStatus.CameraConnectionStatus>() }
     //val cameraConnectionStatus: LiveData<ICameraConnectionStatus.CameraConnectionStatus> = connectionStatus
 
+    private val isEdited : MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
+    val isDataEdited : LiveData<Boolean> = isEdited
+
     val registerInformationCategory: LiveData<String> = category
     val registerInformationLabel01: LiveData<String> = labelData1
     val registerInformationLabel02: LiveData<String> = labelData2
@@ -125,6 +128,8 @@ class RegisterInformationViewModel: ViewModel(), ICameraStatusReceiver, ICameraS
             isReadImage5 = false
 
             infoData.value = context.getString(R.string.label_explain_register_next)
+
+            isEdited.value = false
         }
         catch (e: Exception)
         {
@@ -135,41 +140,49 @@ class RegisterInformationViewModel: ViewModel(), ICameraStatusReceiver, ICameraS
     fun setCategory(value: String)
     {
         category.value = value
+        isEdited.value = true
     }
 
     fun setTextArea1(value: String)
     {
         labelData1.value = value
+        isEdited.value = true
     }
 
     fun setTextArea2(value: String)
     {
         labelData2.value = value
+        isEdited.value = true
     }
 
     fun setTextArea3(value: String)
     {
         labelData3.value = value
+        isEdited.value = true
     }
 
     fun setTextArea4(value: String)
     {
         labelData4.value = value
+        isEdited.value = true
     }
 
     fun setTextReaderArea(value: String)
     {
         labelData5.value = value
+        isEdited.value = true
     }
 
     fun setBarcodeReaderArea(value: String)
     {
         labelData6.value = value
+        isEdited.value = true
     }
 
     fun setIsbnData(value: String)
     {
         isbnData.value = value
+        isEdited.value = true
     }
 
     fun isImage1Read(): Boolean { return(isReadImage1) }
@@ -221,6 +234,7 @@ class RegisterInformationViewModel: ViewModel(), ICameraStatusReceiver, ICameraS
         try
         {
             Log.v(TAG, "ICameraShutterNotify::doShutter($id)")
+            isEdited.value = true
             when (id)
             {
                 1 -> {

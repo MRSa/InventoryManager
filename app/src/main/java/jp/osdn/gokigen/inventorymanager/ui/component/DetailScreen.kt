@@ -87,7 +87,7 @@ fun DetailScreen(navController: NavHostController, viewModel : DetailInventoryVi
                     TextFieldId.TITLE,
                     stringResource(R.string.label_title),
                     detail.value?.title ?: "",
-                    true,
+                    false,
                     viewModel)
                 Spacer(Modifier.size(padding))
                 ShowTextInputData(
@@ -95,7 +95,7 @@ fun DetailScreen(navController: NavHostController, viewModel : DetailInventoryVi
                     TextFieldId.SUBTITLE,
                     stringResource(R.string.label_subtitle),
                     detail.value?.subTitle ?: "",
-                    true,
+                    false,
                     viewModel)
                 Spacer(Modifier.size(padding))
                 ShowTextInputData(
@@ -103,7 +103,7 @@ fun DetailScreen(navController: NavHostController, viewModel : DetailInventoryVi
                     TextFieldId.AUTHOR,
                     stringResource(R.string.label_author),
                     detail.value?.author ?: "",
-                    true,
+                    false,
                     viewModel)
                 Spacer(Modifier.size(padding))
                 ShowTextInputData(
@@ -111,7 +111,7 @@ fun DetailScreen(navController: NavHostController, viewModel : DetailInventoryVi
                     TextFieldId.PUBLISHER,
                     stringResource(R.string.label_publisher),
                     detail.value?.publisher ?: "",
-                    true,
+                    false,
                     viewModel)
                 Spacer(Modifier.size(padding))
                 ShowTextInputData(

@@ -24,13 +24,13 @@ import jp.osdn.gokigen.inventorymanager.liaison.CameraLiaison
 import jp.osdn.gokigen.inventorymanager.recognize.RecognizeFromIsbn
 import jp.osdn.gokigen.inventorymanager.ui.model.DataImportViewModel
 import jp.osdn.gokigen.inventorymanager.ui.model.DetailInventoryViewModel
-import jp.osdn.gokigen.inventorymanager.ui.model.InventoryViewModel
+import jp.osdn.gokigen.inventorymanager.ui.model.ListViewModel
 import jp.osdn.gokigen.inventorymanager.ui.model.PreferenceViewModel
 import jp.osdn.gokigen.inventorymanager.ui.model.RegisterInformationViewModel
 
 class ViewRootComponent @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) : AbstractComposeView(context, attrs, defStyleAttr)
 {
-    private lateinit var myViewModel : InventoryViewModel
+    private lateinit var myViewModel : ListViewModel
     private lateinit var myRegistViewModel : RegisterInformationViewModel
     private lateinit var myPreferenceViewModel : PreferenceViewModel
     private lateinit var myDetailViewModel : DetailInventoryViewModel
@@ -41,7 +41,7 @@ class ViewRootComponent @JvmOverloads constructor(context: Context, attrs: Attri
     private lateinit var myRecognizer : RecognizeFromIsbn
 
     fun setLiaisons(
-        viewModel : InventoryViewModel,
+        viewModel : ListViewModel,
         registScreenViewModel: RegisterInformationViewModel,
         preferenceViewModel: PreferenceViewModel,
         detailViewModel: DetailInventoryViewModel,
@@ -99,7 +99,7 @@ fun NavigationMain(
     navController: NavHostController,
     cameraControl: ICameraControl,
     registViewModel : RegisterInformationViewModel,
-    listModel : InventoryViewModel,
+    listModel : ListViewModel,
     preferenceViewModel: PreferenceViewModel,
     detailViewModel: DetailInventoryViewModel,
     dataImportViewModel: DataImportViewModel,

@@ -85,6 +85,11 @@
     <string name="label_data_updated_from_isbn">情報を反映しました。</string>
     <string name="label_no_data_from_isbn">データは変更していません。</string>
 
+    <string name="dialog_title_filtering_setting">フィルタ条件設定</string>
+    <string name="dialog_message_filtering_setting">一覧に表示する情報の条件を設定してください。</string>
+    <string name="dialog_title_filtering_preparing">準備中…</string>
+    <string name="dialog_title_filter_applying">フィルタ適用中…</string>
+
     <!--  Use for xml/preference_main.xml -->
     <string name="pref_cat_application_control">A01f 制御</string>
     <string name="pref_exit_power_off">アプリ終了</string>

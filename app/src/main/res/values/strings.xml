@@ -85,6 +85,11 @@
     <string name="label_data_updated_from_isbn">Update the fields from ISBN.</string>
     <string name="label_no_data_from_isbn">The data is NOT updated.</string>
 
+    <string name="dialog_title_filtering_setting">Filter Settings</string>
+    <string name="dialog_message_filtering_setting">Set filters for the list.</string>
+    <string name="dialog_title_filtering_preparing">Preparing…</string>
+    <string name="dialog_title_filter_applying">Applying filter…</string>
+
     <!--  Use for xml/preference_main.xml -->
     <string name="pref_cat_application_control">App. Control</string>
     <string name="pref_exit_power_off">Exit Application</string>

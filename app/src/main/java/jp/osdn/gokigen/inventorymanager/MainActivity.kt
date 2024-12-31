@@ -18,7 +18,7 @@ import androidx.lifecycle.ViewModelProvider
 import jp.osdn.gokigen.inventorymanager.liaison.CameraLiaison
 import jp.osdn.gokigen.inventorymanager.preference.PreferenceValueInitializer
 import jp.osdn.gokigen.inventorymanager.ui.component.ViewRootComponent
-import jp.osdn.gokigen.inventorymanager.ui.model.InventoryViewModel
+import jp.osdn.gokigen.inventorymanager.ui.model.ListViewModel
 import jp.osdn.gokigen.gokigenassets.scene.IVibrator
 import jp.osdn.gokigen.inventorymanager.export.DataExporter
 import jp.osdn.gokigen.inventorymanager.import.DataImporter
@@ -34,7 +34,7 @@ class MainActivity : AppCompatActivity()
 {
     private lateinit var db : InventoryDataHolder
     private lateinit var rootComponent : ViewRootComponent
-    private lateinit var myViewModel : InventoryViewModel
+    private lateinit var myViewModel : ListViewModel
     private lateinit var myRegistViewModel : RegisterInformationViewModel
     private lateinit var myPreferenceViewModel : PreferenceViewModel
     private lateinit var myDetailViewModel : DetailInventoryViewModel
@@ -67,7 +67,7 @@ class MainActivity : AppCompatActivity()
 
             liaison = CameraLiaison(this, myRegistViewModel, myRegistViewModel, myRegistViewModel)
 
-            myViewModel = ViewModelProvider(this)[InventoryViewModel::class.java]
+            myViewModel = ViewModelProvider(this)[ListViewModel::class.java]
             myViewModel.initializeViewModel()
 
             myDetailViewModel = ViewModelProvider(this)[DetailInventoryViewModel::class.java]

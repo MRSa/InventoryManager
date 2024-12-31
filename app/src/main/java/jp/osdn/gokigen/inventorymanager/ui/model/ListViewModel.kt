@@ -14,16 +14,25 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class InventoryViewModel: ViewModel(), DataExporter.IExportProgressCallback, RecognizeFromIsbn.RecognizeDataFromIsbnCallback
+class ListViewModel: ViewModel(), DataExporter.IExportProgressCallback, RecognizeFromIsbn.RecognizeDataFromIsbnCallback
 {
     private val storageDao = AppSingleton.db.storageDao()
     val dataList = mutableStateListOf<DataContent>()
+
+    private val categories = MutableLiveData<List<String>>()
+    val categoryList: LiveData<List<String>> = categories
 
     private val isUpdatingFromIsbn : MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val isUpdatingDataFromIsbn: LiveData<Boolean> = isUpdatingFromIsbn
 
     private val isRefreshing : MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val refreshingData: LiveData<Boolean> = isRefreshing
+
+    private val enableFilter : MutableLiveData<FilterDialogCondition> by lazy { MutableLiveData<FilterDialogCondition>() }
+    val filterSetting: LiveData<FilterDialogCondition> = enableFilter
+
+    private val isFilterApply : MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
+    val isFilterApplying: LiveData<Boolean> = isFilterApply
 
     private val isExporting : MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val dataExporting: LiveData<Boolean> = isExporting
@@ -50,11 +59,13 @@ class InventoryViewModel: ViewModel(), DataExporter.IExportProgressCallback, Rec
             isUpdatingFromIsbn.value = false
             isRefreshing.value = false
             isExporting.value = false
+            enableFilter.value = FilterDialogCondition.READY
             exportingProgress.value = 0.0f
             lastExportedFileCount.value = 0
             lastTotalExportedFileCount.value = 0
             listCount.value = 0
             filterInformation.value = ""
+            isFilterApply.value = false
         }
         catch (e: Exception)
         {
@@ -69,6 +80,7 @@ class InventoryViewModel: ViewModel(), DataExporter.IExportProgressCallback, Rec
             if (!refresh)
             {
                 isRefreshing.value = true
+                enableFilter.value = FilterDialogCondition.DISABLE
                 dataList.clear()
                 withContext(Dispatchers.Default) {
                     storageDao.getAll().forEach { data ->
@@ -76,8 +88,10 @@ class InventoryViewModel: ViewModel(), DataExporter.IExportProgressCallback, Rec
                     }
                 }
                 isRefreshing.value = false
+                enableFilter.value = FilterDialogCondition.READY
             }
             listCount.value = dataList.size
+            isFilterApply.value = false
         }
     }
 
@@ -99,9 +113,47 @@ class InventoryViewModel: ViewModel(), DataExporter.IExportProgressCallback, Rec
         }
     }
 
+    fun setFilterDialogCondition(value: FilterDialogCondition)
+    {
+        enableFilter.value = value
+        if (value == FilterDialogCondition.POSTPROCESSING)
+        {
+            // --- 仮に実装...フィルタ適用中マーキング
+            isFilterApply.value = true
+            enableFilter.value = FilterDialogCondition.READY
+        }
+    }
+
+    fun prepareToShowFilterSettingDialog()
+    {
+        Thread {
+            try
+            {
+                // ----- Roomは、別Thread で実行しないとダメ...
+                val listOfCategory = storageDao.getCategories()
+                CoroutineScope(Dispatchers.Main).launch {
+                    // ---- これで値を設定できたはずだが...
+                    categories.value = listOfCategory
+                    enableFilter.value = FilterDialogCondition.SHOWING
+
+                    Log.v(TAG, " _____ Categories: ${categories.value?.size}")
+                    val categoryList = categories.value ?: ArrayList()
+                    for (category in categoryList)
+                    {
+                        Log.v(TAG, "  category: $category")
+                    }
+                }
+            }
+            catch (e: Exception)
+            {
+                e.printStackTrace()
+            }
+        }.start()
+    }
     override fun startExportFile(fileName: String) {
         Log.v(TAG, "startExportFile(): $fileName")
         isExporting.value = true
+        enableFilter.value = FilterDialogCondition.DISABLE
         exportingProgress.value = 0.0f
     }
 
@@ -123,6 +175,7 @@ class InventoryViewModel: ViewModel(), DataExporter.IExportProgressCallback, Rec
         try
         {
             isExporting.value = false
+            enableFilter.value = FilterDialogCondition.READY
             exportingProgress.value = 0.0f
             lastTotalExportedFileCount.value = totalFile
             lastExportedFileCount.value = totalFile - exportNG
@@ -136,15 +189,21 @@ class InventoryViewModel: ViewModel(), DataExporter.IExportProgressCallback, Rec
     override fun startRecognizeFromIsbn()
     {
         isUpdatingFromIsbn.value = true
+        enableFilter.value = FilterDialogCondition.DISABLE
     }
 
     override fun finishRecognizeFromIsbn()
     {
         isUpdatingFromIsbn.value = false
+        enableFilter.value = FilterDialogCondition.READY
+    }
+
+    enum class FilterDialogCondition {
+        DISABLE, READY, PREPARING, SHOWING, POSTPROCESSING
     }
 
     companion object
     {
-        private val TAG = InventoryViewModel::class.java.simpleName
+        private val TAG = ListViewModel::class.java.simpleName
     }
 }

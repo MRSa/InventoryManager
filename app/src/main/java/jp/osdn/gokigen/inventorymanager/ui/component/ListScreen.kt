@@ -13,8 +13,10 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -29,7 +31,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
@@ -37,11 +41,12 @@ import androidx.navigation.compose.rememberNavController
 import jp.osdn.gokigen.inventorymanager.R
 import jp.osdn.gokigen.inventorymanager.export.DataExporter
 import jp.osdn.gokigen.inventorymanager.recognize.RecognizeFromIsbn
-import jp.osdn.gokigen.inventorymanager.ui.model.InventoryViewModel
+import jp.osdn.gokigen.inventorymanager.ui.model.ListViewModel
+import jp.osdn.gokigen.inventorymanager.ui.model.ListViewModel.FilterDialogCondition
 import java.util.Locale.US
 
 @Composable
-fun ListScreen(navController: NavHostController, viewModel : InventoryViewModel, exporter: DataExporter, recognizer: RecognizeFromIsbn)
+fun ListScreen(navController: NavHostController, viewModel : ListViewModel, exporter: DataExporter, recognizer: RecognizeFromIsbn)
 {
     // 画面遷移時にデータを取得
     rememberNavController()
@@ -60,12 +65,13 @@ fun ListScreen(navController: NavHostController, viewModel : InventoryViewModel,
             Spacer(Modifier.size(padding))
             ReceivedContentList(navController, viewModel)
             ShowBusyDialogsAtListScreen(viewModel)
+            ShowFilterConditionSettingDialog(viewModel)
         }
     }
 }
 
 @Composable
-fun CommandPanel(navController: NavHostController, dataListModel : InventoryViewModel, exporter: DataExporter, recognizer: RecognizeFromIsbn)
+fun CommandPanel(navController: NavHostController, dataListModel : ListViewModel, exporter: DataExporter, recognizer: RecognizeFromIsbn)
 {
     // ----- 表示メッセージを生成する
     val listCount = dataListModel.dataListCount.observeAsState()
@@ -91,21 +97,31 @@ fun CommandPanel(navController: NavHostController, dataListModel : InventoryView
                 contentDescription = "back to main screen")
         }
 
-        // ----- 件数等の表示
+        // ----- 件数等の表示 (フィルター設定時には強調表示）
+        val isFilterApply = dataListModel.isFilterApplying.observeAsState()
         Text(
+            color = if (isFilterApply.value == true) { MaterialTheme.colorScheme.primary } else { MaterialTheme.colorScheme.secondary },
+            fontWeight = if (isFilterApply.value == true) { FontWeight.Bold } else { FontWeight.Medium },
+            textDecoration = if (isFilterApply.value == true) { TextDecoration.Underline } else { TextDecoration.None } ,
             text = message,
             modifier = Modifier.align(Alignment.CenterVertically)
         )
 
         // ----- 検索用フィルタ（設定）
+        val isEnableFilter = dataListModel.filterSetting.observeAsState()
         IconButton(
-            enabled = false,
+            enabled = (isEnableFilter.value == FilterDialogCondition.READY),
             modifier = Modifier,
-            onClick = { })
+            onClick = {
+                dataListModel.setFilterDialogCondition(FilterDialogCondition.PREPARING)
+                dataListModel.prepareToShowFilterSettingDialog()
+            })
         {
             Icon(
                 painter = painterResource(R.drawable.baseline_filter_alt_24),
-                contentDescription = "filter")
+                tint = if (isFilterApply.value == true) { MaterialTheme.colorScheme.primary } else { MaterialTheme.colorScheme.secondary },
+                contentDescription = "filter"
+            )
         }
         IconButton(
             modifier = Modifier,
@@ -146,7 +162,7 @@ fun CommandPanel(navController: NavHostController, dataListModel : InventoryView
 }
 
 @Composable
-fun ShowExportingDialog(dataListModel: InventoryViewModel)
+fun ShowExportingDialog(dataListModel: ListViewModel)
 {
     val percent = dataListModel.exportingProgressPercent.observeAsState()
     val fileCount = dataListModel.lastExportFileCount.observeAsState()
@@ -182,7 +198,7 @@ fun ShowUpdatingDialog(message: String)
 }
 
 @Composable
-fun ShowBusyDialogsAtListScreen(dataListModel: InventoryViewModel)
+fun ShowBusyDialogsAtListScreen(dataListModel: ListViewModel)
 {
     // ----- エクスポート中ダイアログを表示する
     val exporting = dataListModel.dataExporting.observeAsState()
@@ -208,7 +224,7 @@ fun ShowBusyDialogsAtListScreen(dataListModel: InventoryViewModel)
 
 
 @Composable
-fun ReceivedContentList(navController: NavHostController, dataListModel: InventoryViewModel)
+fun ReceivedContentList(navController: NavHostController, dataListModel: ListViewModel)
 {
     val listState = rememberLazyListState()
     if (dataListModel.dataList.isEmpty()) {
@@ -240,5 +256,63 @@ fun ReceivedContentList(navController: NavHostController, dataListModel: Invento
                 HorizontalDivider(thickness = 1.dp)
             }
         }
+    }
+}
+
+@Composable
+fun ShowFilterConditionSettingDialog(viewModel : ListViewModel)
+{
+    val isEnableFilter = viewModel.filterSetting.observeAsState()
+    when (isEnableFilter.value) {
+        FilterDialogCondition.PREPARING -> {
+            // ----- フィルター条件を出すための準備中
+            val message = stringResource(R.string.dialog_title_filtering_preparing)
+            AlertDialog(
+                onDismissRequest = { },
+                title = { Text(message) },
+                text = {
+                    Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                        CircularProgressIndicator()
+                    }
+                },
+                confirmButton = { },
+                dismissButton = null
+            )
+        }
+        FilterDialogCondition.SHOWING -> {
+            // ----- フィルタ条件を設定する
+            AlertDialog(
+                onDismissRequest = {  },
+                icon = {
+                    Icon(
+                        imageVector = Icons.Filled.Info,
+                        contentDescription = "Info"
+                    )
+                },
+                title = { Text(text = stringResource(R.string.dialog_title_filtering_setting)) },
+                text = { Text(text = stringResource(R.string.dialog_message_filtering_setting)) },
+                confirmButton = {
+                    Button(onClick = { viewModel.setFilterDialogCondition(FilterDialogCondition.POSTPROCESSING) }) {
+                        Text(text = stringResource(R.string.dialog_button_dismiss))
+                    }
+                }
+            )
+        }
+        FilterDialogCondition.POSTPROCESSING -> {
+            // ----- フィルター条件を反映中
+            val message = stringResource(R.string.dialog_title_filter_applying)
+            AlertDialog(
+                onDismissRequest = { },
+                title = { Text(message) },
+                text = {
+                    Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                        CircularProgressIndicator()
+                    }
+                },
+                confirmButton = { },
+                dismissButton = null
+            )
+        }
+        else -> { }
     }
 }

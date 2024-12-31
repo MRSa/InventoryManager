@@ -12,6 +12,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
@@ -51,17 +54,18 @@ fun DataImportScreen(navController: NavHostController, viewModel: DataImportView
                 .verticalScroll(scrollState)
         ) {
             HorizontalDivider(thickness = 1.dp)
-            DataImportCommandPanel(navController, viewModel, dataImporter)
+            DataImportCommandPanel(navController, viewModel)
             HorizontalDivider(thickness = 1.dp)
             FilePickerForTargetFile(viewModel, dataImporter)
             Spacer(modifier = Modifier.weight(1.0f))
             ShowImportReadyDialog(viewModel, dataImporter)
+            ShowImportFinishDialog(viewModel)
         }
     }
 }
 
 @Composable
-fun DataImportCommandPanel(navController: NavHostController, viewModel: DataImportViewModel, dataImporter: DataImporter)
+fun DataImportCommandPanel(navController: NavHostController, viewModel: DataImportViewModel)
 {
     val importing = viewModel.dataImporting.observeAsState()
     val buttonEnable = (importing.value != true)
@@ -147,7 +151,7 @@ fun FilePickerForTargetFile(viewModel: DataImportViewModel, dataImporter: DataIm
             enabled = (targetUri.value != null),
             modifier = Modifier.padding(vertical = 4.dp, horizontal = 16.dp),
             onClick = {
-                Thread { dataImporter.extractZipFileIntoLocal(targetUri.value, viewModel) }.start()
+                Thread { dataImporter.extractZipFileIntoLocal(targetUri.value, viewModel, viewModel) }.start()
             }
         ) {
             Text(stringResource(R.string.label_analyze_file))
@@ -164,16 +168,16 @@ fun ShowImportReadyDialog(viewModel: DataImportViewModel, dataImporter: DataImpo
     if (isReadyToImport.value == true)
     {
         AlertDialog(
-            onDismissRequest = { viewModel.cancelImport() },
+            onDismissRequest = { Thread { dataImporter.postProcessImport(viewModel) }.start() },
             title = { Text(text = stringResource(R.string.dialog_title_start_import)) },
             text = { Text(text = "${stringResource(R.string.dialog_message_start_import_1)} ${dataCount.value} ${stringResource(R.string.dialog_message_start_import_2)}") },
             confirmButton = {
-                Button(onClick = { Thread { dataImporter.doImport(viewModel) }.start() }) {
+                Button(onClick = { Thread { dataImporter.doImport(viewModel, viewModel) }.start() }) {
                     Text(text = stringResource(R.string.dialog_button_ok))
                 }
             },
             dismissButton = {
-                Button(onClick = { viewModel.cancelImport() } ) {
+                Button(onClick = { Thread { dataImporter.postProcessImport(viewModel) }.start() }) {
                     Text(text = stringResource(R.string.dialog_button_cancel))
                 }
             }
@@ -182,18 +186,27 @@ fun ShowImportReadyDialog(viewModel: DataImportViewModel, dataImporter: DataImpo
 
     val isImporting = viewModel.dataImporting.observeAsState()
     val currentImportCount = viewModel.currentImportCount.observeAsState()
+    val currentImportProcess = viewModel.currentExecutingProcess.observeAsState()
     val totalCount = dataCount.value ?: 0
     val currentCount = currentImportCount.value ?: 0
     if (isImporting.value == true)
     {
+        val statusMessage = when (currentImportProcess.value) {
+            DataImporter.ImportProcess.IDLE -> { stringResource(R.string.dialog_idle_proceed) }
+            DataImporter.ImportProcess.PREPARE -> { stringResource(R.string.dialog_prepare_proceed) }
+            DataImporter.ImportProcess.IMPORT -> { stringResource(R.string.dialog_import_proceed) }
+            DataImporter.ImportProcess.POSTPROCESS -> { stringResource(R.string.dialog_postprocess_proceed) }
+            else -> { "" }
+        }
+
         // ---- 実行中ダイアログの表示
         val message = if ((currentCount == 0)||(totalCount == 0)) {
-            // ----- 処理カウントがゼロの場合は、「実行中」のみ表示
-            stringResource(R.string.dialog_progress_proceed)
+            // ----- 処理カウントがゼロの場合
+            "$statusMessage ${stringResource(R.string.dialog_progress_proceed)}"
         } else {
-            // ----- カウントがわかる場合は、カウント表示を行う
+            // ----- カウントがわかる場合
             val progressPercent = (currentCount.toFloat() / totalCount.toFloat()) * 100.0f
-            "${stringResource(R.string.dialog_progress_proceed)} $currentCount / $totalCount (${String.format(US, "%.1f", progressPercent)})"
+            "$statusMessage ${stringResource(R.string.dialog_progress_proceed)} $currentCount / $totalCount (${String.format(US, "%.1f", progressPercent)})"
         }
         AlertDialog(
             onDismissRequest = { },
@@ -205,6 +218,49 @@ fun ShowImportReadyDialog(viewModel: DataImportViewModel, dataImporter: DataImpo
             },
             confirmButton = { },
             dismissButton = null
+        )
+    }
+}
+
+@Composable
+fun ShowImportFinishDialog(viewModel: DataImportViewModel)
+{
+    val importProcess = viewModel.currentExecutingProcess.observeAsState()
+    if (importProcess.value == DataImporter.ImportProcess.FINISH_SUCCESS)
+    {
+        AlertDialog(
+            onDismissRequest = {  },
+            icon = {
+                Icon(
+                    imageVector = Icons.Filled.Check,
+                    contentDescription = "Success"
+                )
+            },
+            title = { Text(text = stringResource(R.string.dialog_title_finish_import)) },
+            text = { Text(text = stringResource(R.string.dialog_message_finish_import)) },
+            confirmButton = {
+                Button(onClick = { viewModel.dismissImportProcess() }) {
+                    Text(text = stringResource(R.string.dialog_button_ok))
+                }
+            }
+        )
+    } else if (importProcess.value == DataImporter.ImportProcess.FINISH_FAILURE)
+    {
+        AlertDialog(
+            onDismissRequest = {  },
+            icon = {
+                Icon(
+                    imageVector = Icons.Filled.Warning,
+                    contentDescription = "Warning"
+                )
+            },
+            title = { Text(text = stringResource(R.string.dialog_title_finish_failure_import)) },
+            text = { Text(text = stringResource(R.string.dialog_message_finish_failure_import)) },
+            confirmButton = {
+                Button(onClick = { viewModel.dismissImportProcess() }) {
+                    Text(text = stringResource(R.string.dialog_button_dismiss))
+                }
+            }
         )
     }
 }

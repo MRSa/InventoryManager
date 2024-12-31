@@ -25,7 +25,7 @@ class DataImporter(private val activity: AppCompatActivity)
     private var dataList: DataContentListSerializer? = null
     private var dataImportCount = 0
 
-    fun doImport(callback: IImportProgress?)
+    fun doImport(callback: IImportProgress?, postProcessCallback : IExtractPostProcess?)
     {
         try
         {
@@ -36,25 +36,47 @@ class DataImporter(private val activity: AppCompatActivity)
                     callback?.finishImportFiles(
                         false,
                         0,
-                        activity.getString(R.string.failure_import_no_data)
+                        ImportProcess.IDLE
                     )
                 }
                 return
             }
             // ----- 処理開始を通知
-            activity.runOnUiThread { callback?.startImportFiles() }
+            activity.runOnUiThread { callback?.startImportFiles(ImportProcess.IMPORT) }
 
             dataImportCount = 0
             val result = doImportImpl(dataList?.list, callback)
 
             // ----- 処理終了を通知
             activity.runOnUiThread {
-                callback?.finishImportFiles(result, dataImportCount, "")
+                callback?.finishImportFiles(result, dataImportCount, ImportProcess.IDLE)
             }
+
+            // ----- 後処理を実行する
+            doPostProcessImport(result, postProcessCallback)
         }
         catch (e: Exception)
         {
             e.printStackTrace()
+        }
+    }
+
+    private fun doPostProcessImport(result: Boolean, postProcessCallback : IExtractPostProcess?)
+    {
+        // ----- 後処理（展開したファイルの削除）を実行
+        postProcessImport(postProcessCallback)
+
+        // ----- インポート処理がすべて終了したことを通知
+        activity.runOnUiThread {
+            postProcessCallback?.finishImportAllProcess(
+                if (result) {
+                    ImportProcess.FINISH_SUCCESS
+                }
+                else
+                {
+                    ImportProcess.FINISH_FAILURE
+                }
+            )
         }
     }
 
@@ -179,15 +201,14 @@ class DataImporter(private val activity: AppCompatActivity)
         return ("")
     }
 
-    fun extractZipFileIntoLocal(targetUri: Uri?, callback: IExtractProgress?)
+    fun extractZipFileIntoLocal(targetUri: Uri?, callback: IExtractProgress?, postProcessCallback : IExtractPostProcess?)
     {
-        var message = ""
         try
         {
             dataList = null
             Log.v(TAG, "extractZipFileIntoLocal() : START")
             activity.runOnUiThread {
-                callback?.startExtractFiles()
+                callback?.startExtractFiles(ImportProcess.PREPARE)
                 Toast.makeText(activity, activity.getString(R.string.label_check_zip_file), Toast.LENGTH_SHORT).show()
             }
 
@@ -200,6 +221,12 @@ class DataImporter(private val activity: AppCompatActivity)
             val fileCount = extractZipFileIntoLocalImpl(targetPath, targetUri, callback)
             if (fileCount == 0)
             {
+                activity.runOnUiThread {
+                    callback?.finishExtractFiles(false, 0, ImportProcess.IDLE)
+                }
+
+                // ----- 後処理を実行する
+                doPostProcessImport(false, postProcessCallback)
                 return
             }
 
@@ -213,9 +240,7 @@ class DataImporter(private val activity: AppCompatActivity)
                 activity.runOnUiThread {
                     callback?.progressExtractFiles(fileCount, jsonFilePath)
                 }
-                message = jsonFilePath
-
-                 checkReadJsonFile(jsonFilePath)
+                checkReadJsonFile(jsonFilePath)
             }
         }
         catch (e: Exception)
@@ -227,13 +252,18 @@ class DataImporter(private val activity: AppCompatActivity)
             if (dataCount > 0)
             {
                 // ----- データの読み込みに成功
-                callback?.finishExtractFiles(true, dataCount, message)
+                callback?.finishExtractFiles(true, dataCount, ImportProcess.IDLE)
             }
             else
             {
                 // ----- データの読み込みに失敗
-                callback?.finishExtractFiles(false, 0, message)
+                callback?.finishExtractFiles(false, 0, ImportProcess.IDLE)
             }
+        }
+        if (dataCount == 0)
+        {
+            // ----- データ読み込み後の後処理を実行する
+            doPostProcessImport(false, postProcessCallback)
         }
     }
 
@@ -258,6 +288,8 @@ class DataImporter(private val activity: AppCompatActivity)
     {
         try
         {
+            Log.v(TAG, "prepareExtractDir($targetPath)")
+
             // ---- 展開先のディレクトリを準備する
             val destination = File(targetPath)
             if (destination.exists())
@@ -284,30 +316,12 @@ class DataImporter(private val activity: AppCompatActivity)
 
             if (targetUri == null)
             {
-                activity.runOnUiThread {
-                    callback?.finishExtractFiles(
-                        false,
-                        0,
-                        activity.getString(R.string.failure_file_not_find)
-                    )
-                }
                 return (0)
             }
 
             // ----- Zipファイルを展開する
             val resolver = activity.contentResolver
-            val inputStream: InputStream? = resolver.openInputStream(targetUri)
-            if (inputStream == null)
-            {
-                activity.runOnUiThread {
-                    callback?.finishExtractFiles(
-                        false,
-                        0,
-                        activity.getString(R.string.failure_file_not_find)
-                    )
-                }
-                return (0)
-            }
+            val inputStream: InputStream = resolver.openInputStream(targetUri) ?: return (0)
             val zipInputStream = ZipInputStream(inputStream)
             var entry: ZipEntry? = zipInputStream.nextEntry
             while (entry != null)
@@ -357,17 +371,6 @@ class DataImporter(private val activity: AppCompatActivity)
         catch (e: Exception)
         {
             e.printStackTrace()
-        }
-        if (fileCount == 0)
-        {
-            // ---- 展開されたファイル数がゼロなので、、、ファイル無しで終了する
-            activity.runOnUiThread {
-                callback?.finishExtractFiles(
-                    false,
-                    0,
-                    activity.getString(R.string.failure_file_not_find)
-                )
-            }
         }
         return (fileCount)
     }
@@ -444,18 +447,55 @@ class DataImporter(private val activity: AppCompatActivity)
         }
     }
 
+    fun postProcessImport(callback : IExtractPostProcess?)
+    {
+        try
+        {
+            activity.runOnUiThread {
+                callback?.startImportPostProcess(ImportProcess.POSTPROCESS)
+            }
+
+            // ----- 展開先ディレクトリをクリーンアップする
+            val targetPath = "${activity.getExternalFilesDir(null)?.absolutePath}/extract"
+            prepareExtractDir(targetPath)
+
+            activity.runOnUiThread {
+                callback?.finishImportPostProcess(true, ImportProcess.IDLE)
+            }
+            return
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
+        activity.runOnUiThread {
+            callback?.finishImportPostProcess(false, ImportProcess.IDLE)
+        }
+    }
+
     interface IExtractProgress
     {
-        fun startExtractFiles()
+        fun startExtractFiles(status: ImportProcess)
         fun progressExtractFiles(count: Int, fileName: String)
-        fun finishExtractFiles(result: Boolean, dataCount: Int, message: String)
+        fun finishExtractFiles(result: Boolean, dataCount: Int, status: ImportProcess)
     }
 
     interface IImportProgress
     {
-        fun startImportFiles()
+        fun startImportFiles(status: ImportProcess)
         fun progressImportFiles(count: Int, totalCount: Int)
-        fun finishImportFiles(result: Boolean, dataCount: Int, message: String)
+        fun finishImportFiles(result: Boolean, dataCount: Int, status: ImportProcess)
+    }
+
+    interface IExtractPostProcess
+    {
+        fun startImportPostProcess(status: ImportProcess)
+        fun finishImportPostProcess(result: Boolean, status: ImportProcess)
+        fun finishImportAllProcess(status: ImportProcess)
+    }
+
+    enum class ImportProcess {
+        IDLE, PREPARE, IMPORT, POSTPROCESS, FINISH_SUCCESS, FINISH_FAILURE
     }
 
     companion object

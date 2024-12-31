@@ -58,9 +58,18 @@
     <string name="dialog_title_start_import">Start Import</string>
     <string name="dialog_button_ok">OK</string>
     <string name="dialog_button_cancel">Cancel</string>
+    <string name="dialog_button_dismiss">Dismiss</string>
     <string name="dialog_message_start_import_1">Do you want to import </string>
     <string name="dialog_message_start_import_2"> data items? </string>
     <string name="dialog_progress_proceed">Executing…</string>
+    <string name="dialog_prepare_proceed">Check </string>
+    <string name="dialog_import_proceed">Import </string>
+    <string name="dialog_postprocess_proceed">Post process </string>
+    <string name="dialog_idle_proceed"> </string>
+    <string name="dialog_title_finish_import">Finish Import</string>
+    <string name="dialog_message_finish_import">The import process is finished.</string>
+    <string name="dialog_title_finish_failure_import">Failure Import</string>
+    <string name="dialog_message_finish_failure_import">Import failed due to an incorrect file format. Please reselect the import file.</string>
 
     <string name="label_data_start_export">Start data export… </string>
     <string name="label_data_exporting">Data exporting… </string>

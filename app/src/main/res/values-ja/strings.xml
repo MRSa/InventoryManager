@@ -6,7 +6,7 @@
     <string name="label_main_screen_message">下記より操作を選択してください</string>
     <string name="button_label_list">一覧</string>
     <string name="button_label_register">情報の登録</string>
-    <string name="button_label_data_import">情報の一括取り込み（インポート）</string>
+    <string name="button_label_data_import">一括取り込み（インポート）</string>
     <string name="button_label_preference">設定</string>
     <string name="title_label_preference">設定</string>
     <string name="screen_title_registry">情報の登録</string>
@@ -58,9 +58,18 @@
     <string name="dialog_title_start_import">インポートの開始</string>
     <string name="dialog_button_ok">OK</string>
     <string name="dialog_button_cancel">Cancel</string>
-    <string name="dialog_message_start_import_1">データのインポートを </string>
+    <string name="dialog_button_dismiss">確認</string>
+    <string name="dialog_message_start_import_1">一括取り込み（インポート）を </string>
     <string name="dialog_message_start_import_2"> 件行います。\nよろしいですか？</string>
     <string name="dialog_progress_proceed">実行中です…</string>
+    <string name="dialog_prepare_proceed">ファイル内容確認 </string>
+    <string name="dialog_import_proceed">データ取り込み </string>
+    <string name="dialog_postprocess_proceed">後処理 </string>
+    <string name="dialog_idle_proceed"> </string>
+    <string name="dialog_title_finish_import">インポート成功</string>
+    <string name="dialog_message_finish_import">一括取り込みが完了しました。</string>
+    <string name="dialog_title_finish_failure_import">インポート失敗</string>
+    <string name="dialog_message_finish_failure_import">ファイル形式が正しくないため、一括取り込みに失敗しました。一括取り込みするファイルを選び直してください。</string>
 
     <string name="label_data_start_export">エクスポートを開始… </string>
     <string name="label_data_exporting">データエクスポート中… </string>

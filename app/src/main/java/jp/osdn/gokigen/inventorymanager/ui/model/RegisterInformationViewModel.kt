@@ -33,6 +33,7 @@ class RegisterInformationViewModel: ViewModel(), ICameraStatusReceiver, ICameraS
     private val labelData5 : MutableLiveData<String> by lazy { MutableLiveData<String>() }
     private val labelData6 : MutableLiveData<String> by lazy { MutableLiveData<String>() }
 
+    private val isbnData : MutableLiveData<String> by lazy { MutableLiveData<String>() }
     private val infoData  : MutableLiveData<String> by lazy { MutableLiveData<String>() }
 
     private val image01 : MutableLiveData<Bitmap> by lazy { MutableLiveData<Bitmap>() }
@@ -52,6 +53,7 @@ class RegisterInformationViewModel: ViewModel(), ICameraStatusReceiver, ICameraS
     val registerInformationLabel05: LiveData<String> = labelData5
     val registerInformationLabel06: LiveData<String> = labelData6
 
+    val registerInformationIsbn: LiveData<String> = isbnData
     val registerInformationData : LiveData<String> = infoData
 
     val registerInformationImage1 : LiveData<Bitmap> =  image01
@@ -60,7 +62,7 @@ class RegisterInformationViewModel: ViewModel(), ICameraStatusReceiver, ICameraS
     val registerInformationImage4 : LiveData<Bitmap> =  image04
     val registerInformationImage5 : LiveData<Bitmap> =  image05
 
-    private var isbnValue : String = ""
+    //private var isbnValue : String = ""
     private var prodValue : String = ""
     private var textValue : String = ""
     private var urlValue : String = ""
@@ -112,7 +114,7 @@ class RegisterInformationViewModel: ViewModel(), ICameraStatusReceiver, ICameraS
             labelData4.value = ""
             labelData5.value = ""
             labelData6.value = ""
-            isbnValue = ""
+            isbnData.value = ""
             prodValue = ""
             textValue = ""
             urlValue = ""
@@ -165,13 +167,18 @@ class RegisterInformationViewModel: ViewModel(), ICameraStatusReceiver, ICameraS
         labelData6.value = value
     }
 
+    fun setIsbnData(value: String)
+    {
+        isbnData.value = value
+    }
+
     fun isImage1Read(): Boolean { return(isReadImage1) }
     fun isImage2Read(): Boolean { return(isReadImage2) }
     fun isImage3Read(): Boolean { return(isReadImage3) }
     fun isImage4Read(): Boolean { return(isReadImage4) }
     fun isImage5Read(): Boolean { return(isReadImage5) }
 
-    fun getIsbnValue(): String { return(isbnValue) }
+    // fun getIsbnValue(): String { return(isbnValue) }
     fun getProductIdValue(): String { return(prodValue) }
     fun getTextValue(): String { return(textValue) }
     fun getUrlValue(): String { return(urlValue) }
@@ -317,7 +324,7 @@ class RegisterInformationViewModel: ViewModel(), ICameraStatusReceiver, ICameraS
                     }
                     Barcode.TYPE_ISBN -> {
                         readData += " ISBN:$rawValue "
-                        isbnValue = rawValue ?: ""
+                        isbnData.value = rawValue ?: ""
                     }
                     else -> {
                         readData += " ?[$valueType]:$rawValue "

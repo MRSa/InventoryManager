@@ -22,6 +22,9 @@ class ListViewModel: ViewModel(), DataExporter.IExportProgressCallback, Recogniz
     private val categories = MutableLiveData<List<String>>()
     val categoryList: LiveData<List<String>> = categories
 
+    private val filterStatus = MutableLiveData<FilterState>()
+    val filterState: LiveData<FilterState> = filterStatus
+
     private val isUpdatingFromIsbn : MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val isUpdatingDataFromIsbn: LiveData<Boolean> = isUpdatingFromIsbn
 
@@ -66,6 +69,7 @@ class ListViewModel: ViewModel(), DataExporter.IExportProgressCallback, Recogniz
             listCount.value = 0
             filterInformation.value = ""
             isFilterApply.value = false
+            filterStatus.value = FilterState()
         }
         catch (e: Exception)
         {
@@ -83,7 +87,7 @@ class ListViewModel: ViewModel(), DataExporter.IExportProgressCallback, Recogniz
                 enableFilter.value = FilterDialogCondition.DISABLE
                 dataList.clear()
                 withContext(Dispatchers.Default) {
-                    storageDao.getAll().forEach { data ->
+                    storageDao.getAllCreateLatest().forEach { data ->
                         dataList.add(data)
                     }
                 }
@@ -150,6 +154,101 @@ class ListViewModel: ViewModel(), DataExporter.IExportProgressCallback, Recogniz
             }
         }.start()
     }
+
+    fun setFilterState(filterState: FilterState?)
+    {
+        if (filterState == null)
+        {
+            Log.v(TAG, "setFilterState(): NULL...")
+            return
+        }
+        val updateFilterState = FilterState()
+        updateFilterState.isCategoryChecked = filterState.isCategoryChecked
+        updateFilterState.selectedCategory = filterState.selectedCategory
+        updateFilterState.sortOrderDirection = filterState.sortOrderDirection
+        filterStatus.value = updateFilterState
+    }
+
+    fun applyFilter(filterState: FilterState)
+    {
+        Log.v(TAG, "applyFilter() : $filterState")
+        try
+        {
+            CoroutineScope(Dispatchers.Main).launch {
+                enableFilter.value = FilterDialogCondition.POSTPROCESSING
+                val refresh = isRefreshing.value ?: false
+                if (!refresh)
+                {
+                    isRefreshing.value = true
+                    enableFilter.value = FilterDialogCondition.DISABLE
+                    dataList.clear()
+                    withContext(Dispatchers.Default) {
+                        if (filterState.isCategoryChecked)
+                        {
+                            when (filterState.sortOrderDirection)
+                            {
+                                SortOrderDirection.CREATE_OLDEST -> {
+                                    storageDao.findByCategoryCreateOldest(filterState.selectedCategory).forEach { data ->
+                                        dataList.add(data)
+                                    }
+                                }
+                                SortOrderDirection.CREATE_NEWEST -> {
+                                    storageDao.findByCategoryCreateLatest(filterState.selectedCategory).forEach { data ->
+                                        dataList.add(data)
+                                    }
+                                }
+                                SortOrderDirection.UPDATE_OLDEST -> {
+                                    storageDao.findByCategoryUpdateOldest(filterState.selectedCategory).forEach { data ->
+                                        dataList.add(data)
+                                    }
+                                }
+                                SortOrderDirection.UPDATE_NEWEST -> {
+                                    storageDao.findByCategoryUpdateLatest(filterState.selectedCategory).forEach { data ->
+                                        dataList.add(data)
+                                    }
+                                }
+                            }
+                        }
+                        else
+                        {
+                            when (filterState.sortOrderDirection)
+                            {
+                                SortOrderDirection.CREATE_OLDEST -> {
+                                    storageDao.getAllCreateOldest().forEach { data ->
+                                        dataList.add(data)
+                                    }
+                                }
+                                SortOrderDirection.CREATE_NEWEST -> {
+                                    storageDao.getAllCreateLatest().forEach { data ->
+                                        dataList.add(data)
+                                    }
+                                }
+                                SortOrderDirection.UPDATE_OLDEST -> {
+                                    storageDao.getAllUpdateOldest().forEach { data ->
+                                        dataList.add(data)
+                                    }
+                                }
+                                SortOrderDirection.UPDATE_NEWEST -> {
+                                    storageDao.getAllUpdateLatest().forEach { data ->
+                                        dataList.add(data)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    isRefreshing.value = false
+                }
+                listCount.value = dataList.size
+                isFilterApply.value = true
+                enableFilter.value = FilterDialogCondition.READY
+            }
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
+    }
+
     override fun startExportFile(fileName: String) {
         Log.v(TAG, "startExportFile(): $fileName")
         isExporting.value = true
@@ -196,6 +295,16 @@ class ListViewModel: ViewModel(), DataExporter.IExportProgressCallback, Recogniz
     {
         isUpdatingFromIsbn.value = false
         enableFilter.value = FilterDialogCondition.READY
+    }
+
+    data class FilterState(
+        var isCategoryChecked: Boolean = false,
+        var selectedCategory: String = "",
+        var sortOrderDirection: SortOrderDirection = SortOrderDirection.CREATE_NEWEST
+    )
+
+    enum class SortOrderDirection {
+        CREATE_NEWEST, CREATE_OLDEST, UPDATE_NEWEST, UPDATE_OLDEST
     }
 
     enum class FilterDialogCondition {

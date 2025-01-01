@@ -90,6 +90,16 @@
     <string name="dialog_title_filtering_preparing">Preparing…</string>
     <string name="dialog_title_filter_applying">Applying filter…</string>
 
+    <string name="dialog_label_button_filter_apply">Apply</string>
+    <string name="dialog_label_button_filter_cancel">Cancel</string>
+    <string name="dialog_label_filter_category">Category: </string>
+    <string name="dialog_label_sort_order">Sort order:</string>
+    <string name="dialog_filter_sort_order_newest">Newest</string>
+    <string name="dialog_filter_sort_order_oldest">Oldest</string>
+    <string name="dialog_filter_sort_order_create">Created date</string>
+    <string name="dialog_filter_sort_order_update">Updated date</string>
+    <string name="dialog_filter_sort_not_specified">(no filter)</string>
+
     <!--  Use for xml/preference_main.xml -->
     <string name="pref_cat_application_control">App. Control</string>
     <string name="pref_exit_power_off">Exit Application</string>

@@ -281,6 +281,13 @@ fun ShowFilterConditionSettingDialog(viewModel : ListViewModel)
         }
         FilterDialogCondition.SHOWING -> {
             // ----- フィルタ条件を設定する
+            ListFilterDialog(
+                listViewModel = viewModel,
+                onApply = { newState -> viewModel.applyFilter(newState) },
+                onDismissRequest = { viewModel.setFilterDialogCondition(FilterDialogCondition.READY) }
+            )
+
+/*
             AlertDialog(
                 onDismissRequest = {  },
                 icon = {
@@ -297,6 +304,8 @@ fun ShowFilterConditionSettingDialog(viewModel : ListViewModel)
                     }
                 }
             )
+
+ */
         }
         FilterDialogCondition.POSTPROCESSING -> {
             // ----- フィルター条件を反映中

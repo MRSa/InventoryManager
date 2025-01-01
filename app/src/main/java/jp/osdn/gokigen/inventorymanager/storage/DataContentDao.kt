@@ -13,6 +13,18 @@ interface DataContentDao
     @Query("SELECT * FROM contents")
     fun getAll(): List<DataContent>
 
+    @Query("SELECT * FROM contents ORDER BY update_date DESC")
+    fun getAllUpdateLatest(): List<DataContent>
+
+    @Query("SELECT * FROM contents ORDER BY update_date")
+    fun getAllUpdateOldest(): List<DataContent>
+
+    @Query("SELECT * FROM contents ORDER BY create_date DESC")
+    fun getAllCreateLatest(): List<DataContent>
+
+    @Query("SELECT * FROM contents ORDER BY create_date")
+    fun getAllCreateOldest(): List<DataContent>
+
     @Query("SELECT * FROM contents WHERE id IN (:ids)")
     fun getAllByIds(ids: LongArray): List<DataContent>
 
@@ -24,6 +36,18 @@ interface DataContentDao
 
     @Query("SELECT * FROM contents WHERE category = :category")
     fun findByCategory(category: String): List<DataContent>
+
+    @Query("SELECT * FROM contents WHERE category = :category ORDER BY update_date DESC")
+    fun findByCategoryUpdateLatest(category: String): List<DataContent>
+
+    @Query("SELECT * FROM contents WHERE category = :category ORDER BY update_date")
+    fun findByCategoryUpdateOldest(category: String): List<DataContent>
+
+    @Query("SELECT * FROM contents WHERE category = :category ORDER BY create_date DESC")
+    fun findByCategoryCreateLatest(category: String): List<DataContent>
+
+    @Query("SELECT * FROM contents WHERE category = :category ORDER BY create_date")
+    fun findByCategoryCreateOldest(category: String): List<DataContent>
 
     @Query("SELECT * FROM contents WHERE author = :author")
     fun findByAuthor(author: String): List<DataContent>

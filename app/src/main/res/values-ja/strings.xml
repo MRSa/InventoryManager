@@ -90,6 +90,16 @@
     <string name="dialog_title_filtering_preparing">準備中…</string>
     <string name="dialog_title_filter_applying">フィルタ適用中…</string>
 
+    <string name="dialog_label_button_filter_apply">適用</string>
+    <string name="dialog_label_button_filter_cancel">キャンセル</string>
+    <string name="dialog_label_filter_category">カテゴリ : </string>
+    <string name="dialog_label_sort_order">Sort order:</string>
+    <string name="dialog_filter_sort_order_newest">最新から</string>
+    <string name="dialog_filter_sort_order_oldest">最古から</string>
+    <string name="dialog_filter_sort_order_create">作成日</string>
+    <string name="dialog_filter_sort_order_update">更新日</string>
+    <string name="dialog_filter_sort_not_specified">（フィルタ未指定）</string>
+
     <!--  Use for xml/preference_main.xml -->
     <string name="pref_cat_application_control">A01f 制御</string>
     <string name="pref_exit_power_off">アプリ終了</string>

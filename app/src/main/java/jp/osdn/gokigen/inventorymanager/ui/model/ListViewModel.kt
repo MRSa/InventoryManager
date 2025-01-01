@@ -52,9 +52,6 @@ class ListViewModel: ViewModel(), DataExporter.IExportProgressCallback, Recogniz
     private val listCount : MutableLiveData<Int> by lazy { MutableLiveData<Int>() }
     val dataListCount: LiveData<Int> = listCount
 
-    private val filterInformation : MutableLiveData<String> by lazy { MutableLiveData<String>() }
-    val listFilterInformation: LiveData<String> = filterInformation
-
     fun initializeViewModel()
     {
         try
@@ -67,7 +64,6 @@ class ListViewModel: ViewModel(), DataExporter.IExportProgressCallback, Recogniz
             lastExportedFileCount.value = 0
             lastTotalExportedFileCount.value = 0
             listCount.value = 0
-            filterInformation.value = ""
             isFilterApply.value = false
             filterStatus.value = FilterState()
         }
@@ -96,6 +92,7 @@ class ListViewModel: ViewModel(), DataExporter.IExportProgressCallback, Recogniz
             }
             listCount.value = dataList.size
             isFilterApply.value = false
+            filterStatus.value = FilterState()
         }
     }
 

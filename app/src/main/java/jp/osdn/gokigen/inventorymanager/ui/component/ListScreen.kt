@@ -1,5 +1,6 @@
 package jp.osdn.gokigen.inventorymanager.ui.component
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,10 +14,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -75,10 +74,22 @@ fun CommandPanel(navController: NavHostController, dataListModel : ListViewModel
 {
     // ----- 表示メッセージを生成する
     val listCount = dataListModel.dataListCount.observeAsState()
-    val filterInfo = dataListModel.listFilterInformation.observeAsState()
+    val filterInfo = dataListModel.filterState.observeAsState()
+    val isFilterApplying = dataListModel.isFilterApplying.observeAsState()
 
-    val message = if ((filterInfo.value?.length ?: 0) > 0) {
-        "${stringResource(R.string.label_data_count)} ${listCount.value} (${filterInfo.value})"
+    val message = if (isFilterApplying.value == true) {
+        val category = if (filterInfo.value?.isCategoryChecked == true) { "(${filterInfo.value?.selectedCategory})" } else { "" }
+        val direction = if ((filterInfo.value?.sortOrderDirection == ListViewModel.SortOrderDirection.CREATE_OLDEST)||(filterInfo.value?.sortOrderDirection == ListViewModel.SortOrderDirection.UPDATE_OLDEST))
+        {
+            // OLD -> New の順番
+            stringResource(R.string.dialog_info_sort_order_oldest)
+        }
+        else
+        {
+            // NEW -> OLD の順番
+            stringResource(R.string.dialog_info_sort_order_newest)
+        }
+        "${stringResource(R.string.label_data_count)} ${listCount.value} $direction $category"
     }
     else
     {
@@ -104,7 +115,10 @@ fun CommandPanel(navController: NavHostController, dataListModel : ListViewModel
             fontWeight = if (isFilterApply.value == true) { FontWeight.Bold } else { FontWeight.Medium },
             textDecoration = if (isFilterApply.value == true) { TextDecoration.Underline } else { TextDecoration.None } ,
             text = message,
-            modifier = Modifier.align(Alignment.CenterVertically)
+            modifier = Modifier.align(Alignment.CenterVertically).clickable {
+                dataListModel.setFilterDialogCondition(FilterDialogCondition.PREPARING)
+                dataListModel.prepareToShowFilterSettingDialog()
+            }
         )
 
         // ----- 検索用フィルタ（設定）

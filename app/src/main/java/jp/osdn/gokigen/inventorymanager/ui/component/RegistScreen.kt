@@ -77,7 +77,10 @@ fun RegistScreen(
                 {
                     cameraControl.finishCamera(false) // カメラ処理を終了
                     Log.v("RegistScreen", "handleOnBackPressed")
-                    navController.popBackStack()  // ひとつ戻る
+                    if (navController.currentBackStackEntry?.destination?.route == "RegistScreen")
+                    {
+                        navController.popBackStack()
+                    }
                 }
                 catch (e: Exception)
                 {
@@ -627,7 +630,10 @@ fun ReturnToMainScreenFromRegisterScreen(navController: NavHostController, camer
             contentDescription = "Back",
             modifier = Modifier.clickable( onClick = {
                 cameraControl.finishCamera(false) // カメラ処理を終了
-                navController.popBackStack()
+                if (navController.currentBackStackEntry?.destination?.route == "RegistScreen")
+                {
+                    navController.popBackStack()
+                }
             })
         )
         Text(text = stringResource(R.string.label_return_to_main_screen),
@@ -635,7 +641,10 @@ fun ReturnToMainScreenFromRegisterScreen(navController: NavHostController, camer
             color = MaterialTheme.colorScheme.primary,
             modifier = Modifier.clickable( onClick = {
                 cameraControl.finishCamera(false) // カメラ処理を終了
-                navController.popBackStack()
+                if (navController.currentBackStackEntry?.destination?.route == "RegistScreen")
+                {
+                    navController.popBackStack()
+                }
             })
         )
     }

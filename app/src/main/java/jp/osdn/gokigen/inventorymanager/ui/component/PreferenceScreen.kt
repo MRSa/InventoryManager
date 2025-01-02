@@ -96,14 +96,21 @@ fun ReturnToMainScreen(navController: NavHostController)
             painter = painterResource(id = R.drawable.baseline_arrow_back_24),
             contentDescription = "Back",
             modifier = Modifier.clickable( onClick = {
-                navController.popBackStack()
+                Log.v("BACK", "CURRENT SCREEN: ${navController.currentBackStackEntry?.destination?.route}")
+                if (navController.currentBackStackEntry?.destination?.route == "PreferenceScreen") {
+                    navController.popBackStack()
+                }
             })
         )
         Text(text = stringResource(R.string.label_return_to_main_screen),
             fontSize = with(density) { 18.dp.toSp() },
             color = MaterialTheme.colorScheme.primary,
             modifier = Modifier.clickable( onClick = {
-                navController.popBackStack()
+                Log.v("BACK", "CURRENT SCREEN: ${navController.currentBackStackEntry?.destination?.route}")
+                if (navController.currentBackStackEntry?.destination?.route == "PreferenceScreen")
+                {
+                    navController.popBackStack()
+                }
             })
         )
     }

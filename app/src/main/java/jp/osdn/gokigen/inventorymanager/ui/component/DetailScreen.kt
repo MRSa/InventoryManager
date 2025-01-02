@@ -588,13 +588,22 @@ fun ReturnToListScreen(navController: NavHostController)
         Icon(
             painter = painterResource(id = R.drawable.baseline_arrow_back_24),
             contentDescription = "Back",
-            modifier = Modifier.clickable( onClick = { navController.popBackStack() })
+            modifier = Modifier.clickable( onClick = {
+                if (navController.currentBackStackEntry?.destination?.route == "DetailScreen/{id}")
+                {
+                    navController.popBackStack()
+                }
+            })
         )
         Text(text = stringResource(R.string.label_return_to_list_screen),
             fontSize = with(density) { 18.dp.toSp() },
             color = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.clickable( onClick = { navController.popBackStack() })
+            modifier = Modifier.clickable( onClick = {
+                if (navController.currentBackStackEntry?.destination?.route == "DetailScreen/{id}")
+                {
+                    navController.popBackStack()
+                }
+            })
         )
     }
 }
-

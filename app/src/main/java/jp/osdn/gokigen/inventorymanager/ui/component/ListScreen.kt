@@ -102,7 +102,10 @@ fun CommandPanel(navController: NavHostController, dataListModel : ListViewModel
             enabled = true,
             modifier = Modifier,
             onClick = {
-                navController.popBackStack()
+                if (navController.currentBackStackEntry?.destination?.route == "ListScreen")
+                {
+                    navController.popBackStack()
+                }
             }
         ) {
             Icon(
@@ -302,26 +305,6 @@ fun ShowFilterConditionSettingDialog(viewModel : ListViewModel)
                 onApply = { newState -> viewModel.applyFilter(newState) },
                 onDismissRequest = { viewModel.setFilterDialogCondition(FilterDialogCondition.READY) }
             )
-
-/*
-            AlertDialog(
-                onDismissRequest = {  },
-                icon = {
-                    Icon(
-                        imageVector = Icons.Filled.Info,
-                        contentDescription = "Info"
-                    )
-                },
-                title = { Text(text = stringResource(R.string.dialog_title_filtering_setting)) },
-                text = { Text(text = stringResource(R.string.dialog_message_filtering_setting)) },
-                confirmButton = {
-                    Button(onClick = { viewModel.setFilterDialogCondition(FilterDialogCondition.POSTPROCESSING) }) {
-                        Text(text = stringResource(R.string.dialog_button_dismiss))
-                    }
-                }
-            )
-
- */
         }
         FilterDialogCondition.POSTPROCESSING -> {
             // ----- フィルター条件を反映中

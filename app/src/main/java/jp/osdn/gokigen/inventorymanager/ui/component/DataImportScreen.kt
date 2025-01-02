@@ -75,7 +75,10 @@ fun DataImportCommandPanel(navController: NavHostController, viewModel: DataImpo
             enabled = buttonEnable,
             modifier = Modifier,
             onClick = {
-                navController.popBackStack()
+                if (navController.currentBackStackEntry?.destination?.route == "DataImportScreen")
+                {
+                    navController.popBackStack()
+                }
             }
         ) {
             Icon(
@@ -91,7 +94,10 @@ fun DataImportCommandPanel(navController: NavHostController, viewModel: DataImpo
             modifier = Modifier
                 .align(Alignment.CenterVertically)
                 .clickable {
-                    navController.popBackStack()
+                    if (navController.currentBackStackEntry?.destination?.route == "DataImportScreen")
+                    {
+                        navController.popBackStack()
+                    }
                 }
         )
     }

@@ -206,7 +206,7 @@ fun ShowImportReadyDialog(viewModel: DataImportViewModel, dataImporter: DataImpo
         } else {
             // ----- カウントがわかる場合
             val progressPercent = (currentCount.toFloat() / totalCount.toFloat()) * 100.0f
-            "$statusMessage ${stringResource(R.string.dialog_progress_proceed)} $currentCount / $totalCount (${String.format(US, "%.1f", progressPercent)})"
+            "$statusMessage ${stringResource(R.string.dialog_progress_proceed)} $currentCount / $totalCount (${String.format(US, "%.1f", progressPercent)} %)"
         }
         AlertDialog(
             onDismissRequest = { },

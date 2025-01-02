@@ -43,6 +43,9 @@ class DetailInventoryViewModel: ViewModel(), RecognizeFromIsbnCallback {
     private val isNoteEdit: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val isNoteEditing: LiveData<Boolean> = isNoteEdit
 
+    private val isMemoEdit: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
+    val isMemoEditing: LiveData<Boolean> = isMemoEdit
+
     fun initializeViewModel()
     {
         try
@@ -57,6 +60,7 @@ class DetailInventoryViewModel: ViewModel(), RecognizeFromIsbnCallback {
             isAuthorEdit.value = false
             isPublisherEdit.value = false
             isNoteEdit.value = false
+            isMemoEdit.value = false
         }
         catch (e: Exception)
         {
@@ -85,6 +89,7 @@ class DetailInventoryViewModel: ViewModel(), RecognizeFromIsbnCallback {
                     isAuthorEdit.value = false
                     isPublisherEdit.value = false
                     isNoteEdit.value = false
+                    isMemoEdit.value = false
                 }
                 Log.v(TAG, "Update Detail Data : $id")
             }.start()
@@ -128,6 +133,10 @@ class DetailInventoryViewModel: ViewModel(), RecognizeFromIsbnCallback {
                 isNoteEdit.value = !isEnable
                 update = true
             }
+            TextFieldId.MEMO -> {
+                isMemoEdit.value = !isEnable
+                update = true
+            }
         }
         if ((update)&&((isTitleEdit.value == true)||
                     (isSubtitleEdit.value == true)||
@@ -135,7 +144,8 @@ class DetailInventoryViewModel: ViewModel(), RecognizeFromIsbnCallback {
                     (isPublisherEdit.value == true)||
                     (isIsbnEdit.value == true)||
                     (isCategoryEdit.value == true)||
-                    (isNoteEdit.value == true)))
+                    (isNoteEdit.value == true)||
+                    (isMemoEdit.value == true)))
         {
             // データのどれかが編集中の時は、更新ボタンは有効にしない
             update = false
@@ -162,7 +172,7 @@ class DetailInventoryViewModel: ViewModel(), RecognizeFromIsbnCallback {
                 subTitle = if (textFieldId == TextFieldId.SUBTITLE) { value } else { content.value?.subTitle },
                 author = if (textFieldId == TextFieldId.AUTHOR) { value } else { content.value?.author },
                 publisher = if (textFieldId == TextFieldId.PUBLISHER) { value } else { content.value?.publisher },
-                description = content.value?.description,
+                description = if (textFieldId == TextFieldId.MEMO) { value } else { content.value?.description },
                 isbn = if (textFieldId == TextFieldId.ISBN) { value } else { content.value?.isbn },
                 productId = content.value?.productId,
                 urlStr = content.value?.urlStr,

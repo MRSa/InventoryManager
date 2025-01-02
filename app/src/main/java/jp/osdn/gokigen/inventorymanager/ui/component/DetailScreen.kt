@@ -130,6 +130,14 @@ fun DetailScreen(navController: NavHostController, viewModel : DetailInventoryVi
                     true,
                     viewModel)
                 Spacer(Modifier.size(padding))
+                ShowTextInputData(
+                    id,
+                    TextFieldId.MEMO,
+                    stringResource(R.string.label_memo),
+                    detail.value?.description ?: "",
+                    false,
+                    viewModel)
+                Spacer(Modifier.size(padding))
                 if ((detail.value?.note ?: "").isNotEmpty()) {
                     HorizontalDivider(thickness = 1.dp)
                     Spacer(Modifier.size(padding))
@@ -186,6 +194,7 @@ fun DetailScreen(navController: NavHostController, viewModel : DetailInventoryVi
                             val subTitle = detail.value?.subTitle ?: ""
                             val author = detail.value?.author ?: ""
                             val publisher = detail.value?.publisher ?: ""
+                            val description = detail.value?.description ?: ""
                             val isbn = detail.value?.isbn ?: ""
                             val category = detail.value?.category ?: ""
                             val note = detail.value?.note ?: ""
@@ -203,6 +212,7 @@ fun DetailScreen(navController: NavHostController, viewModel : DetailInventoryVi
                                         subTitle = subTitle,
                                         author = author,
                                         publisher = publisher,
+                                        description = description,
                                         isbn = isbn,
                                         category = category,
                                         note = note,
@@ -238,6 +248,7 @@ fun ShowTextInputData(id: Long, itemId: TextFieldId, label: String, value: Strin
     val isAuthorEditing = viewModel.isAuthorEditing.observeAsState()
     val isPublisherEditing = viewModel.isPublisherEditing.observeAsState()
     val isNoteEditing = viewModel.isNoteEditing.observeAsState()
+    val isMemoEditing = viewModel.isMemoEditing.observeAsState()
 
     Row(
         modifier = Modifier.fillMaxWidth().padding(horizontal = 4.dp),
@@ -257,6 +268,7 @@ fun ShowTextInputData(id: Long, itemId: TextFieldId, label: String, value: Strin
                 TextFieldId.ISBN -> { isIsbnEditing.value ?: false }
                 TextFieldId.CATEGORY -> { isCategoryEditing.value ?: false }
                 TextFieldId.TEXT -> { isNoteEditing.value ?: false }
+                TextFieldId.MEMO -> { isMemoEditing.value ?: false }
             },
             value = value,
             singleLine = isSingleLine,
@@ -269,6 +281,7 @@ fun ShowTextInputData(id: Long, itemId: TextFieldId, label: String, value: Strin
                     TextFieldId.ISBN -> { viewModel.updateValueSingle(id, TextFieldId.ISBN, it) }
                     TextFieldId.CATEGORY -> { viewModel.updateValueSingle(id, TextFieldId.CATEGORY, it) }
                     TextFieldId.TEXT -> { viewModel.updateValueSingle(id, TextFieldId.TEXT, it) }
+                    TextFieldId.MEMO -> { viewModel.updateValueSingle(id, TextFieldId.MEMO, it) }
                 }
             },
             modifier = Modifier.weight(5.0f),
@@ -281,6 +294,7 @@ fun ShowTextInputData(id: Long, itemId: TextFieldId, label: String, value: Strin
                 TextFieldId.ISBN -> { KeyboardOptions(keyboardType = KeyboardType.Number) }
                 TextFieldId.CATEGORY -> { KeyboardOptions(keyboardType = KeyboardType.Text) }
                 TextFieldId.TEXT -> { KeyboardOptions() }
+                TextFieldId.MEMO -> { KeyboardOptions() }
             },
             visualTransformation = VisualTransformation.None
         )
@@ -295,6 +309,7 @@ fun ShowTextInputData(id: Long, itemId: TextFieldId, label: String, value: Strin
                 TextFieldId.ISBN -> { true }
                 TextFieldId.CATEGORY -> { true }
                 TextFieldId.TEXT -> { true }
+                TextFieldId.MEMO -> { true }
             },
             onClick = {
                 when (itemId)
@@ -319,6 +334,9 @@ fun ShowTextInputData(id: Long, itemId: TextFieldId, label: String, value: Strin
                     }
                     TextFieldId.TEXT -> {
                         viewModel.toggleEditButtonStatus(TextFieldId.TEXT, isNoteEditing.value ?: false)
+                    }
+                    TextFieldId.MEMO -> {
+                        viewModel.toggleEditButtonStatus(TextFieldId.MEMO, isMemoEditing.value ?: false)
                     }
                 }
             },
@@ -402,6 +420,19 @@ fun ShowTextInputData(id: Long, itemId: TextFieldId, label: String, value: Strin
                         ButtonDefaults.buttonColors()
                     }
                 }
+                TextFieldId.MEMO -> {
+                    if (isMemoEditing.value == true)
+                    {
+                        ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                            contentColor = MaterialTheme.colorScheme.onPrimary
+                        )
+                    }
+                    else
+                    {
+                        ButtonDefaults.buttonColors()
+                    }
+                }
                 TextFieldId.TEXT -> {
                     if (isNoteEditing.value == true)
                     {
@@ -471,6 +502,18 @@ fun ShowTextInputData(id: Long, itemId: TextFieldId, label: String, value: Strin
                     }
                     TextFieldId.CATEGORY -> {
                         if (isCategoryEditing.value == true)
+                        {
+                            // --- 編集中の時には、ボタンを「確定」にする
+                            stringResource(R.string.button_label_set)
+                        }
+                        else
+                        {
+                            // --- 通常は、「編集」ボタン
+                            stringResource(R.string.button_label_edit)
+                        }
+                    }
+                    TextFieldId.MEMO -> {
+                        if (isMemoEditing.value == true)
                         {
                             // --- 編集中の時には、ボタンを「確定」にする
                             stringResource(R.string.button_label_set)

@@ -2,6 +2,7 @@ package jp.osdn.gokigen.inventorymanager.ui.component
 
 import android.widget.Toast
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -28,6 +29,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -70,7 +72,7 @@ fun DetailScreen(navController: NavHostController, viewModel : DetailInventoryVi
                 .fillMaxSize()
                 .verticalScroll(scrollState)
             ) {
-                ReturnToMainScreen(navController)
+                ReturnToListScreen(navController)
                 Spacer(Modifier.size(padding))
                 // HorizontalDivider(thickness = 1.dp)
 
@@ -576,3 +578,23 @@ fun ShowCapturedImage(id: Long, imageFile1: String, imageFile2: String, imageFil
         }
     }
 }
+
+@Composable
+fun ReturnToListScreen(navController: NavHostController)
+{
+    val density = LocalDensity.current
+    Spacer(Modifier.size(12.dp))
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Icon(
+            painter = painterResource(id = R.drawable.baseline_arrow_back_24),
+            contentDescription = "Back",
+            modifier = Modifier.clickable( onClick = { navController.popBackStack() })
+        )
+        Text(text = stringResource(R.string.label_return_to_list_screen),
+            fontSize = with(density) { 18.dp.toSp() },
+            color = MaterialTheme.colorScheme.primary,
+            modifier = Modifier.clickable( onClick = { navController.popBackStack() })
+        )
+    }
+}
+

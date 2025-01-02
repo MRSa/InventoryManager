@@ -94,7 +94,8 @@ fun RegistScreen(
     MaterialTheme {
         val scrollState = rememberScrollState()
         Column(
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier
+                .fillMaxSize()
                 .verticalScroll(scrollState)
         )
         {
@@ -114,56 +115,75 @@ fun RegistScreen(
 
             // 画像表示エリア
             Row(
-                modifier = Modifier.fillMaxWidth().weight(1.0f)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1.0f)
             ) {
                 Column(modifier = Modifier.weight(1f)) {
                     if (imageData1.value != null) {
                         Image(
                             imageData1.value!!.asImageBitmap(),
                             contentDescription = null,
-                            modifier = Modifier.fillMaxWidth().weight(1.0f).padding(all = 4.dp)
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .weight(1.0f)
+                                .padding(all = 4.dp)
                         )
                     } else {
                         Image(
                             painter = painterResource(id = R.drawable.baseline_image_24),
                             contentDescription = null,
-                            modifier = Modifier.fillMaxWidth().weight(1.0f)
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .weight(1.0f)
                         )
                     }
                     if (imageData2.value != null) {
                         Image(
                             imageData2.value!!.asImageBitmap(),
                             contentDescription = null,
-                            modifier = Modifier.fillMaxWidth().weight(1.0f).padding(all = 4.dp)
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .weight(1.0f)
+                                .padding(all = 4.dp)
                         )
                     } else {
                         Image(
                             painter = painterResource(id = R.drawable.baseline_image_24),
                             contentDescription = null,
-                            modifier = Modifier.fillMaxWidth().weight(1.0f)
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .weight(1.0f)
                         )
                     }
                     if (imageData3.value != null) {
                         Image(
                             imageData3.value!!.asImageBitmap(),
                             contentDescription = null,
-                            modifier = Modifier.fillMaxWidth().weight(1.0f).padding(all = 4.dp)
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .weight(1.0f)
+                                .padding(all = 4.dp)
                         )
                     } else {
                         Image(
                             painter = painterResource(id = R.drawable.baseline_image_24),
                             contentDescription = null,
-                            modifier = Modifier.fillMaxWidth().weight(1.0f)
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .weight(1.0f)
                         )
                     }
                     Row(
-                        modifier = Modifier.fillMaxWidth().height(50.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(50.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
 
                             text = stringResource(R.string.label_register_category),
-                            modifier = Modifier.weight(1f),
+                            modifier = Modifier.weight(1f).padding(start = 2.dp),
                             fontSize = 14.sp
                         )
                         TextField(
@@ -217,7 +237,8 @@ fun RegistScreen(
                             .pointerInput(Unit) {
                                 detectTapGestures(
                                     onLongPress = {
-                                        cameraControl.onLongClickReceiver(0)
+                                        cameraControl
+                                            .onLongClickReceiver(0)
                                             .onLongClick(null) /* Called on Long Press */
                                     },
                                 )
@@ -258,13 +279,15 @@ fun TextDataInputArea(viewModel: RegisterInformationViewModel)
     ) {
         // ----- 題名
         Row(
-            modifier = Modifier.fillMaxWidth().height(50.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(50.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
 
                 text = stringResource(R.string.label_title),
-                modifier = Modifier.weight(1f),
+                modifier = Modifier.weight(1f).padding(start = 2.dp),
                 fontSize = 14.sp
             )
             TextField(
@@ -278,13 +301,15 @@ fun TextDataInputArea(viewModel: RegisterInformationViewModel)
         }
         // ----- 副題
         Row(
-            modifier = Modifier.fillMaxWidth().height(50.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(50.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
 
                 text = stringResource(R.string.label_subtitle),
-                modifier = Modifier.weight(1f),
+                modifier = Modifier.weight(1f).padding(start = 2.dp),
                 fontSize = 14.sp
             )
             TextField(
@@ -298,12 +323,14 @@ fun TextDataInputArea(viewModel: RegisterInformationViewModel)
         }
         // ----- 作者
         Row(
-            modifier = Modifier.fillMaxWidth().height(50.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(50.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
                 text = stringResource(R.string.label_author),
-                modifier = Modifier.weight(1f),
+                modifier = Modifier.weight(1f).padding(start = 2.dp),
                 fontSize = 14.sp
             )
             TextField(
@@ -317,12 +344,14 @@ fun TextDataInputArea(viewModel: RegisterInformationViewModel)
         }
         // ----- 会社
         Row(
-            modifier = Modifier.fillMaxWidth().height(50.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(50.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
                 text = stringResource(R.string.label_publisher),
-                modifier = Modifier.weight(1f),
+                modifier = Modifier.weight(1f).padding(start = 2.dp),
                 fontSize = 14.sp
             )
             TextField(
@@ -337,12 +366,14 @@ fun TextDataInputArea(viewModel: RegisterInformationViewModel)
 
         // ----- ISBN (数字を手動入力)
         Row(
-            modifier = Modifier.fillMaxWidth().height(50.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(50.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
                 text = stringResource(R.string.label_isbn),
-                modifier = Modifier.weight(1f),
+                modifier = Modifier.weight(1f).padding(start = 2.dp),
                 fontSize = 14.sp
             )
             TextField(
@@ -358,12 +389,14 @@ fun TextDataInputArea(viewModel: RegisterInformationViewModel)
 
         // ----- テキスト（文字認識データ）
         Row(
-            modifier = Modifier.fillMaxWidth().height(50.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(50.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
                 text = stringResource(R.string.label_register_text),
-                modifier = Modifier.weight(1f),
+                modifier = Modifier.weight(1f).padding(start = 2.dp),
                 fontSize = 14.sp
             )
             TextField(
@@ -377,12 +410,14 @@ fun TextDataInputArea(viewModel: RegisterInformationViewModel)
 
         // ----- バーコードデータ
         Row(
-            modifier = Modifier.fillMaxWidth().height(50.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(50.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
                 text = stringResource(R.string.label_register_bcr),
-                modifier = Modifier.weight(1f),
+                modifier = Modifier.weight(1f).padding(start = 2.dp),
                 fontSize = 14.sp
             )
             TextField(
@@ -415,7 +450,9 @@ fun RegisterOperationPanel(cameraControl: ICameraControl, viewModel: RegisterInf
 
     // 操作ボタンを配置する部分 (その１）
     Row(
-        modifier = Modifier.fillMaxWidth().height(50.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(50.dp),
         horizontalArrangement = Arrangement.Start
     )
     {
@@ -520,7 +557,9 @@ fun RegisterOperationPanel(cameraControl: ICameraControl, viewModel: RegisterInf
         Spacer(modifier = Modifier.weight(3.0f))
     }
     Row(
-        modifier = Modifier.fillMaxWidth().padding(all = 8.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(all = 8.dp),
         horizontalArrangement = Arrangement.End,
         verticalAlignment = Alignment.CenterVertically
     ) {

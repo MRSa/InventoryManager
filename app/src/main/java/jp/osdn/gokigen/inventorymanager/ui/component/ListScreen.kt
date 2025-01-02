@@ -101,8 +101,10 @@ fun CommandPanel(navController: NavHostController, dataListModel : ListViewModel
         IconButton(
             enabled = true,
             modifier = Modifier,
-            onClick = { navController.popBackStack() })
-        {
+            onClick = {
+                navController.popBackStack()
+            }
+        ) {
             Icon(
                 painter = painterResource(R.drawable.baseline_arrow_back_24),
                 contentDescription = "back to main screen")

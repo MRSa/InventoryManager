@@ -104,6 +104,7 @@
     <string name="dialog_filter_sort_not_specified">(no filter)</string>
     <string name="dialog_info_sort_order_newest">↑</string>
     <string name="dialog_info_sort_order_oldest">↓</string>
+    <string name="message_not_found">Not found the back screen</string>
 
     <!--  Use for xml/preference_main.xml -->
     <string name="pref_cat_application_control">App. Control</string>

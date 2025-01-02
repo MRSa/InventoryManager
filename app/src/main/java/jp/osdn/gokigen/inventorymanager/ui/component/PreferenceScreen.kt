@@ -1,5 +1,6 @@
 package jp.osdn.gokigen.inventorymanager.ui.component
 
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -94,12 +95,16 @@ fun ReturnToMainScreen(navController: NavHostController)
         Icon(
             painter = painterResource(id = R.drawable.baseline_arrow_back_24),
             contentDescription = "Back",
-            modifier = Modifier.clickable( onClick = { navController.popBackStack() })
+            modifier = Modifier.clickable( onClick = {
+                navController.popBackStack()
+            })
         )
         Text(text = stringResource(R.string.label_return_to_main_screen),
             fontSize = with(density) { 18.dp.toSp() },
             color = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.clickable( onClick = { navController.popBackStack() })
+            modifier = Modifier.clickable( onClick = {
+                navController.popBackStack()
+            })
         )
     }
 }
@@ -112,7 +117,7 @@ fun SwitchCheckInformationImmediately(prefsModel: PreferenceViewModel)
     val checkImmediately = prefsModel.checkIsbnImmediately.observeAsState()
     Row (
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.padding(horizontal = 4.dp, )
+        modifier = Modifier.padding(horizontal = 4.dp)
     ) {
         Switch(
             checked = checkImmediately.value?: false,

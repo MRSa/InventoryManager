@@ -74,8 +74,10 @@ fun DataImportCommandPanel(navController: NavHostController, viewModel: DataImpo
         IconButton(
             enabled = buttonEnable,
             modifier = Modifier,
-            onClick = { navController.popBackStack() })
-        {
+            onClick = {
+                navController.popBackStack()
+            }
+        ) {
             Icon(
                 painter = painterResource(R.drawable.baseline_arrow_back_24),
                 contentDescription = "back to main screen")
@@ -89,9 +91,7 @@ fun DataImportCommandPanel(navController: NavHostController, viewModel: DataImpo
             modifier = Modifier
                 .align(Alignment.CenterVertically)
                 .clickable {
-                    if (buttonEnable) {
-                        navController.popBackStack()
-                    }
+                    navController.popBackStack()
                 }
         )
     }

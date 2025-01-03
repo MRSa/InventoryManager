@@ -48,7 +48,8 @@
     <string name="label_isbn">ISBN</string>
     <string name="label_category">カテゴリ</string>
     <string name="label_memo">メモ</string>
-    <string name="label_Rating">評価</string>
+    <string name="label_rating">評価</string>
+    <string name="label_rating_star">★</string>
     <string name="label_text_recognition">文字認識</string>
     <string name="button_label_update">データ更新</string>
 

@@ -683,7 +683,7 @@ fun ShowRatingSettingArea(
     viewModel: DetailInventoryViewModel
 ) {
     val ratingValue = viewModel.ratingValue.observeAsState()
-    val ratingTitle = "${stringResource(R.string.label_Rating)} "  // "${ratingValue.value} "
+    val ratingTitle = "${stringResource(R.string.label_rating)} "
 
     Row(
         modifier = modifier,

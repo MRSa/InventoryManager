@@ -118,21 +118,24 @@ class DataImporter(private val activity: AppCompatActivity)
         {
             // ----- レコードの登録
             val content = DataContent.create(
-                data.title,
-                data.subTitle,
-                data.author,
-                data.publisher,
-                data.isbn,
-                data.productId ,
-                data.urlStr,
-                data.bcrText,
-                data.category,
-                "",
-                "",
-                "",
-                "",
-                "",
-                data.note)
+                title = data.title,
+                subTitle = data.subTitle,
+                author = data.author,
+                publisher = data.publisher,
+                isbn = data.isbn,
+                productId = data.productId ,
+                urlStr = data.urlStr,
+                bcrText = data.bcrText,
+                category = data.category,
+                imageFile1 = "",
+                imageFile2 = "",
+                imageFile3 = "",
+                imageFile4 = "",
+                imageFile5 = "",
+                textRecognitionData = data.note,
+                level = 0,
+                counter = 0
+            )
             entryId = storageDao.insertSingle(content)
 
             // ----- 画像ファイルの移動と更新

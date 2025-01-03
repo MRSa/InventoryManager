@@ -27,6 +27,8 @@ data class DataContent(
     @ColumnInfo(name = "image_file_5_name") val imageFile5: String?,  // Image file name (5) : BCR
     @ColumnInfo(name = "checked") val checked: Boolean,               // AFTER MARK AREA (check)
     @ColumnInfo(name = "inform_message") val informMessage: String?,  // AFTER MARK AREA (information)
+    @ColumnInfo(name = "level") val level: Int,                       // AFTER MARK AREA (level)
+    @ColumnInfo(name = "counter") val counter: Int,                   // AFTER MARK AREA (counter)
     @ColumnInfo(name = "inform_date") val informDate: Date?,          // AFTER MARK AREA (date)
     @ColumnInfo(name = "is_delete") val isDelete: Boolean,            // DELETE INFORMATION
     @ColumnInfo(name = "delete_date") val deleteDate: Date?,
@@ -50,35 +52,40 @@ data class DataContent(
                    imageFile3: String?,
                    imageFile4: String?,
                    imageFile5: String?,
-                   textRecognitionData: String?) : DataContent
+                   textRecognitionData: String?,
+                   level: Int = 0,
+                   counter: Int = 0,
+        ) : DataContent
         {
             val currentDate = Date()
             return (
                     DataContent(
-                        0,
-                        title,
-                        subTitle,
-                        author,
-                        publisher,
-                        "",
-                        isbn,
-                        productId,
-                        urlStr,
-                        bcrText,
-                        textRecognitionData,
-                        category,
-                        imageFile1,
-                        imageFile2,
-                        imageFile3,
-                        imageFile4,
-                        imageFile5,
-                        false,
-                        null,
-                        null,
-                        false,
-                        null,
-                        null,
-                        currentDate)
+                        id = 0,
+                        title = title,
+                        subTitle = subTitle,
+                        author = author,
+                        publisher = publisher,
+                        description = "",
+                        isbn = isbn,
+                        productId = productId,
+                        urlStr = urlStr,
+                        bcrText = bcrText,
+                        note = textRecognitionData,
+                        category = category,
+                        imageFile1 = imageFile1,
+                        imageFile2 = imageFile2,
+                        imageFile3 = imageFile3,
+                        imageFile4 = imageFile4,
+                        imageFile5 = imageFile5,
+                        checked = false,
+                        informMessage = null,
+                        level = level,
+                        counter = counter,
+                        informDate = null,
+                        isDelete = false,
+                        deleteDate = null,
+                        updateDate = null,
+                        createDate = currentDate)
                     )
         }
     }

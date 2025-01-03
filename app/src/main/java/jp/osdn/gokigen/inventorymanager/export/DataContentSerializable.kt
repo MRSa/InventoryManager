@@ -24,6 +24,8 @@ data class DataContentSerializable(
     val checked: Boolean = false,     // AFTER MARK AREA (check)
     val informMessage: String? = "",  // AFTER MARK AREA (information)
     val informDate: Long? = 0,        // AFTER MARK AREA (date)
+    val level: Int = 0,               // AFTER MARK AREA (level)
+    val counter: Int = 0,             // AFTER MARK AREA (counter)
     val isDelete: Boolean = false,    // DELETE INFORMATION
     val deleteDate: Long? = 0,
     val updateDate: Long? = 0,

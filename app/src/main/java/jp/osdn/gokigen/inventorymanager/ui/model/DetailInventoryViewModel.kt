@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.room.util.convertByteToUUID
 import jp.osdn.gokigen.inventorymanager.AppSingleton
 import jp.osdn.gokigen.inventorymanager.recognize.RecognizeFromIsbnCallback
 import jp.osdn.gokigen.inventorymanager.recognize.UpdateRecordInformation
@@ -187,6 +188,8 @@ class DetailInventoryViewModel: ViewModel(), RecognizeFromIsbnCallback {
                 checked = content.value?.checked ?: false,
                 informMessage = content.value?.informMessage,
                 informDate = content.value?.informDate,
+                level = content.value?.level ?: 0,
+                counter = content.value?.counter ?: 0,
                 isDelete = content.value?.isDelete ?: false,
                 deleteDate = content.value?.deleteDate,
                 updateDate = content.value?.updateDate,
@@ -232,6 +235,8 @@ class DetailInventoryViewModel: ViewModel(), RecognizeFromIsbnCallback {
                 informMessage = content.value?.informMessage,
                 informDate = content.value?.informDate,
                 isDelete = content.value?.isDelete ?: false,
+                level = content.value?.level ?: 0,
+                counter = content.value?.counter ?: 0,
                 deleteDate = content.value?.deleteDate,
                 updateDate = content.value?.updateDate,
                 createDate = content.value?.createDate
@@ -248,5 +253,4 @@ class DetailInventoryViewModel: ViewModel(), RecognizeFromIsbnCallback {
     {
         private val TAG = DetailInventoryViewModel::class.java.simpleName
     }
-
 }

@@ -200,6 +200,8 @@ fun DetailScreen(navController: NavHostController, viewModel : DetailInventoryVi
                             val isbn = detail.value?.isbn ?: ""
                             val category = detail.value?.category ?: ""
                             val note = detail.value?.note ?: ""
+                            val level = detail.value?.level ?: 0
+                            val counter = detail.value?.counter ?: 0
                             val currentDate = Date()
                             viewModel.updateButtonEnable(
                                 isEnableUpdate = false,
@@ -218,6 +220,8 @@ fun DetailScreen(navController: NavHostController, viewModel : DetailInventoryVi
                                         isbn = isbn,
                                         category = category,
                                         note = note,
+                                        level = level,
+                                        counter = counter,
                                         updateDate = currentDate
                                     )
                                 }

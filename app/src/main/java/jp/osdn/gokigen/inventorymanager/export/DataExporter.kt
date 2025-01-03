@@ -101,6 +101,8 @@ class DataExporter(private val activity: AppCompatActivity)
                     imageFile5 = if ((data.imageFile5?:"").isNotEmpty()) { if (archiveOnlyOneFile) { "${data.imageFile5}" } else { "${data.id}/${data.imageFile5}" } } else { data.imageFile5 },
                     checked = data.checked,
                     informMessage = data.informMessage,
+                    level = data.level,
+                    counter = data.counter,
                     informDate = dateConverter.fromDateToLong(data.informDate),
                     isDelete = data.isDelete,
                     deleteDate = dateConverter.fromDateToLong(data.deleteDate),

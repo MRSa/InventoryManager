@@ -4,7 +4,6 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.room.util.convertByteToUUID
 import jp.osdn.gokigen.inventorymanager.AppSingleton
 import jp.osdn.gokigen.inventorymanager.recognize.RecognizeFromIsbnCallback
 import jp.osdn.gokigen.inventorymanager.recognize.UpdateRecordInformation
@@ -47,6 +46,9 @@ class DetailInventoryViewModel: ViewModel(), RecognizeFromIsbnCallback {
     private val isMemoEdit: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val isMemoEditing: LiveData<Boolean> = isMemoEdit
 
+    private val dataRating: MutableLiveData<Int> by lazy { MutableLiveData<Int>() }
+    val ratingValue: LiveData<Int> = dataRating
+
     fun initializeViewModel()
     {
         try
@@ -62,6 +64,7 @@ class DetailInventoryViewModel: ViewModel(), RecognizeFromIsbnCallback {
             isPublisherEdit.value = false
             isNoteEdit.value = false
             isMemoEdit.value = false
+            dataRating.value = 0
         }
         catch (e: Exception)
         {
@@ -91,6 +94,7 @@ class DetailInventoryViewModel: ViewModel(), RecognizeFromIsbnCallback {
                     isPublisherEdit.value = false
                     isNoteEdit.value = false
                     isMemoEdit.value = false
+                    dataRating.value = content.value?.level ?: 0
                 }
                 Log.v(TAG, "Update Detail Data : $id")
             }.start()
@@ -161,6 +165,20 @@ class DetailInventoryViewModel: ViewModel(), RecognizeFromIsbnCallback {
     {
         this.isUpdate.value = isEnableUpdate
         this.isQueryEnable.value = isEnableQuery
+    }
+
+    fun updateLevelValue(newLevel: Int)
+    {
+        try
+        {
+            dataRating.value = newLevel
+            content.value = content.value?.copy(level = newLevel)
+            isUpdate.value = true
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
     }
 
     fun updateValueSingle(id: Long, textFieldId: TextFieldId, value: String)

@@ -48,6 +48,7 @@
     <string name="label_isbn">ISBN</string>
     <string name="label_category">カテゴリ</string>
     <string name="label_memo">メモ</string>
+    <string name="label_Rating">評価</string>
     <string name="label_text_recognition">文字認識</string>
     <string name="button_label_update">データ更新</string>
 
@@ -96,7 +97,7 @@
     <string name="dialog_label_button_filter_apply">適用</string>
     <string name="dialog_label_button_filter_cancel">キャンセル</string>
     <string name="dialog_label_filter_category">カテゴリ : </string>
-    <string name="dialog_label_sort_order">Sort order:</string>
+    <string name="dialog_label_sort_order">並び順: </string>
     <string name="dialog_filter_sort_order_newest">最新から</string>
     <string name="dialog_filter_sort_order_oldest">最古から</string>
     <string name="dialog_filter_sort_order_create">作成日</string>

@@ -48,6 +48,7 @@
     <string name="label_isbn">ISBN</string>
     <string name="label_category">Category</string>
     <string name="label_memo">Memo</string>
+    <string name="label_Rating">Rating</string>
     <string name="label_text_recognition">Text recognition</string>
     <string name="button_label_update">Update</string>
 

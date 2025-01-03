@@ -33,6 +33,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
@@ -153,6 +154,10 @@ fun DetailScreen(navController: NavHostController, viewModel : DetailInventoryVi
                     )
                     Spacer(Modifier.size(padding))
                 }
+                Spacer(Modifier.size(padding))
+                ShowRatingSettingArea(
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 4.dp),
+                    viewModel = viewModel)
                 Spacer(Modifier.size(padding))
                 Spacer(Modifier.size(padding))
 
@@ -609,5 +614,158 @@ fun ReturnToListScreen(navController: NavHostController)
                 }
             })
         )
+    }
+}
+
+/*
+@Composable
+fun ShowRatingSettingArea(
+    modifier: Modifier = Modifier,
+    viewModel : DetailInventoryViewModel
+)
+{
+    val ratingValue = viewModel.ratingValue.observeAsState()
+    val ratingTitle = "${stringResource(R.string.label_Rating)} "  // "${ratingValue.value} "
+    Row(
+        modifier = modifier,
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically,
+    )
+    {
+        Text(
+            text = ratingTitle,
+            fontSize = 16.sp,
+        )
+        Spacer(Modifier.size(6.dp))
+
+        RatingBar(
+            value = ratingValue.value ?: 0,
+            onValueChange = { if (it < 8) { viewModel.updateLevelValue(it) } }
+        )
+        Spacer(Modifier.size(8.dp))
+        Text(
+            text = " [${ratingValue.value ?: 0}] ",
+            fontSize = 18.sp,
+        )
+        Spacer(Modifier.size(2.dp))
+        IconButton(
+            onClick = {
+                val rating = ratingValue.value ?: 0
+                if (rating > 0) { viewModel.updateLevelValue(rating - 1)}
+            }
+        ) {
+            Icon(
+                painter = painterResource(R.drawable.baseline_thumb_down_24),
+                contentDescription = "Thumb Down",
+                tint = MaterialTheme.colorScheme.primary
+            )
+        }
+        IconButton(
+            onClick = {
+                val rating = ratingValue.value ?: 0
+                if (rating < 7) { viewModel.updateLevelValue(rating + 1) }
+            }
+        ) {
+            Icon(
+                painter = painterResource(R.drawable.baseline_thumb_up_24),
+                contentDescription = "Thumb Up",
+                tint = MaterialTheme.colorScheme.primary
+            )
+        }
+
+    }
+}
+ */
+
+@Composable
+fun ShowRatingSettingArea(
+    modifier: Modifier = Modifier,
+    viewModel: DetailInventoryViewModel
+) {
+    val ratingValue = viewModel.ratingValue.observeAsState()
+    val ratingTitle = "${stringResource(R.string.label_Rating)} "  // "${ratingValue.value} "
+
+    Row(
+        modifier = modifier,
+        horizontalArrangement = Arrangement.Start,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(
+            text = ratingTitle,
+            fontSize = 16.sp,
+            modifier = Modifier.clickable {
+                viewModel.updateLevelValue(0)
+            }
+        )
+        Spacer(Modifier.size(2.dp))
+        Text(
+            text = " ${ratingValue.value ?: 0} ",
+            fontSize = 18.sp,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.primary,
+            modifier = Modifier.clickable {
+                viewModel.updateLevelValue(0)
+            }
+        )
+        Spacer(Modifier.weight(0.5f))
+        RatingBar(
+            value = ratingValue.value ?: 0,
+            numberOfStars = 7,
+            onValueChange = { if (it < 8) { viewModel.updateLevelValue(it) } }
+        )
+        Spacer(Modifier.weight(1f))
+        IconButton(
+            onClick = {
+                val rating = ratingValue.value ?: 0
+                if (rating > 0) { viewModel.updateLevelValue(rating - 1)}
+            }
+        ) {
+            Icon(
+                painter = painterResource(R.drawable.baseline_thumb_down_24),
+                contentDescription = "Thumb Down",
+                tint = MaterialTheme.colorScheme.primary
+            )
+        }
+        IconButton(
+            onClick = {
+                val rating = ratingValue.value ?: 0
+                if (rating < 7) { viewModel.updateLevelValue(rating + 1) }
+            }
+        ) {
+            Icon(
+                painter = painterResource(R.drawable.baseline_thumb_up_24),
+                contentDescription = "Thumb Up",
+                tint = MaterialTheme.colorScheme.primary
+            )
+        }
+        Spacer(Modifier.size(2.dp))
+    }
+}
+
+@Composable
+fun RatingBar(
+    value: Int = 0,
+    onValueChange: (Int) -> Unit,
+    numberOfStars: Int = 7,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        modifier = modifier,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        repeat(numberOfStars) { index ->
+            Icon(
+                painter = if (index < value) {
+                    painterResource(R.drawable.baseline_star_24)
+                } else {
+                    painterResource(R.drawable.baseline_star_outline_24)
+                },
+                tint = if (index < value) { MaterialTheme.colorScheme.primary } else { MaterialTheme.colorScheme.secondary },
+                contentDescription = "Star",
+                modifier = Modifier
+                    .clickable { onValueChange(index + 1) }
+                    .size(24.dp)
+            )
+        }
     }
 }

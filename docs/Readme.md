@@ -26,15 +26,34 @@ InventoryManagerは、本やその他の所有物を管理するAndroidアプリ
 
 ## 画面遷移
 
+以下に画面遷移を示します。アプリ起動直後は、メイン画面を表示します。
+
 ![画面遷移](images/screen_transition.png "画面遷移")
 
+必要な機能に合わせ、画面を切り替えてください。
+
+## 画面説明
+
 ### メイン画面 (Main Screen)
+
+起動直後に表示する画面です。
 
 ![メイン画面](images/main_screen.png "メイン画面")
 
 ### 一覧画面 (Inventory List Screen)
 
+登録済のデータ一覧を表示する画面です。
+
 ![一覧画面](images/list_screen.png "一覧画面")
+
+リストをタッチすると、詳細画面に遷移します。『←』ボタンで、メイン画面に戻ることができます。
+
+![詳細画面に遷移](images/inventory_list.png "詳細画面に遷移")
+
+フィルタアイコンをタッチすると、一覧に表示する内容をフィルタリングすることができます。リロードボタンで、フィルタリングの解除ができます。
+
+![一覧画面のフィルタリング](images/filter_settings_filter.png "一覧画面のフィルタリング")
+
 
 ### 詳細画面 (Detail Screen)
 
@@ -51,3 +70,11 @@ InventoryManagerは、本やその他の所有物を管理するAndroidアプリ
 ### 設定画面 (Preferences Screen)
 
 ![設定画面](images/preferences_screen.png "設定画面")
+
+
+## その他
+
+
+## ソースコード
+
+* https://github.com/MRSa/InventoryManager.git

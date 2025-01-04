@@ -78,7 +78,18 @@ fun CommandPanel(navController: NavHostController, dataListModel : ListViewModel
     val isFilterApplying = dataListModel.isFilterApplying.observeAsState()
 
     val message = if (isFilterApplying.value == true) {
-        val category = if (filterInfo.value?.isCategoryChecked == true) { "(${filterInfo.value?.selectedCategory})" } else { "" }
+        val category = if (filterInfo.value?.isCategoryChecked == true) { "(${filterInfo.value?.selectedCategory}) " } else { "" }
+        val ratingOperator = if (filterInfo.value?.isOperatorChecked == true) {
+            when (filterInfo.value?.selectedOperatorIndex) {
+                0 -> { stringResource(R.string.filter_operation_equal) }
+                1 -> { stringResource(R.string.filter_operation_not_equal) }
+                2 -> { stringResource(R.string.filter_operation_over) }
+                3 -> { stringResource(R.string.filter_operation_under) }
+                else -> { "" }
+            }
+        }
+        else { "" }
+        val rating = if (filterInfo.value?.isOperatorChecked == true) { " $ratingOperator ${stringResource(R.string.label_rating_star)}${filterInfo.value?.selectedFilterRating}" } else { "" }
         val direction = if ((filterInfo.value?.sortOrderDirection == ListViewModel.SortOrderDirection.CREATE_OLDEST)||(filterInfo.value?.sortOrderDirection == ListViewModel.SortOrderDirection.UPDATE_OLDEST))
         {
             // OLD -> New の順番
@@ -89,7 +100,7 @@ fun CommandPanel(navController: NavHostController, dataListModel : ListViewModel
             // NEW -> OLD の順番
             stringResource(R.string.dialog_info_sort_order_newest)
         }
-        "${stringResource(R.string.label_data_count)} ${listCount.value} $direction $category"
+        "${stringResource(R.string.label_data_count)} ${listCount.value} $direction $category $rating"
     }
     else
     {

@@ -617,66 +617,6 @@ fun ReturnToListScreen(navController: NavHostController)
     }
 }
 
-/*
-@Composable
-fun ShowRatingSettingArea(
-    modifier: Modifier = Modifier,
-    viewModel : DetailInventoryViewModel
-)
-{
-    val ratingValue = viewModel.ratingValue.observeAsState()
-    val ratingTitle = "${stringResource(R.string.label_Rating)} "  // "${ratingValue.value} "
-    Row(
-        modifier = modifier,
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically,
-    )
-    {
-        Text(
-            text = ratingTitle,
-            fontSize = 16.sp,
-        )
-        Spacer(Modifier.size(6.dp))
-
-        RatingBar(
-            value = ratingValue.value ?: 0,
-            onValueChange = { if (it < 8) { viewModel.updateLevelValue(it) } }
-        )
-        Spacer(Modifier.size(8.dp))
-        Text(
-            text = " [${ratingValue.value ?: 0}] ",
-            fontSize = 18.sp,
-        )
-        Spacer(Modifier.size(2.dp))
-        IconButton(
-            onClick = {
-                val rating = ratingValue.value ?: 0
-                if (rating > 0) { viewModel.updateLevelValue(rating - 1)}
-            }
-        ) {
-            Icon(
-                painter = painterResource(R.drawable.baseline_thumb_down_24),
-                contentDescription = "Thumb Down",
-                tint = MaterialTheme.colorScheme.primary
-            )
-        }
-        IconButton(
-            onClick = {
-                val rating = ratingValue.value ?: 0
-                if (rating < 7) { viewModel.updateLevelValue(rating + 1) }
-            }
-        ) {
-            Icon(
-                painter = painterResource(R.drawable.baseline_thumb_up_24),
-                contentDescription = "Thumb Up",
-                tint = MaterialTheme.colorScheme.primary
-            )
-        }
-
-    }
-}
- */
-
 @Composable
 fun ShowRatingSettingArea(
     modifier: Modifier = Modifier,
@@ -739,33 +679,5 @@ fun ShowRatingSettingArea(
             )
         }
         Spacer(Modifier.size(2.dp))
-    }
-}
-
-@Composable
-fun RatingBar(
-    value: Int = 0,
-    onValueChange: (Int) -> Unit,
-    numberOfStars: Int = 7,
-    modifier: Modifier = Modifier
-) {
-    Row(
-        modifier = modifier,
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        repeat(numberOfStars) { index ->
-            Icon(
-                painter = if (index < value) {
-                    painterResource(R.drawable.baseline_star_24)
-                } else {
-                    painterResource(R.drawable.baseline_star_outline_24)
-                },
-                tint = if (index < value) { MaterialTheme.colorScheme.primary } else { MaterialTheme.colorScheme.secondary },
-                contentDescription = "Star",
-                modifier = Modifier
-                    .clickable { onValueChange(index + 1) }
-                    .size(24.dp)
-            )
-        }
     }
 }

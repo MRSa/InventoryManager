@@ -163,6 +163,9 @@ class ListViewModel: ViewModel(), DataExporter.IExportProgressCallback, Recogniz
         updateFilterState.isCategoryChecked = filterState.isCategoryChecked
         updateFilterState.selectedCategory = filterState.selectedCategory
         updateFilterState.sortOrderDirection = filterState.sortOrderDirection
+        updateFilterState.isOperatorChecked = filterState.isOperatorChecked
+        updateFilterState.selectedOperatorIndex = filterState.selectedOperatorIndex
+        updateFilterState.selectedFilterRating = filterState.selectedFilterRating
         filterStatus.value = updateFilterState
     }
 
@@ -180,57 +183,21 @@ class ListViewModel: ViewModel(), DataExporter.IExportProgressCallback, Recogniz
                     enableFilter.value = FilterDialogCondition.DISABLE
                     dataList.clear()
                     withContext(Dispatchers.Default) {
-                        if (filterState.isCategoryChecked)
+                        if ((!filterState.isCategoryChecked)&&(!filterState.isOperatorChecked))
                         {
-                            when (filterState.sortOrderDirection)
-                            {
-                                SortOrderDirection.CREATE_OLDEST -> {
-                                    storageDao.findByCategoryCreateOldest(filterState.selectedCategory).forEach { data ->
-                                        dataList.add(data)
-                                    }
-                                }
-                                SortOrderDirection.CREATE_NEWEST -> {
-                                    storageDao.findByCategoryCreateLatest(filterState.selectedCategory).forEach { data ->
-                                        dataList.add(data)
-                                    }
-                                }
-                                SortOrderDirection.UPDATE_OLDEST -> {
-                                    storageDao.findByCategoryUpdateOldest(filterState.selectedCategory).forEach { data ->
-                                        dataList.add(data)
-                                    }
-                                }
-                                SortOrderDirection.UPDATE_NEWEST -> {
-                                    storageDao.findByCategoryUpdateLatest(filterState.selectedCategory).forEach { data ->
-                                        dataList.add(data)
-                                    }
-                                }
-                            }
+                            applySortOrder(filterState)
                         }
-                        else
+                        else if ((filterState.isCategoryChecked)&&(filterState.isOperatorChecked))
                         {
-                            when (filterState.sortOrderDirection)
-                            {
-                                SortOrderDirection.CREATE_OLDEST -> {
-                                    storageDao.getAllCreateOldest().forEach { data ->
-                                        dataList.add(data)
-                                    }
-                                }
-                                SortOrderDirection.CREATE_NEWEST -> {
-                                    storageDao.getAllCreateLatest().forEach { data ->
-                                        dataList.add(data)
-                                    }
-                                }
-                                SortOrderDirection.UPDATE_OLDEST -> {
-                                    storageDao.getAllUpdateOldest().forEach { data ->
-                                        dataList.add(data)
-                                    }
-                                }
-                                SortOrderDirection.UPDATE_NEWEST -> {
-                                    storageDao.getAllUpdateLatest().forEach { data ->
-                                        dataList.add(data)
-                                    }
-                                }
-                            }
+                            applyFilterCategoryAndRating(filterState)
+                        }
+                        else if (filterState.isCategoryChecked) // &&(!filterState.isOperatorChecked)
+                        {
+                            applyFilterCategory(filterState)
+                        }
+                        else // if ((!filterState.isCategoryChecked)&&(filterState.isOperatorChecked))
+                        {
+                            applyFilterRating(filterState)
                         }
                     }
                     isRefreshing.value = false
@@ -245,6 +212,575 @@ class ListViewModel: ViewModel(), DataExporter.IExportProgressCallback, Recogniz
             e.printStackTrace()
         }
     }
+
+    private fun applySortOrder(filterState: FilterState)
+    {
+        try
+        {
+            when (filterState.sortOrderDirection) {
+                SortOrderDirection.CREATE_OLDEST -> {
+                    storageDao.getAllOrderBy(isUpdateDate = false, isAscending = true)
+                        .forEach { data ->
+                            dataList.add(data)
+                        }
+                }
+
+                SortOrderDirection.CREATE_NEWEST -> {
+                    storageDao.getAllOrderBy(isUpdateDate = false, isAscending = false)
+                        .forEach { data ->
+                            dataList.add(data)
+                        }
+                }
+
+                SortOrderDirection.UPDATE_OLDEST -> {
+                    storageDao.getAllOrderBy(isUpdateDate = true, isAscending = true)
+                        .forEach { data ->
+                            dataList.add(data)
+                        }
+                }
+
+                SortOrderDirection.UPDATE_NEWEST -> {
+                    storageDao.getAllOrderBy(isUpdateDate = true, isAscending = true)
+                        .forEach { data ->
+                            dataList.add(data)
+                        }
+                }
+            }
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
+    }
+
+    private fun applyFilterCategory(filterState: FilterState)
+    {
+        try
+        {
+            when (filterState.sortOrderDirection) {
+                SortOrderDirection.CREATE_OLDEST -> {
+                    storageDao.findByCategoryOrderBy(
+                        category = filterState.selectedCategory,
+                        isUpdateDate = false,
+                        isAscending = true
+                    ).forEach { data ->
+                        dataList.add(data)
+                    }
+                }
+
+                SortOrderDirection.CREATE_NEWEST -> {
+                    storageDao.findByCategoryOrderBy(
+                        category = filterState.selectedCategory,
+                        isUpdateDate = false,
+                        isAscending = false
+                    ).forEach { data ->
+                        dataList.add(data)
+                    }
+                }
+
+                SortOrderDirection.UPDATE_OLDEST -> {
+                    storageDao.findByCategoryOrderBy(
+                        category = filterState.selectedCategory,
+                        isUpdateDate = true,
+                        isAscending = true
+                    ).forEach { data ->
+                        dataList.add(data)
+                    }
+                }
+
+                SortOrderDirection.UPDATE_NEWEST -> {
+                    storageDao.findByCategoryOrderBy(
+                        category = filterState.selectedCategory,
+                        isUpdateDate = true,
+                        isAscending = true
+                    ).forEach { data ->
+                        dataList.add(data)
+                    }
+                }
+            }
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
+    }
+
+    private fun applyFilterRating(filterState: FilterState)
+    {
+        try
+        {
+            when (filterState.sortOrderDirection) {
+                SortOrderDirection.CREATE_OLDEST -> {
+                    when (filterState.selectedOperatorIndex) {
+                        0 -> { // Operator : =
+                            storageDao.findByRatingEqualOrderBy(
+                                rating = filterState.selectedFilterRating,
+                                isUpdateDate = false,
+                                isAscending = true
+                            ).forEach { data ->
+                                dataList.add(data)
+                            }
+                        }
+
+                        1 -> { // Operator : !=
+                            storageDao.findByRatingNotEqualOrderBy(
+                                rating = filterState.selectedFilterRating,
+                                isUpdateDate = false,
+                                isAscending = true
+                            ).forEach { data ->
+                                dataList.add(data)
+                            }
+                        }
+
+                        2 -> { // Operator : >=
+                            storageDao.findByRatingOverOrderBy(
+                                rating = filterState.selectedFilterRating,
+                                isUpdateDate = false,
+                                isAscending = true
+                            ).forEach { data ->
+                                dataList.add(data)
+                            }
+                        }
+
+                        3 -> { // Operator : <=
+                            storageDao.findByRatingUnderOrderBy(
+                                rating = filterState.selectedFilterRating,
+                                isUpdateDate = false,
+                                isAscending = true
+                            ).forEach { data ->
+                                dataList.add(data)
+                            }
+                        }
+
+                        else -> {  // Operator : =
+                            storageDao.findByRatingEqualOrderBy(
+                                rating = filterState.selectedFilterRating,
+                                isUpdateDate = false,
+                                isAscending = true
+                            ).forEach { data ->
+                                dataList.add(data)
+                            }
+                        }
+                    }
+                }
+
+                SortOrderDirection.CREATE_NEWEST -> {
+                    when (filterState.selectedOperatorIndex) {
+                        0 -> { // Operator : =
+                            storageDao.findByRatingEqualOrderBy(
+                                rating = filterState.selectedFilterRating,
+                                isUpdateDate = false,
+                                isAscending = false
+                            ).forEach { data ->
+                                dataList.add(data)
+                            }
+                        }
+
+                        1 -> { // Operator : !=
+                            storageDao.findByRatingNotEqualOrderBy(
+                                rating = filterState.selectedFilterRating,
+                                isUpdateDate = false,
+                                isAscending = false
+                            ).forEach { data ->
+                                dataList.add(data)
+                            }
+                        }
+
+                        2 -> { // Operator : >=
+                            storageDao.findByRatingOverOrderBy(
+                                rating = filterState.selectedFilterRating,
+                                isUpdateDate = false,
+                                isAscending = false
+                            ).forEach { data ->
+                                dataList.add(data)
+                            }
+                        }
+
+                        3 -> { // Operator : <=
+                            storageDao.findByRatingUnderOrderBy(
+                                rating = filterState.selectedFilterRating,
+                                isUpdateDate = false,
+                                isAscending = false
+                            ).forEach { data ->
+                                dataList.add(data)
+                            }
+                        }
+
+                        else -> {  // Operator : =
+                            storageDao.findByRatingEqualOrderBy(
+                                rating = filterState.selectedFilterRating,
+                                isUpdateDate = false,
+                                isAscending = false
+                            ).forEach { data ->
+                                dataList.add(data)
+                            }
+                        }
+                    }
+                }
+
+                SortOrderDirection.UPDATE_OLDEST -> {
+                    when (filterState.selectedOperatorIndex) {
+                        0 -> { // Operator : =
+                            storageDao.findByRatingEqualOrderBy(
+                                rating = filterState.selectedFilterRating,
+                                isUpdateDate = true,
+                                isAscending = true
+                            ).forEach { data ->
+                                dataList.add(data)
+                            }
+                        }
+
+                        1 -> { // Operator : !=
+                            storageDao.findByRatingNotEqualOrderBy(
+                                rating = filterState.selectedFilterRating,
+                                isUpdateDate = true,
+                                isAscending = true
+                            ).forEach { data ->
+                                dataList.add(data)
+                            }
+                        }
+
+                        2 -> { // Operator : >=
+                            storageDao.findByRatingOverOrderBy(
+                                rating = filterState.selectedFilterRating,
+                                isUpdateDate = true,
+                                isAscending = true
+                            ).forEach { data ->
+                                dataList.add(data)
+                            }
+                        }
+
+                        3 -> { // Operator : <=
+                            storageDao.findByRatingUnderOrderBy(
+                                rating = filterState.selectedFilterRating,
+                                isUpdateDate = true,
+                                isAscending = true
+                            ).forEach { data ->
+                                dataList.add(data)
+                            }
+                        }
+
+                        else -> {  // Operator : =
+                            storageDao.findByRatingEqualOrderBy(
+                                rating = filterState.selectedFilterRating,
+                                isUpdateDate = true,
+                                isAscending = true
+                            ).forEach { data ->
+                                dataList.add(data)
+                            }
+                        }
+                    }
+                }
+
+                SortOrderDirection.UPDATE_NEWEST -> {
+                    when (filterState.selectedOperatorIndex) {
+                        0 -> { // Operator : =
+                            storageDao.findByRatingEqualOrderBy(
+                                rating = filterState.selectedFilterRating,
+                                isUpdateDate = true,
+                                isAscending = false
+                            ).forEach { data ->
+                                dataList.add(data)
+                            }
+                        }
+
+                        1 -> { // Operator : !=
+                            storageDao.findByRatingNotEqualOrderBy(
+                                rating = filterState.selectedFilterRating,
+                                isUpdateDate = true,
+                                isAscending = false
+                            ).forEach { data ->
+                                dataList.add(data)
+                            }
+                        }
+
+                        2 -> { // Operator : >=
+                            storageDao.findByRatingOverOrderBy(
+                                rating = filterState.selectedFilterRating,
+                                isUpdateDate = true,
+                                isAscending = false
+                            ).forEach { data ->
+                                dataList.add(data)
+                            }
+                        }
+
+                        3 -> { // Operator : <=
+                            storageDao.findByRatingUnderOrderBy(
+                                rating = filterState.selectedFilterRating,
+                                isUpdateDate = true,
+                                isAscending = false
+                            ).forEach { data ->
+                                dataList.add(data)
+                            }
+                        }
+
+                        else -> {  // Operator : =
+                            storageDao.findByRatingEqualOrderBy(
+                                rating = filterState.selectedFilterRating,
+                                isUpdateDate = true,
+                                isAscending = false
+                            ).forEach { data ->
+                                dataList.add(data)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
+    }
+
+    private fun applyFilterCategoryAndRating(filterState: FilterState)
+    {
+        try
+        {
+            when (filterState.sortOrderDirection) {
+                SortOrderDirection.CREATE_OLDEST -> {
+                    when (filterState.selectedOperatorIndex) {
+                        0 -> { // Operator : =
+                            storageDao.findByCategoryWithRatingEqualOrderBy(
+                                category = filterState.selectedCategory,
+                                rating = filterState.selectedFilterRating,
+                                isUpdateDate = false,
+                                isAscending = true
+                            ).forEach { data ->
+                                dataList.add(data)
+                            }
+                        }
+
+                        1 -> { // Operator : !=
+                            storageDao.findByCategoryWithRatingNotEqualOrderBy(
+                                category = filterState.selectedCategory,
+                                rating = filterState.selectedFilterRating,
+                                isUpdateDate = false,
+                                isAscending = true
+                            ).forEach { data ->
+                                dataList.add(data)
+                            }
+                        }
+
+                        2 -> { // Operator : >=
+                            storageDao.findByCategoryWithRatingOverOrderBy(
+                                category = filterState.selectedCategory,
+                                rating = filterState.selectedFilterRating,
+                                isUpdateDate = false,
+                                isAscending = true
+                            ).forEach { data ->
+                                dataList.add(data)
+                            }
+                        }
+
+                        3 -> { // Operator : <=
+                            storageDao.findByCategoryWithRatingUnderOrderBy(
+                                category = filterState.selectedCategory,
+                                rating = filterState.selectedFilterRating,
+                                isUpdateDate = false,
+                                isAscending = true
+                            ).forEach { data ->
+                                dataList.add(data)
+                            }
+                        }
+
+                        else -> {  // Operator : =
+                            storageDao.findByCategoryWithRatingEqualOrderBy(
+                                category = filterState.selectedCategory,
+                                rating = filterState.selectedFilterRating,
+                                isUpdateDate = false,
+                                isAscending = true
+                            ).forEach { data ->
+                                dataList.add(data)
+                            }
+                        }
+                    }
+                }
+
+                SortOrderDirection.CREATE_NEWEST -> {
+                    when (filterState.selectedOperatorIndex) {
+                        0 -> { // Operator : =
+                            storageDao.findByCategoryWithRatingEqualOrderBy(
+                                category = filterState.selectedCategory,
+                                rating = filterState.selectedFilterRating,
+                                isUpdateDate = false,
+                                isAscending = false
+                            ).forEach { data ->
+                                dataList.add(data)
+                            }
+                        }
+
+                        1 -> { // Operator : !=
+                            storageDao.findByCategoryWithRatingNotEqualOrderBy(
+                                category = filterState.selectedCategory,
+                                rating = filterState.selectedFilterRating,
+                                isUpdateDate = false,
+                                isAscending = false
+                            ).forEach { data ->
+                                dataList.add(data)
+                            }
+                        }
+
+                        2 -> { // Operator : >=
+                            storageDao.findByCategoryWithRatingOverOrderBy(
+                                category = filterState.selectedCategory,
+                                rating = filterState.selectedFilterRating,
+                                isUpdateDate = false,
+                                isAscending = false
+                            ).forEach { data ->
+                                dataList.add(data)
+                            }
+                        }
+
+                        3 -> { // Operator : <=
+                            storageDao.findByCategoryWithRatingUnderOrderBy(
+                                category = filterState.selectedCategory,
+                                rating = filterState.selectedFilterRating,
+                                isUpdateDate = false,
+                                isAscending = false
+                            ).forEach { data ->
+                                dataList.add(data)
+                            }
+                        }
+
+                        else -> {  // Operator : =
+                            storageDao.findByCategoryWithRatingEqualOrderBy(
+                                category = filterState.selectedCategory,
+                                rating = filterState.selectedFilterRating,
+                                isUpdateDate = false,
+                                isAscending = false
+                            ).forEach { data ->
+                                dataList.add(data)
+                            }
+                        }
+                    }
+                }
+
+                SortOrderDirection.UPDATE_OLDEST -> {
+                    when (filterState.selectedOperatorIndex) {
+                        0 -> { // Operator : =
+                            storageDao.findByCategoryWithRatingEqualOrderBy(
+                                category = filterState.selectedCategory,
+                                rating = filterState.selectedFilterRating,
+                                isUpdateDate = true,
+                                isAscending = true
+                            ).forEach { data ->
+                                dataList.add(data)
+                            }
+                        }
+
+                        1 -> { // Operator : !=
+                            storageDao.findByCategoryWithRatingNotEqualOrderBy(
+                                category = filterState.selectedCategory,
+                                rating = filterState.selectedFilterRating,
+                                isUpdateDate = true,
+                                isAscending = true
+                            ).forEach { data ->
+                                dataList.add(data)
+                            }
+                        }
+
+                        2 -> { // Operator : >=
+                            storageDao.findByCategoryWithRatingOverOrderBy(
+                                category = filterState.selectedCategory,
+                                rating = filterState.selectedFilterRating,
+                                isUpdateDate = true,
+                                isAscending = true
+                            ).forEach { data ->
+                                dataList.add(data)
+                            }
+                        }
+
+                        3 -> { // Operator : <=
+                            storageDao.findByCategoryWithRatingUnderOrderBy(
+                                category = filterState.selectedCategory,
+                                rating = filterState.selectedFilterRating,
+                                isUpdateDate = true,
+                                isAscending = true
+                            ).forEach { data ->
+                                dataList.add(data)
+                            }
+                        }
+
+                        else -> {  // Operator : =
+                            storageDao.findByCategoryWithRatingEqualOrderBy(
+                                category = filterState.selectedCategory,
+                                rating = filterState.selectedFilterRating,
+                                isUpdateDate = true,
+                                isAscending = true
+                            ).forEach { data ->
+                                dataList.add(data)
+                            }
+                        }
+                    }
+                }
+
+                SortOrderDirection.UPDATE_NEWEST -> {
+                    when (filterState.selectedOperatorIndex) {
+                        0 -> { // Operator : =
+                            storageDao.findByCategoryWithRatingEqualOrderBy(
+                                category = filterState.selectedCategory,
+                                rating = filterState.selectedFilterRating,
+                                isUpdateDate = true,
+                                isAscending = false
+                            ).forEach { data ->
+                                dataList.add(data)
+                            }
+                        }
+
+                        1 -> { // Operator : !=
+                            storageDao.findByCategoryWithRatingNotEqualOrderBy(
+                                category = filterState.selectedCategory,
+                                rating = filterState.selectedFilterRating,
+                                isUpdateDate = true,
+                                isAscending = false
+                            ).forEach { data ->
+                                dataList.add(data)
+                            }
+                        }
+
+                        2 -> { // Operator : >=
+                            storageDao.findByCategoryWithRatingOverOrderBy(
+                                category = filterState.selectedCategory,
+                                rating = filterState.selectedFilterRating,
+                                isUpdateDate = true,
+                                isAscending = false
+                            ).forEach { data ->
+                                dataList.add(data)
+                            }
+                        }
+
+                        3 -> { // Operator : <=
+                            storageDao.findByCategoryWithRatingUnderOrderBy(
+                                category = filterState.selectedCategory,
+                                rating = filterState.selectedFilterRating,
+                                isUpdateDate = true,
+                                isAscending = false
+                            ).forEach { data ->
+                                dataList.add(data)
+                            }
+                        }
+
+                        else -> {  // Operator : =
+                            storageDao.findByCategoryWithRatingEqualOrderBy(
+                                category = filterState.selectedCategory,
+                                rating = filterState.selectedFilterRating,
+                                isUpdateDate = true,
+                                isAscending = false
+                            ).forEach { data ->
+                                dataList.add(data)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
+    }
+
 
     override fun startExportFile(fileName: String) {
         Log.v(TAG, "startExportFile(): $fileName")
@@ -297,6 +833,9 @@ class ListViewModel: ViewModel(), DataExporter.IExportProgressCallback, Recogniz
     data class FilterState(
         var isCategoryChecked: Boolean = false,
         var selectedCategory: String = "",
+        var isOperatorChecked: Boolean = false,
+        var selectedOperatorIndex: Int = 0,
+        var selectedFilterRating: Int = 0,
         var sortOrderDirection: SortOrderDirection = SortOrderDirection.CREATE_NEWEST
     )
 

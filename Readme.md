@@ -1,4 +1,4 @@
-# InventoryManager: Android App to Organize Your Belongings, especially for your books
+# GOKIGEN Bookshelf: Android App to Organize Your Belongings, especially for your books
 
 ## Screenshots
 
@@ -7,7 +7,7 @@
 ## Features
 
 * **Register items:**
-  * Register books, DVDs, games, or other personal belongings.
+  * Register books, DVDs, or other personal belongings.
   * Capture book images using the camera.
   * Read barcodes (ISBN, etc.).
   * Extract text from images using optical character recognition (OCR).

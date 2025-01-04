@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">InventoryManager</string>
+    <string name="app_name">ごきげん本棚</string>
     <string name="permission_not_granted">必要な権限が有効ではありません。有効にしてください。</string>
 
     <string name="main_title_label_message">メイン</string>
@@ -52,6 +52,16 @@
     <string name="label_rating_star">★</string>
     <string name="label_text_recognition">文字認識</string>
     <string name="button_label_update">データ更新</string>
+
+    <string name="label_operation_equal">一致 (=)</string>
+    <string name="label_operation_not_equal">以外 (!=)</string>
+    <string name="label_operation_over">以上 (≧) </string>
+    <string name="label_operation_under">以下 (≦) </string>
+    <string name="label_operation_none">(未指定)</string>
+    <string name="filter_operation_equal">＝</string>
+    <string name="filter_operation_not_equal">≠</string>
+    <string name="filter_operation_over">≧</string>
+    <string name="filter_operation_under">≦</string>
 
     <string name="label_import_file_name">ファイル名： </string>
     <string name="label_no_import_file_name">(未選択)</string>

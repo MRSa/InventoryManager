@@ -2,6 +2,8 @@
 
 「ごきげん本棚」は、本やその他の所有物を管理するAndroidアプリケーションです。
 
+アイテムの情報を登録するだけでなく、メモや８段階の評価を記録することができます。
+
 ## スクリーンショット
 
 ![Screenshot](images/screenshots.png "Screenshots")
@@ -52,6 +54,8 @@
 ![詳細画面に遷移](images/inventory_list.png "詳細画面に遷移")
 
 フィルタアイコンをタッチすると、一覧に表示する内容をフィルタリングすることができます。リロードボタンで、フィルタリングの解除ができます。
+
+フィルタリングは、「カテゴリ」と「評価」で、また、データ登録順、データ更新順で並べ替えの設定が可能です。
 
 ![一覧画面のフィルタリング](images/filter_settings_filter.png "一覧画面のフィルタリング")
 
@@ -141,6 +145,7 @@
 
 * 「1つのファイルにまとめてエクスポート」が ON の場合
   * Download/ の下に サブフォルダ inventoryYYYYMMDD_hhmmss/ (YYYYMMDD_hhmms は、年月日_時分秒)　を作成し、その中に zip形式のファイル、inventoryDataExport.json.zip を出力します。
+   zip形式のファイルの中には、JSON形式のデータファイルと、画像ファイルがアーカイブされています。
 
 * 「1つのファイルにまとめてエクスポート」が OFF の場合
   * Download/ の下に サブフォルダ inventoryYYYYMMDD_hhmmss/ (YYYYMMDD_hhmms は、年月日_時分秒)　を作成し、その中に json形式のファイル、inventoryDataExport.json を出力します。
@@ -150,4 +155,9 @@
 
 ソースコードは、以下の場所で管理しています。
 
-* https://github.com/MRSa/InventoryManager.git
+* [https://github.com/MRSa/InventoryManager.git](https://github.com/MRSa/InventoryManager.git)
+
+
+## ライセンス
+
+* [https://github.com/MRSa/InventoryManager/blob/master/LICENSE.txt](https://github.com/MRSa/InventoryManager/blob/master/LICENSE.txt)

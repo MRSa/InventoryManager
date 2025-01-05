@@ -38,6 +38,8 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import jp.osdn.gokigen.inventorymanager.R
+import jp.osdn.gokigen.inventorymanager.storage.FilterState
+import jp.osdn.gokigen.inventorymanager.storage.SortOrderDirection
 import jp.osdn.gokigen.inventorymanager.ui.model.ListViewModel
 import kotlinx.coroutines.launch
 
@@ -45,7 +47,7 @@ import kotlinx.coroutines.launch
 fun ListFilterDialog(
     listViewModel: ListViewModel,
     onDismissRequest: () -> Unit,
-    onApply: (ListViewModel.FilterState) -> Unit
+    onApply: (FilterState) -> Unit
 ) {
     val filterState = listViewModel.filterState.observeAsState()
     AlertDialog(
@@ -65,7 +67,7 @@ fun ListFilterDialog(
         confirmButton = {
             Button(
                 onClick = {
-                    onApply(filterState.value ?: ListViewModel.FilterState())
+                    onApply(filterState.value ?: FilterState())
                 }
             ) {
                 Text(stringResource(R.string.dialog_label_button_filter_apply))
@@ -286,7 +288,7 @@ fun ShowFilterOrderArea(listViewModel: ListViewModel)
     Row(verticalAlignment = Alignment.CenterVertically) {
         Text(stringResource(R.string.dialog_label_sort_order))
         Text(
-            text = if (filterState.value?.sortOrderDirection == ListViewModel.SortOrderDirection.CREATE_NEWEST || filterState.value?.sortOrderDirection == ListViewModel.SortOrderDirection.CREATE_OLDEST) {
+            text = if (filterState.value?.sortOrderDirection == SortOrderDirection.CREATE_NEWEST || filterState.value?.sortOrderDirection == SortOrderDirection.CREATE_OLDEST) {
                 stringResource(R.string.dialog_filter_sort_order_create)
             } else {
                 stringResource(R.string.dialog_filter_sort_order_update)
@@ -309,23 +311,23 @@ fun ShowFilterOrderArea(listViewModel: ListViewModel)
                             val sortOrderDirection = if (index == 0)
                             {
                                 // ---- Create Date
-                                if (filterState.value?.sortOrderDirection == ListViewModel.SortOrderDirection.CREATE_NEWEST || filterState.value?.sortOrderDirection == ListViewModel.SortOrderDirection.UPDATE_NEWEST) {
-                                    ListViewModel.SortOrderDirection.CREATE_NEWEST
+                                if (filterState.value?.sortOrderDirection == SortOrderDirection.CREATE_NEWEST || filterState.value?.sortOrderDirection == SortOrderDirection.UPDATE_NEWEST) {
+                                    SortOrderDirection.CREATE_NEWEST
                                 }
                                 else
                                 {
-                                    ListViewModel.SortOrderDirection.CREATE_OLDEST
+                                    SortOrderDirection.CREATE_OLDEST
                                 }
                             }
                             else
                             {
                                 // ---- Update Date
-                                if (filterState.value?.sortOrderDirection == ListViewModel.SortOrderDirection.CREATE_NEWEST || filterState.value?.sortOrderDirection == ListViewModel.SortOrderDirection.UPDATE_NEWEST) {
-                                    ListViewModel.SortOrderDirection.UPDATE_NEWEST
+                                if (filterState.value?.sortOrderDirection == SortOrderDirection.CREATE_NEWEST || filterState.value?.sortOrderDirection == SortOrderDirection.UPDATE_NEWEST) {
+                                    SortOrderDirection.UPDATE_NEWEST
                                 }
                                 else
                                 {
-                                    ListViewModel.SortOrderDirection.UPDATE_OLDEST
+                                    SortOrderDirection.UPDATE_OLDEST
                                 }
                             }
                             listViewModel.setFilterState(
@@ -349,16 +351,16 @@ fun ShowFilterDirectionArea(listViewModel: ListViewModel)
     Row(verticalAlignment = Alignment.CenterVertically) {
         RadioButton(
             selected = filterState.value?.sortOrderDirection in setOf(
-                ListViewModel.SortOrderDirection.CREATE_NEWEST,
-                ListViewModel.SortOrderDirection.UPDATE_NEWEST
+                SortOrderDirection.CREATE_NEWEST,
+                SortOrderDirection.UPDATE_NEWEST
             ),
             onClick = {
                 listViewModel.setFilterState(
                     filterState.value?.copy(
-                        sortOrderDirection = if (filterState.value?.sortOrderDirection == ListViewModel.SortOrderDirection.CREATE_NEWEST || filterState.value?.sortOrderDirection == ListViewModel.SortOrderDirection.CREATE_OLDEST) {
-                            ListViewModel.SortOrderDirection.CREATE_NEWEST
+                        sortOrderDirection = if (filterState.value?.sortOrderDirection == SortOrderDirection.CREATE_NEWEST || filterState.value?.sortOrderDirection == SortOrderDirection.CREATE_OLDEST) {
+                            SortOrderDirection.CREATE_NEWEST
                         } else {
-                            ListViewModel.SortOrderDirection.UPDATE_NEWEST
+                            SortOrderDirection.UPDATE_NEWEST
                         }
                     )
                 )
@@ -369,10 +371,10 @@ fun ShowFilterDirectionArea(listViewModel: ListViewModel)
             modifier = Modifier.clickable {
                 listViewModel.setFilterState(
                     filterState.value?.copy(
-                        sortOrderDirection = if (filterState.value?.sortOrderDirection == ListViewModel.SortOrderDirection.CREATE_NEWEST || filterState.value?.sortOrderDirection == ListViewModel.SortOrderDirection.CREATE_OLDEST) {
-                            ListViewModel.SortOrderDirection.CREATE_NEWEST
+                        sortOrderDirection = if (filterState.value?.sortOrderDirection == SortOrderDirection.CREATE_NEWEST || filterState.value?.sortOrderDirection == SortOrderDirection.CREATE_OLDEST) {
+                            SortOrderDirection.CREATE_NEWEST
                         } else {
-                            ListViewModel.SortOrderDirection.UPDATE_NEWEST
+                            SortOrderDirection.UPDATE_NEWEST
                         }
                     )
                 )
@@ -380,16 +382,16 @@ fun ShowFilterDirectionArea(listViewModel: ListViewModel)
         )
         RadioButton(
             selected = filterState.value?.sortOrderDirection in setOf(
-                ListViewModel.SortOrderDirection.CREATE_OLDEST,
-                ListViewModel.SortOrderDirection.UPDATE_OLDEST
+                SortOrderDirection.CREATE_OLDEST,
+                SortOrderDirection.UPDATE_OLDEST
             ),
             onClick = {
                 listViewModel.setFilterState(
                     filterState.value?.copy(
-                        sortOrderDirection = if (filterState.value?.sortOrderDirection == ListViewModel.SortOrderDirection.CREATE_NEWEST || filterState.value?.sortOrderDirection == ListViewModel.SortOrderDirection.CREATE_OLDEST) {
-                            ListViewModel.SortOrderDirection.CREATE_OLDEST
+                        sortOrderDirection = if (filterState.value?.sortOrderDirection == SortOrderDirection.CREATE_NEWEST || filterState.value?.sortOrderDirection == SortOrderDirection.CREATE_OLDEST) {
+                            SortOrderDirection.CREATE_OLDEST
                         } else {
-                            ListViewModel.SortOrderDirection.UPDATE_OLDEST
+                            SortOrderDirection.UPDATE_OLDEST
                         }
                     )
                 )
@@ -400,10 +402,10 @@ fun ShowFilterDirectionArea(listViewModel: ListViewModel)
             modifier = Modifier.clickable {
                 listViewModel.setFilterState(
                     filterState.value?.copy(
-                        sortOrderDirection = if (filterState.value?.sortOrderDirection == ListViewModel.SortOrderDirection.CREATE_NEWEST || filterState.value?.sortOrderDirection == ListViewModel.SortOrderDirection.CREATE_OLDEST) {
-                            ListViewModel.SortOrderDirection.CREATE_OLDEST
+                        sortOrderDirection = if (filterState.value?.sortOrderDirection == SortOrderDirection.CREATE_NEWEST || filterState.value?.sortOrderDirection == SortOrderDirection.CREATE_OLDEST) {
+                            SortOrderDirection.CREATE_OLDEST
                         } else {
-                            ListViewModel.SortOrderDirection.UPDATE_OLDEST
+                            SortOrderDirection.UPDATE_OLDEST
                         }
                     )
                 )

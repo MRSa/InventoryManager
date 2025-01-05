@@ -40,6 +40,7 @@ import androidx.navigation.compose.rememberNavController
 import jp.osdn.gokigen.inventorymanager.R
 import jp.osdn.gokigen.inventorymanager.export.DataExporter
 import jp.osdn.gokigen.inventorymanager.recognize.RecognizeFromIsbn
+import jp.osdn.gokigen.inventorymanager.storage.SortOrderDirection
 import jp.osdn.gokigen.inventorymanager.ui.model.ListViewModel
 import jp.osdn.gokigen.inventorymanager.ui.model.ListViewModel.FilterDialogCondition
 import java.util.Locale.US
@@ -90,7 +91,7 @@ fun CommandPanel(navController: NavHostController, dataListModel : ListViewModel
         }
         else { "" }
         val rating = if (filterInfo.value?.isOperatorChecked == true) { " $ratingOperator ${stringResource(R.string.label_rating_star)}${filterInfo.value?.selectedFilterRating}" } else { "" }
-        val direction = if ((filterInfo.value?.sortOrderDirection == ListViewModel.SortOrderDirection.CREATE_OLDEST)||(filterInfo.value?.sortOrderDirection == ListViewModel.SortOrderDirection.UPDATE_OLDEST))
+        val direction = if ((filterInfo.value?.sortOrderDirection == SortOrderDirection.CREATE_OLDEST)||(filterInfo.value?.sortOrderDirection == SortOrderDirection.UPDATE_OLDEST))
         {
             // OLD -> New の順番
             stringResource(R.string.dialog_info_sort_order_oldest)

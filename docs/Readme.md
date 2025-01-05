@@ -25,7 +25,9 @@
 
 ## インストール
 
-（インストール方法は、現在検討中です）
+本アプリは、Google Play で配布しています。[Google Playよりインストール](https://play.google.com/store/apps/details?id=jp.osdn.gokigen.inventorymanager)してください。
+
+* https://play.google.com/store/apps/details?id=jp.osdn.gokigen.inventorymanager
 
 ## 画面遷移
 

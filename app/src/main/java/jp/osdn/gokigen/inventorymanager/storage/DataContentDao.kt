@@ -13,22 +13,6 @@ interface DataContentDao
     @Query("SELECT * FROM contents")
     fun getAll(): List<DataContent>
 
-    fun getAllOrderBy(isUpdateDate: Boolean, isAscending: Boolean): List<DataContent> {
-        return if (isAscending) {
-            if (isUpdateDate) {
-                (getAll().sortedBy { it.updateDate })
-            } else {
-                (getAll().sortedBy { it.createDate })
-            }
-        } else {
-            if (isUpdateDate) {
-                (getAll().sortedByDescending { it.updateDate })
-            } else {
-                (getAll().sortedByDescending { it.createDate })
-            }
-        }
-    }
-
     @Query("SELECT * FROM contents ORDER BY create_date DESC")
     fun getAllCreateLatest(): List<DataContent>
 
@@ -44,171 +28,131 @@ interface DataContentDao
     @Query("SELECT * FROM contents WHERE category = :category")
     fun findByCategory(category: String): List<DataContent>
 
-    fun findByCategoryOrderBy(category: String, isUpdateDate: Boolean, isAscending: Boolean): List<DataContent> {
-        return if (isAscending) {
-            if (isUpdateDate) {
-                (findByCategory(category).sortedBy { it.updateDate })
-            } else {
-                (findByCategory(category).sortedBy { it.createDate })
-            }
-        } else {
-            if (isUpdateDate) {
-                (findByCategory(category).sortedByDescending  { it.updateDate })
-            } else {
-                (findByCategory(category).sortedByDescending  { it.createDate })
-            }
-        }
-    }
-
     @Query("SELECT * FROM contents WHERE category = :category AND level = :rating")
     fun findByCategoryWithRatingEqual(category: String, rating: Int): List<DataContent>
-
-    fun findByCategoryWithRatingEqualOrderBy(category: String, rating: Int, isUpdateDate: Boolean, isAscending: Boolean): List<DataContent> {
-        return if (isAscending) {
-            if (isUpdateDate) {
-                (findByCategoryWithRatingEqual(category, rating).sortedBy { it.updateDate })
-            } else {
-                (findByCategoryWithRatingEqual(category, rating).sortedBy { it.createDate })
-            }
-        } else {
-            if (isUpdateDate) {
-                (findByCategoryWithRatingEqual(category, rating).sortedByDescending  { it.updateDate })
-            } else {
-                (findByCategoryWithRatingEqual(category, rating).sortedByDescending  { it.createDate })
-            }
-        }
-    }
 
     @Query("SELECT * FROM contents WHERE category = :category AND level != :rating")
     fun findByCategoryWithRatingNotEqual(category: String, rating: Int): List<DataContent>
 
-    fun findByCategoryWithRatingNotEqualOrderBy(category: String, rating: Int, isUpdateDate: Boolean, isAscending: Boolean): List<DataContent> {
-        return if (isAscending) {
-            if (isUpdateDate) {
-                (findByCategoryWithRatingNotEqual(category, rating).sortedBy { it.updateDate })
-            } else {
-                (findByCategoryWithRatingNotEqual(category, rating).sortedBy { it.createDate })
-            }
-        } else {
-            if (isUpdateDate) {
-                (findByCategoryWithRatingNotEqual(category, rating).sortedByDescending  { it.updateDate })
-            } else {
-                (findByCategoryWithRatingNotEqual(category, rating).sortedByDescending  { it.createDate })
-            }
-        }
-    }
-
     @Query("SELECT * FROM contents WHERE category = :category AND level >= :rating")
     fun findByCategoryWithRatingOver(category: String, rating: Int): List<DataContent>
-
-    fun findByCategoryWithRatingOverOrderBy(category: String, rating: Int, isUpdateDate: Boolean, isAscending: Boolean): List<DataContent> {
-        return if (isAscending) {
-            if (isUpdateDate) {
-                (findByCategoryWithRatingOver(category, rating).sortedBy { it.updateDate })
-            } else {
-                (findByCategoryWithRatingOver(category, rating).sortedBy { it.createDate })
-            }
-        } else {
-            if (isUpdateDate) {
-                (findByCategoryWithRatingOver(category, rating).sortedByDescending  { it.updateDate })
-            } else {
-                (findByCategoryWithRatingOver(category, rating).sortedByDescending  { it.createDate })
-            }
-        }
-    }
 
     @Query("SELECT * FROM contents WHERE category = :category AND level <= :rating")
     fun findByCategoryWithRatingUnder(category: String, rating: Int): List<DataContent>
 
-    fun findByCategoryWithRatingUnderOrderBy(category: String, rating: Int, isUpdateDate: Boolean, isAscending: Boolean): List<DataContent> {
-        return if (isAscending) {
-            if (isUpdateDate) {
-                (findByCategoryWithRatingUnder(category, rating).sortedBy { it.updateDate })
-            } else {
-                (findByCategoryWithRatingUnder(category, rating).sortedBy { it.createDate })
-            }
-        } else {
-            if (isUpdateDate) {
-                (findByCategoryWithRatingUnder(category, rating).sortedByDescending  { it.updateDate })
-            } else {
-                (findByCategoryWithRatingUnder(category, rating).sortedByDescending  { it.createDate })
-            }
-        }
-    }
-
     @Query("SELECT * FROM contents WHERE level = :rating")
     fun findRatingEqual(rating: Int): List<DataContent>
 
-    fun findByRatingEqualOrderBy(rating: Int, isUpdateDate: Boolean, isAscending: Boolean): List<DataContent> {
-        return if (isAscending) {
-            if (isUpdateDate) {
-                (findRatingEqual(rating).sortedBy { it.updateDate })
-            } else {
-                (findRatingEqual(rating).sortedBy { it.createDate })
-            }
-        } else {
-            if (isUpdateDate) {
-                (findRatingEqual(rating).sortedByDescending  { it.updateDate })
-            } else {
-                (findRatingEqual(rating).sortedByDescending  { it.createDate })
-            }
-        }
-    }
-
     @Query("SELECT * FROM contents WHERE level != :rating")
-    fun findByRatingNotEqual(rating: Int): List<DataContent>
-
-    fun findByRatingNotEqualOrderBy(rating: Int, isUpdateDate: Boolean, isAscending: Boolean): List<DataContent> {
-        return if (isAscending) {
-            if (isUpdateDate) {
-                (findByRatingNotEqual(rating).sortedBy { it.updateDate })
-            } else {
-                (findByRatingNotEqual(rating).sortedBy { it.createDate })
-            }
-        } else {
-            if (isUpdateDate) {
-                (findByRatingNotEqual(rating).sortedByDescending  { it.updateDate })
-            } else {
-                (findByRatingNotEqual(rating).sortedByDescending  { it.createDate })
-            }
-        }
-    }
+    fun findRatingNotEqual(rating: Int): List<DataContent>
 
     @Query("SELECT * FROM contents WHERE level >= :rating")
-    fun findByRatingOver(rating: Int): List<DataContent>
-
-    fun findByRatingOverOrderBy(rating: Int, isUpdateDate: Boolean, isAscending: Boolean): List<DataContent> {
-        return if (isAscending) {
-            if (isUpdateDate) {
-                (findByRatingOver(rating).sortedBy { it.updateDate })
-            } else {
-                (findByRatingOver(rating).sortedBy { it.createDate })
-            }
-        } else {
-            if (isUpdateDate) {
-                (findByRatingOver(rating).sortedByDescending  { it.updateDate })
-            } else {
-                (findByRatingOver(rating).sortedByDescending  { it.createDate })
-            }
-        }
-    }
+    fun findRatingOver(rating: Int): List<DataContent>
 
     @Query("SELECT * FROM contents WHERE level <= :rating")
-    fun findByRatingUnder(rating: Int): List<DataContent>
+    fun findRatingUnder(rating: Int): List<DataContent>
 
-    fun findByRatingUnderOrderBy(rating: Int, isUpdateDate: Boolean, isAscending: Boolean): List<DataContent> {
-        return if (isAscending) {
-            if (isUpdateDate) {
-                (findByRatingUnder(rating).sortedBy { it.updateDate })
-            } else {
-                (findByRatingUnder(rating).sortedBy { it.createDate })
+    fun getDataListWithFilter(filterState: FilterState): List<DataContent> {
+        if ((filterState.isCategoryChecked)&&(filterState.isOperatorChecked)) {
+            when (filterState.selectedOperatorIndex) {
+                0 -> {  //  =
+                    return (when (filterState.sortOrderDirection) {
+                        SortOrderDirection.CREATE_NEWEST -> (findByCategoryWithRatingEqual(filterState.selectedCategory, filterState.selectedFilterRating).sortedByDescending { it.createDate })
+                        SortOrderDirection.CREATE_OLDEST -> (findByCategoryWithRatingEqual(filterState.selectedCategory, filterState.selectedFilterRating).sortedBy { it.createDate })
+                        SortOrderDirection.UPDATE_NEWEST -> (findByCategoryWithRatingEqual(filterState.selectedCategory, filterState.selectedFilterRating).sortedByDescending { it.updateDate })
+                        SortOrderDirection.UPDATE_OLDEST -> (findByCategoryWithRatingEqual(filterState.selectedCategory, filterState.selectedFilterRating).sortedBy { it.updateDate })
+                    })
+                }
+                1 -> {  // !=
+                    return (when (filterState.sortOrderDirection) {
+                        SortOrderDirection.CREATE_NEWEST -> (findByCategoryWithRatingNotEqual(filterState.selectedCategory, filterState.selectedFilterRating).sortedByDescending { it.createDate })
+                        SortOrderDirection.CREATE_OLDEST -> (findByCategoryWithRatingNotEqual(filterState.selectedCategory, filterState.selectedFilterRating).sortedBy { it.createDate })
+                        SortOrderDirection.UPDATE_NEWEST -> (findByCategoryWithRatingNotEqual(filterState.selectedCategory, filterState.selectedFilterRating).sortedByDescending { it.updateDate })
+                        SortOrderDirection.UPDATE_OLDEST -> (findByCategoryWithRatingNotEqual(filterState.selectedCategory, filterState.selectedFilterRating).sortedBy { it.updateDate })
+                    })
+                }
+                2 -> {  // >=
+                    return (when (filterState.sortOrderDirection) {
+                        SortOrderDirection.CREATE_NEWEST -> (findByCategoryWithRatingOver(filterState.selectedCategory, filterState.selectedFilterRating).sortedByDescending { it.createDate })
+                        SortOrderDirection.CREATE_OLDEST -> (findByCategoryWithRatingOver(filterState.selectedCategory, filterState.selectedFilterRating).sortedBy { it.createDate })
+                        SortOrderDirection.UPDATE_NEWEST -> (findByCategoryWithRatingOver(filterState.selectedCategory, filterState.selectedFilterRating).sortedByDescending { it.updateDate })
+                        SortOrderDirection.UPDATE_OLDEST -> (findByCategoryWithRatingOver(filterState.selectedCategory, filterState.selectedFilterRating).sortedBy { it.updateDate })
+                    })
+                }
+                3 -> {  // <=
+                    return (when (filterState.sortOrderDirection) {
+                        SortOrderDirection.CREATE_NEWEST -> (findByCategoryWithRatingUnder(filterState.selectedCategory, filterState.selectedFilterRating).sortedByDescending { it.createDate })
+                        SortOrderDirection.CREATE_OLDEST -> (findByCategoryWithRatingUnder(filterState.selectedCategory, filterState.selectedFilterRating).sortedBy { it.createDate })
+                        SortOrderDirection.UPDATE_NEWEST -> (findByCategoryWithRatingUnder(filterState.selectedCategory, filterState.selectedFilterRating).sortedByDescending { it.updateDate })
+                        SortOrderDirection.UPDATE_OLDEST -> (findByCategoryWithRatingUnder(filterState.selectedCategory, filterState.selectedFilterRating).sortedBy { it.updateDate })
+                    })
+                }
+                else -> {
+                    return (when (filterState.sortOrderDirection) {
+                        SortOrderDirection.CREATE_NEWEST -> (findByCategoryWithRatingEqual(filterState.selectedCategory, filterState.selectedFilterRating).sortedByDescending { it.createDate })
+                        SortOrderDirection.CREATE_OLDEST -> (findByCategoryWithRatingEqual(filterState.selectedCategory, filterState.selectedFilterRating).sortedBy { it.createDate })
+                        SortOrderDirection.UPDATE_NEWEST -> (findByCategoryWithRatingEqual(filterState.selectedCategory, filterState.selectedFilterRating).sortedByDescending { it.updateDate })
+                        SortOrderDirection.UPDATE_OLDEST -> (findByCategoryWithRatingEqual(filterState.selectedCategory, filterState.selectedFilterRating).sortedBy { it.updateDate })
+                    })
+                }
+            }
+        } else if (filterState.isCategoryChecked) {
+            return (when (filterState.sortOrderDirection) {
+                SortOrderDirection.CREATE_NEWEST -> (findByCategory(filterState.selectedCategory).sortedByDescending { it.createDate })
+                SortOrderDirection.CREATE_OLDEST -> (findByCategory(filterState.selectedCategory).sortedBy { it.createDate })
+                SortOrderDirection.UPDATE_NEWEST -> (findByCategory(filterState.selectedCategory).sortedByDescending { it.updateDate })
+                SortOrderDirection.UPDATE_OLDEST -> (findByCategory(filterState.selectedCategory).sortedBy { it.updateDate })
+            })
+        } else if (filterState.isOperatorChecked) {
+            when (filterState.selectedOperatorIndex) {
+                0 -> {  //  =
+                    return (when (filterState.sortOrderDirection) {
+                        SortOrderDirection.CREATE_NEWEST -> (findRatingEqual(filterState.selectedFilterRating).sortedByDescending { it.createDate })
+                        SortOrderDirection.CREATE_OLDEST -> (findRatingEqual(filterState.selectedFilterRating).sortedBy { it.createDate })
+                        SortOrderDirection.UPDATE_NEWEST -> (findRatingEqual(filterState.selectedFilterRating).sortedByDescending { it.updateDate })
+                        SortOrderDirection.UPDATE_OLDEST -> (findRatingEqual(filterState.selectedFilterRating).sortedBy { it.updateDate })
+                    })
+                }
+                1 -> {  // !=
+                    return (when (filterState.sortOrderDirection) {
+                        SortOrderDirection.CREATE_NEWEST -> (findRatingNotEqual(filterState.selectedFilterRating).sortedByDescending { it.createDate })
+                        SortOrderDirection.CREATE_OLDEST -> (findRatingNotEqual(filterState.selectedFilterRating).sortedBy { it.createDate })
+                        SortOrderDirection.UPDATE_NEWEST -> (findRatingNotEqual(filterState.selectedFilterRating).sortedByDescending { it.updateDate })
+                        SortOrderDirection.UPDATE_OLDEST -> (findRatingNotEqual(filterState.selectedFilterRating).sortedBy { it.updateDate })
+                    })
+                }
+                2 -> {  // >=
+                    return (when (filterState.sortOrderDirection) {
+                        SortOrderDirection.CREATE_NEWEST -> (findRatingOver(filterState.selectedFilterRating).sortedByDescending { it.createDate })
+                        SortOrderDirection.CREATE_OLDEST -> (findRatingOver(filterState.selectedFilterRating).sortedBy { it.createDate })
+                        SortOrderDirection.UPDATE_NEWEST -> (findRatingOver(filterState.selectedFilterRating).sortedByDescending { it.updateDate })
+                        SortOrderDirection.UPDATE_OLDEST -> (findRatingOver(filterState.selectedFilterRating).sortedBy { it.updateDate })
+                    })
+                }
+                3 -> {  // <=
+                    return (when (filterState.sortOrderDirection) {
+                        SortOrderDirection.CREATE_NEWEST -> (findRatingUnder(filterState.selectedFilterRating).sortedByDescending { it.createDate })
+                        SortOrderDirection.CREATE_OLDEST -> (findRatingUnder(filterState.selectedFilterRating).sortedBy { it.createDate })
+                        SortOrderDirection.UPDATE_NEWEST -> (findRatingUnder(filterState.selectedFilterRating).sortedByDescending { it.updateDate })
+                        SortOrderDirection.UPDATE_OLDEST -> (findRatingUnder(filterState.selectedFilterRating).sortedBy { it.updateDate })
+                    })
+                }
+                else -> {
+                    return (when (filterState.sortOrderDirection) {
+                        SortOrderDirection.CREATE_NEWEST -> (findRatingEqual(filterState.selectedFilterRating).sortedByDescending { it.createDate })
+                        SortOrderDirection.CREATE_OLDEST -> (findRatingEqual(filterState.selectedFilterRating).sortedBy { it.createDate })
+                        SortOrderDirection.UPDATE_NEWEST -> (findRatingEqual(filterState.selectedFilterRating).sortedByDescending { it.updateDate })
+                        SortOrderDirection.UPDATE_OLDEST -> (findRatingEqual(filterState.selectedFilterRating).sortedBy { it.updateDate })
+                    })
+                }
             }
         } else {
-            if (isUpdateDate) {
-                (findByRatingUnder(rating).sortedByDescending  { it.updateDate })
-            } else {
-                (findByRatingUnder(rating).sortedByDescending  { it.createDate })
-            }
+            return (when (filterState.sortOrderDirection) {
+                SortOrderDirection.CREATE_NEWEST -> (getAll().sortedByDescending { it.createDate })
+                SortOrderDirection.CREATE_OLDEST -> (getAll().sortedBy { it.createDate })
+                SortOrderDirection.UPDATE_NEWEST -> (getAll().sortedByDescending { it.updateDate })
+                SortOrderDirection.UPDATE_OLDEST -> (getAll().sortedBy { it.updateDate })
+            })
         }
     }
 

@@ -111,8 +111,13 @@
     <string name="dialog_label_sort_order">Sort order:</string>
     <string name="dialog_filter_sort_order_newest">Newest</string>
     <string name="dialog_filter_sort_order_oldest">Oldest</string>
+    <string name="dialog_filter_sort_order_descending">Descending</string>
+    <string name="dialog_filter_sort_order_ascending">Ascending</string>
     <string name="dialog_filter_sort_order_create">Created date</string>
     <string name="dialog_filter_sort_order_update">Updated date</string>
+    <string name="dialog_filter_sort_order_title">Title</string>
+    <string name="dialog_filter_sort_order_author">Author</string>
+    <string name="dialog_filter_sort_order_publisher">Publisher</string>
     <string name="dialog_filter_sort_not_specified">(no filter)</string>
     <string name="dialog_info_sort_order_newest">↑</string>
     <string name="dialog_info_sort_order_oldest">↓</string>

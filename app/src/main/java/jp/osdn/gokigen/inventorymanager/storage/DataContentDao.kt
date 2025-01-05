@@ -61,6 +61,12 @@ interface DataContentDao
                         SortOrderDirection.CREATE_OLDEST -> (findByCategoryWithRatingEqual(filterState.selectedCategory, filterState.selectedFilterRating).sortedBy { it.createDate })
                         SortOrderDirection.UPDATE_NEWEST -> (findByCategoryWithRatingEqual(filterState.selectedCategory, filterState.selectedFilterRating).sortedByDescending { it.updateDate })
                         SortOrderDirection.UPDATE_OLDEST -> (findByCategoryWithRatingEqual(filterState.selectedCategory, filterState.selectedFilterRating).sortedBy { it.updateDate })
+                        SortOrderDirection.TITLE_DESCENDING -> (findByCategoryWithRatingEqual(filterState.selectedCategory, filterState.selectedFilterRating).sortedByDescending { it.title})
+                        SortOrderDirection.TITLE_ASCENDING -> (findByCategoryWithRatingEqual(filterState.selectedCategory, filterState.selectedFilterRating).sortedBy { it.title })
+                        SortOrderDirection.AUTHOR_DESCENDING -> (findByCategoryWithRatingEqual(filterState.selectedCategory, filterState.selectedFilterRating).sortedByDescending { it.author })
+                        SortOrderDirection.AUTHOR_ASCENDING -> (findByCategoryWithRatingEqual(filterState.selectedCategory, filterState.selectedFilterRating).sortedBy { it.author })
+                        SortOrderDirection.PUBLISHER_DESCENDING -> (findByCategoryWithRatingEqual(filterState.selectedCategory, filterState.selectedFilterRating).sortedByDescending { it.publisher })
+                        SortOrderDirection.PUBLISHER_ASCENDING -> (findByCategoryWithRatingEqual(filterState.selectedCategory, filterState.selectedFilterRating).sortedBy { it.publisher })
                     })
                 }
                 1 -> {  // !=
@@ -69,6 +75,12 @@ interface DataContentDao
                         SortOrderDirection.CREATE_OLDEST -> (findByCategoryWithRatingNotEqual(filterState.selectedCategory, filterState.selectedFilterRating).sortedBy { it.createDate })
                         SortOrderDirection.UPDATE_NEWEST -> (findByCategoryWithRatingNotEqual(filterState.selectedCategory, filterState.selectedFilterRating).sortedByDescending { it.updateDate })
                         SortOrderDirection.UPDATE_OLDEST -> (findByCategoryWithRatingNotEqual(filterState.selectedCategory, filterState.selectedFilterRating).sortedBy { it.updateDate })
+                        SortOrderDirection.TITLE_DESCENDING -> (findByCategoryWithRatingNotEqual(filterState.selectedCategory, filterState.selectedFilterRating).sortedByDescending { it.title })
+                        SortOrderDirection.TITLE_ASCENDING -> (findByCategoryWithRatingNotEqual(filterState.selectedCategory, filterState.selectedFilterRating).sortedBy { it.title })
+                        SortOrderDirection.AUTHOR_DESCENDING -> (findByCategoryWithRatingNotEqual(filterState.selectedCategory, filterState.selectedFilterRating).sortedByDescending { it.author })
+                        SortOrderDirection.AUTHOR_ASCENDING -> (findByCategoryWithRatingNotEqual(filterState.selectedCategory, filterState.selectedFilterRating).sortedBy { it.author })
+                        SortOrderDirection.PUBLISHER_DESCENDING -> (findByCategoryWithRatingNotEqual(filterState.selectedCategory, filterState.selectedFilterRating).sortedByDescending { it.publisher })
+                        SortOrderDirection.PUBLISHER_ASCENDING -> (findByCategoryWithRatingNotEqual(filterState.selectedCategory, filterState.selectedFilterRating).sortedBy { it.publisher })
                     })
                 }
                 2 -> {  // >=
@@ -77,6 +89,12 @@ interface DataContentDao
                         SortOrderDirection.CREATE_OLDEST -> (findByCategoryWithRatingOver(filterState.selectedCategory, filterState.selectedFilterRating).sortedBy { it.createDate })
                         SortOrderDirection.UPDATE_NEWEST -> (findByCategoryWithRatingOver(filterState.selectedCategory, filterState.selectedFilterRating).sortedByDescending { it.updateDate })
                         SortOrderDirection.UPDATE_OLDEST -> (findByCategoryWithRatingOver(filterState.selectedCategory, filterState.selectedFilterRating).sortedBy { it.updateDate })
+                        SortOrderDirection.TITLE_DESCENDING -> (findByCategoryWithRatingOver(filterState.selectedCategory, filterState.selectedFilterRating).sortedByDescending { it.title })
+                        SortOrderDirection.TITLE_ASCENDING -> (findByCategoryWithRatingOver(filterState.selectedCategory, filterState.selectedFilterRating).sortedBy { it.title })
+                        SortOrderDirection.AUTHOR_DESCENDING -> (findByCategoryWithRatingOver(filterState.selectedCategory, filterState.selectedFilterRating).sortedByDescending { it.author })
+                        SortOrderDirection.AUTHOR_ASCENDING -> (findByCategoryWithRatingOver(filterState.selectedCategory, filterState.selectedFilterRating).sortedBy { it.author })
+                        SortOrderDirection.PUBLISHER_DESCENDING -> (findByCategoryWithRatingOver(filterState.selectedCategory, filterState.selectedFilterRating).sortedByDescending { it.publisher })
+                        SortOrderDirection.PUBLISHER_ASCENDING -> (findByCategoryWithRatingOver(filterState.selectedCategory, filterState.selectedFilterRating).sortedBy { it.publisher })
                     })
                 }
                 3 -> {  // <=
@@ -85,6 +103,13 @@ interface DataContentDao
                         SortOrderDirection.CREATE_OLDEST -> (findByCategoryWithRatingUnder(filterState.selectedCategory, filterState.selectedFilterRating).sortedBy { it.createDate })
                         SortOrderDirection.UPDATE_NEWEST -> (findByCategoryWithRatingUnder(filterState.selectedCategory, filterState.selectedFilterRating).sortedByDescending { it.updateDate })
                         SortOrderDirection.UPDATE_OLDEST -> (findByCategoryWithRatingUnder(filterState.selectedCategory, filterState.selectedFilterRating).sortedBy { it.updateDate })
+                        SortOrderDirection.TITLE_DESCENDING -> (findByCategoryWithRatingUnder(filterState.selectedCategory, filterState.selectedFilterRating).sortedByDescending { it.title })
+                        SortOrderDirection.TITLE_ASCENDING -> (findByCategoryWithRatingUnder(filterState.selectedCategory, filterState.selectedFilterRating).sortedBy { it.title })
+                        SortOrderDirection.AUTHOR_DESCENDING -> (findByCategoryWithRatingUnder(filterState.selectedCategory, filterState.selectedFilterRating).sortedByDescending { it.author })
+                        SortOrderDirection.AUTHOR_ASCENDING -> (findByCategoryWithRatingUnder(filterState.selectedCategory, filterState.selectedFilterRating).sortedBy { it.author })
+                        SortOrderDirection.PUBLISHER_DESCENDING -> (findByCategoryWithRatingUnder(filterState.selectedCategory, filterState.selectedFilterRating).sortedByDescending { it.publisher })
+                        SortOrderDirection.PUBLISHER_ASCENDING -> (findByCategoryWithRatingUnder(filterState.selectedCategory, filterState.selectedFilterRating).sortedBy { it.publisher })
+
                     })
                 }
                 else -> {
@@ -93,6 +118,12 @@ interface DataContentDao
                         SortOrderDirection.CREATE_OLDEST -> (findByCategoryWithRatingEqual(filterState.selectedCategory, filterState.selectedFilterRating).sortedBy { it.createDate })
                         SortOrderDirection.UPDATE_NEWEST -> (findByCategoryWithRatingEqual(filterState.selectedCategory, filterState.selectedFilterRating).sortedByDescending { it.updateDate })
                         SortOrderDirection.UPDATE_OLDEST -> (findByCategoryWithRatingEqual(filterState.selectedCategory, filterState.selectedFilterRating).sortedBy { it.updateDate })
+                        SortOrderDirection.TITLE_DESCENDING -> (findByCategoryWithRatingEqual(filterState.selectedCategory, filterState.selectedFilterRating).sortedByDescending { it.title })
+                        SortOrderDirection.TITLE_ASCENDING -> (findByCategoryWithRatingEqual(filterState.selectedCategory, filterState.selectedFilterRating).sortedBy { it.title })
+                        SortOrderDirection.AUTHOR_DESCENDING -> (findByCategoryWithRatingEqual(filterState.selectedCategory, filterState.selectedFilterRating).sortedByDescending { it.author })
+                        SortOrderDirection.AUTHOR_ASCENDING -> (findByCategoryWithRatingEqual(filterState.selectedCategory, filterState.selectedFilterRating).sortedBy { it.author })
+                        SortOrderDirection.PUBLISHER_DESCENDING -> (findByCategoryWithRatingEqual(filterState.selectedCategory, filterState.selectedFilterRating).sortedByDescending { it.publisher })
+                        SortOrderDirection.PUBLISHER_ASCENDING -> (findByCategoryWithRatingEqual(filterState.selectedCategory, filterState.selectedFilterRating).sortedBy { it.publisher })
                     })
                 }
             }
@@ -102,6 +133,13 @@ interface DataContentDao
                 SortOrderDirection.CREATE_OLDEST -> (findByCategory(filterState.selectedCategory).sortedBy { it.createDate })
                 SortOrderDirection.UPDATE_NEWEST -> (findByCategory(filterState.selectedCategory).sortedByDescending { it.updateDate })
                 SortOrderDirection.UPDATE_OLDEST -> (findByCategory(filterState.selectedCategory).sortedBy { it.updateDate })
+                SortOrderDirection.TITLE_DESCENDING -> (findByCategory(filterState.selectedCategory).sortedByDescending { it.title })
+                SortOrderDirection.TITLE_ASCENDING -> (findByCategory(filterState.selectedCategory).sortedBy { it.title })
+                SortOrderDirection.AUTHOR_DESCENDING -> (findByCategory(filterState.selectedCategory).sortedByDescending { it.author })
+                SortOrderDirection.AUTHOR_ASCENDING -> (findByCategory(filterState.selectedCategory).sortedBy { it.author })
+                SortOrderDirection.PUBLISHER_DESCENDING -> (findByCategory(filterState.selectedCategory).sortedByDescending { it.publisher })
+                SortOrderDirection.PUBLISHER_ASCENDING -> (findByCategory(filterState.selectedCategory).sortedBy { it.publisher })
+
             })
         } else if (filterState.isOperatorChecked) {
             when (filterState.selectedOperatorIndex) {
@@ -111,6 +149,13 @@ interface DataContentDao
                         SortOrderDirection.CREATE_OLDEST -> (findRatingEqual(filterState.selectedFilterRating).sortedBy { it.createDate })
                         SortOrderDirection.UPDATE_NEWEST -> (findRatingEqual(filterState.selectedFilterRating).sortedByDescending { it.updateDate })
                         SortOrderDirection.UPDATE_OLDEST -> (findRatingEqual(filterState.selectedFilterRating).sortedBy { it.updateDate })
+                        SortOrderDirection.TITLE_DESCENDING -> (findRatingEqual(filterState.selectedFilterRating).sortedByDescending { it.title })
+                        SortOrderDirection.TITLE_ASCENDING -> (findRatingEqual(filterState.selectedFilterRating).sortedBy { it.title })
+                        SortOrderDirection.AUTHOR_DESCENDING -> (findRatingEqual(filterState.selectedFilterRating).sortedByDescending { it.author })
+                        SortOrderDirection.AUTHOR_ASCENDING -> (findRatingEqual(filterState.selectedFilterRating).sortedBy { it.author })
+                        SortOrderDirection.PUBLISHER_DESCENDING -> (findRatingEqual(filterState.selectedFilterRating).sortedByDescending { it.publisher })
+                        SortOrderDirection.PUBLISHER_ASCENDING -> (findRatingEqual(filterState.selectedFilterRating).sortedBy { it.publisher })
+
                     })
                 }
                 1 -> {  // !=
@@ -119,6 +164,12 @@ interface DataContentDao
                         SortOrderDirection.CREATE_OLDEST -> (findRatingNotEqual(filterState.selectedFilterRating).sortedBy { it.createDate })
                         SortOrderDirection.UPDATE_NEWEST -> (findRatingNotEqual(filterState.selectedFilterRating).sortedByDescending { it.updateDate })
                         SortOrderDirection.UPDATE_OLDEST -> (findRatingNotEqual(filterState.selectedFilterRating).sortedBy { it.updateDate })
+                        SortOrderDirection.TITLE_DESCENDING -> (findRatingNotEqual(filterState.selectedFilterRating).sortedByDescending { it.title })
+                        SortOrderDirection.TITLE_ASCENDING -> (findRatingNotEqual(filterState.selectedFilterRating).sortedBy { it.title })
+                        SortOrderDirection.AUTHOR_DESCENDING -> (findRatingNotEqual(filterState.selectedFilterRating).sortedByDescending { it.author })
+                        SortOrderDirection.AUTHOR_ASCENDING -> (findRatingNotEqual(filterState.selectedFilterRating).sortedBy { it.author })
+                        SortOrderDirection.PUBLISHER_DESCENDING -> (findRatingNotEqual(filterState.selectedFilterRating).sortedByDescending { it.publisher })
+                        SortOrderDirection.PUBLISHER_ASCENDING -> (findRatingNotEqual(filterState.selectedFilterRating).sortedBy { it.publisher })
                     })
                 }
                 2 -> {  // >=
@@ -127,6 +178,12 @@ interface DataContentDao
                         SortOrderDirection.CREATE_OLDEST -> (findRatingOver(filterState.selectedFilterRating).sortedBy { it.createDate })
                         SortOrderDirection.UPDATE_NEWEST -> (findRatingOver(filterState.selectedFilterRating).sortedByDescending { it.updateDate })
                         SortOrderDirection.UPDATE_OLDEST -> (findRatingOver(filterState.selectedFilterRating).sortedBy { it.updateDate })
+                        SortOrderDirection.TITLE_DESCENDING -> (findRatingOver(filterState.selectedFilterRating).sortedByDescending { it.title })
+                        SortOrderDirection.TITLE_ASCENDING -> (findRatingOver(filterState.selectedFilterRating).sortedBy { it.title })
+                        SortOrderDirection.AUTHOR_DESCENDING -> (findRatingOver(filterState.selectedFilterRating).sortedByDescending { it.author })
+                        SortOrderDirection.AUTHOR_ASCENDING -> (findRatingOver(filterState.selectedFilterRating).sortedBy { it.author })
+                        SortOrderDirection.PUBLISHER_DESCENDING -> (findRatingOver(filterState.selectedFilterRating).sortedByDescending { it.publisher })
+                        SortOrderDirection.PUBLISHER_ASCENDING -> (findRatingOver(filterState.selectedFilterRating).sortedBy { it.publisher })
                     })
                 }
                 3 -> {  // <=
@@ -135,6 +192,12 @@ interface DataContentDao
                         SortOrderDirection.CREATE_OLDEST -> (findRatingUnder(filterState.selectedFilterRating).sortedBy { it.createDate })
                         SortOrderDirection.UPDATE_NEWEST -> (findRatingUnder(filterState.selectedFilterRating).sortedByDescending { it.updateDate })
                         SortOrderDirection.UPDATE_OLDEST -> (findRatingUnder(filterState.selectedFilterRating).sortedBy { it.updateDate })
+                        SortOrderDirection.TITLE_DESCENDING -> (findRatingUnder(filterState.selectedFilterRating).sortedByDescending { it.title })
+                        SortOrderDirection.TITLE_ASCENDING -> (findRatingUnder(filterState.selectedFilterRating).sortedBy { it.title })
+                        SortOrderDirection.AUTHOR_DESCENDING -> (findRatingUnder(filterState.selectedFilterRating).sortedByDescending { it.author })
+                        SortOrderDirection.AUTHOR_ASCENDING -> (findRatingUnder(filterState.selectedFilterRating).sortedBy { it.author })
+                        SortOrderDirection.PUBLISHER_DESCENDING -> (findRatingUnder(filterState.selectedFilterRating).sortedByDescending { it.publisher })
+                        SortOrderDirection.PUBLISHER_ASCENDING -> (findRatingUnder(filterState.selectedFilterRating).sortedBy { it.publisher })
                     })
                 }
                 else -> {
@@ -143,6 +206,12 @@ interface DataContentDao
                         SortOrderDirection.CREATE_OLDEST -> (findRatingEqual(filterState.selectedFilterRating).sortedBy { it.createDate })
                         SortOrderDirection.UPDATE_NEWEST -> (findRatingEqual(filterState.selectedFilterRating).sortedByDescending { it.updateDate })
                         SortOrderDirection.UPDATE_OLDEST -> (findRatingEqual(filterState.selectedFilterRating).sortedBy { it.updateDate })
+                        SortOrderDirection.TITLE_DESCENDING -> (findRatingEqual(filterState.selectedFilterRating).sortedByDescending { it.title })
+                        SortOrderDirection.TITLE_ASCENDING -> (findRatingEqual(filterState.selectedFilterRating).sortedBy { it.title })
+                        SortOrderDirection.AUTHOR_DESCENDING -> (findRatingEqual(filterState.selectedFilterRating).sortedByDescending { it.author })
+                        SortOrderDirection.AUTHOR_ASCENDING -> (findRatingEqual(filterState.selectedFilterRating).sortedBy { it.author })
+                        SortOrderDirection.PUBLISHER_DESCENDING -> (findRatingEqual(filterState.selectedFilterRating).sortedByDescending { it.publisher })
+                        SortOrderDirection.PUBLISHER_ASCENDING -> (findRatingEqual(filterState.selectedFilterRating).sortedBy { it.publisher })
                     })
                 }
             }
@@ -152,6 +221,12 @@ interface DataContentDao
                 SortOrderDirection.CREATE_OLDEST -> (getAll().sortedBy { it.createDate })
                 SortOrderDirection.UPDATE_NEWEST -> (getAll().sortedByDescending { it.updateDate })
                 SortOrderDirection.UPDATE_OLDEST -> (getAll().sortedBy { it.updateDate })
+                SortOrderDirection.TITLE_DESCENDING -> (getAll().sortedByDescending { it.title })
+                SortOrderDirection.TITLE_ASCENDING -> (getAll().sortedBy { it.title })
+                SortOrderDirection.AUTHOR_DESCENDING -> (getAll().sortedByDescending { it.author })
+                SortOrderDirection.AUTHOR_ASCENDING -> (getAll().sortedBy { it.author })
+                SortOrderDirection.PUBLISHER_DESCENDING -> (getAll().sortedByDescending { it.publisher })
+                SortOrderDirection.PUBLISHER_ASCENDING -> (getAll().sortedBy { it.publisher })
             })
         }
     }

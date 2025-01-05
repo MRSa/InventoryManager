@@ -283,15 +283,29 @@ fun ShowFilterOrderArea(listViewModel: ListViewModel)
 
     val filterState = listViewModel.filterState.observeAsState()
     var isSortOrderExpanded by remember { mutableStateOf(false) }
-    val sortOrderSelection = arrayListOf(stringResource(R.string.dialog_filter_sort_order_create), stringResource(R.string.dialog_filter_sort_order_update))
+    val sortOrderSelection = arrayListOf(
+        stringResource(R.string.dialog_filter_sort_order_create),
+        stringResource(R.string.dialog_filter_sort_order_update),
+        stringResource(R.string.dialog_filter_sort_order_title),
+        stringResource(R.string.dialog_filter_sort_order_author),
+        stringResource(R.string.dialog_filter_sort_order_publisher),
+    )
 
     Row(verticalAlignment = Alignment.CenterVertically) {
         Text(stringResource(R.string.dialog_label_sort_order))
         Text(
-            text = if (filterState.value?.sortOrderDirection == SortOrderDirection.CREATE_NEWEST || filterState.value?.sortOrderDirection == SortOrderDirection.CREATE_OLDEST) {
-                stringResource(R.string.dialog_filter_sort_order_create)
-            } else {
-                stringResource(R.string.dialog_filter_sort_order_update)
+            text = when (filterState.value?.sortOrderDirection) {
+                SortOrderDirection.CREATE_NEWEST -> { stringResource(R.string.dialog_filter_sort_order_create) }
+                SortOrderDirection.CREATE_OLDEST -> { stringResource(R.string.dialog_filter_sort_order_create) }
+                SortOrderDirection.UPDATE_NEWEST -> { stringResource(R.string.dialog_filter_sort_order_update) }
+                SortOrderDirection.UPDATE_OLDEST -> { stringResource(R.string.dialog_filter_sort_order_update) }
+                SortOrderDirection.TITLE_DESCENDING -> { stringResource(R.string.dialog_filter_sort_order_title) }
+                SortOrderDirection.TITLE_ASCENDING -> { stringResource(R.string.dialog_filter_sort_order_title) }
+                SortOrderDirection.AUTHOR_DESCENDING -> { stringResource(R.string.dialog_filter_sort_order_author) }
+                SortOrderDirection.AUTHOR_ASCENDING -> { stringResource(R.string.dialog_filter_sort_order_author) }
+                SortOrderDirection.PUBLISHER_DESCENDING -> { stringResource(R.string.dialog_filter_sort_order_publisher) }
+                SortOrderDirection.PUBLISHER_ASCENDING -> { stringResource(R.string.dialog_filter_sort_order_publisher) }
+                else -> { stringResource(R.string.dialog_filter_sort_order_update) }
             },
             modifier = Modifier
                 .padding(start = 8.dp)
@@ -308,26 +322,97 @@ fun ShowFilterOrderArea(listViewModel: ListViewModel)
                     text = { Text(text = selection, fontSize = with(density) { 16.dp.toSp() }) },
                     onClick = {
                         scope.launch {
-                            val sortOrderDirection = if (index == 0)
+                            val sortOrderDirection = when (index)
                             {
-                                // ---- Create Date
-                                if (filterState.value?.sortOrderDirection == SortOrderDirection.CREATE_NEWEST || filterState.value?.sortOrderDirection == SortOrderDirection.UPDATE_NEWEST) {
-                                    SortOrderDirection.CREATE_NEWEST
+                                0 -> {   // CREATE DATE
+                                    when (filterState.value?.sortOrderDirection) {
+                                        SortOrderDirection.CREATE_NEWEST -> { SortOrderDirection.CREATE_NEWEST }
+                                        SortOrderDirection.CREATE_OLDEST -> { SortOrderDirection.CREATE_OLDEST }
+                                        SortOrderDirection.UPDATE_NEWEST -> { SortOrderDirection.CREATE_NEWEST }
+                                        SortOrderDirection.UPDATE_OLDEST -> { SortOrderDirection.CREATE_OLDEST }
+                                        SortOrderDirection.TITLE_DESCENDING -> { SortOrderDirection.CREATE_NEWEST }
+                                        SortOrderDirection.TITLE_ASCENDING -> { SortOrderDirection.CREATE_OLDEST }
+                                        SortOrderDirection.AUTHOR_DESCENDING -> { SortOrderDirection.CREATE_NEWEST }
+                                        SortOrderDirection.AUTHOR_ASCENDING -> { SortOrderDirection.CREATE_OLDEST }
+                                        SortOrderDirection.PUBLISHER_DESCENDING -> { SortOrderDirection.CREATE_NEWEST }
+                                        SortOrderDirection.PUBLISHER_ASCENDING -> { SortOrderDirection.CREATE_OLDEST }
+                                        else -> { SortOrderDirection.CREATE_NEWEST }
+                                    }
                                 }
-                                else
-                                {
-                                    SortOrderDirection.CREATE_OLDEST
+                                1 -> {   // UPDATE DATE
+                                    when (filterState.value?.sortOrderDirection) {
+                                        SortOrderDirection.CREATE_NEWEST -> { SortOrderDirection.UPDATE_NEWEST }
+                                        SortOrderDirection.CREATE_OLDEST -> { SortOrderDirection.UPDATE_OLDEST }
+                                        SortOrderDirection.UPDATE_NEWEST -> { SortOrderDirection.UPDATE_NEWEST }
+                                        SortOrderDirection.UPDATE_OLDEST -> { SortOrderDirection.UPDATE_OLDEST }
+                                        SortOrderDirection.TITLE_DESCENDING -> { SortOrderDirection.UPDATE_NEWEST }
+                                        SortOrderDirection.TITLE_ASCENDING -> { SortOrderDirection.UPDATE_OLDEST }
+                                        SortOrderDirection.AUTHOR_DESCENDING -> { SortOrderDirection.UPDATE_NEWEST }
+                                        SortOrderDirection.AUTHOR_ASCENDING -> { SortOrderDirection.UPDATE_OLDEST }
+                                        SortOrderDirection.PUBLISHER_DESCENDING -> { SortOrderDirection.UPDATE_NEWEST }
+                                        SortOrderDirection.PUBLISHER_ASCENDING -> { SortOrderDirection.UPDATE_OLDEST }
+                                        else -> { SortOrderDirection.UPDATE_NEWEST }
+                                    }
                                 }
-                            }
-                            else
-                            {
-                                // ---- Update Date
-                                if (filterState.value?.sortOrderDirection == SortOrderDirection.CREATE_NEWEST || filterState.value?.sortOrderDirection == SortOrderDirection.UPDATE_NEWEST) {
-                                    SortOrderDirection.UPDATE_NEWEST
+                                2 -> {   // TITLE
+                                    when (filterState.value?.sortOrderDirection) {
+                                        SortOrderDirection.CREATE_NEWEST -> { SortOrderDirection.TITLE_DESCENDING }
+                                        SortOrderDirection.CREATE_OLDEST -> { SortOrderDirection.TITLE_ASCENDING }
+                                        SortOrderDirection.UPDATE_NEWEST -> { SortOrderDirection.TITLE_DESCENDING }
+                                        SortOrderDirection.UPDATE_OLDEST -> { SortOrderDirection.TITLE_ASCENDING }
+                                        SortOrderDirection.TITLE_DESCENDING -> { SortOrderDirection.TITLE_DESCENDING }
+                                        SortOrderDirection.TITLE_ASCENDING -> { SortOrderDirection.TITLE_ASCENDING }
+                                        SortOrderDirection.AUTHOR_DESCENDING -> { SortOrderDirection.TITLE_DESCENDING }
+                                        SortOrderDirection.AUTHOR_ASCENDING -> { SortOrderDirection.TITLE_ASCENDING }
+                                        SortOrderDirection.PUBLISHER_DESCENDING -> { SortOrderDirection.TITLE_DESCENDING }
+                                        SortOrderDirection.PUBLISHER_ASCENDING -> { SortOrderDirection.TITLE_ASCENDING }
+                                        else -> { SortOrderDirection.TITLE_DESCENDING }
+                                    }
                                 }
-                                else
-                                {
-                                    SortOrderDirection.UPDATE_OLDEST
+                                3 -> {   // AUTHOR
+                                    when (filterState.value?.sortOrderDirection) {
+                                        SortOrderDirection.CREATE_NEWEST -> { SortOrderDirection.AUTHOR_DESCENDING }
+                                        SortOrderDirection.CREATE_OLDEST -> { SortOrderDirection.AUTHOR_ASCENDING }
+                                        SortOrderDirection.UPDATE_NEWEST -> { SortOrderDirection.AUTHOR_DESCENDING }
+                                        SortOrderDirection.UPDATE_OLDEST -> { SortOrderDirection.AUTHOR_ASCENDING }
+                                        SortOrderDirection.TITLE_DESCENDING -> { SortOrderDirection.AUTHOR_DESCENDING }
+                                        SortOrderDirection.TITLE_ASCENDING -> { SortOrderDirection.AUTHOR_ASCENDING }
+                                        SortOrderDirection.AUTHOR_DESCENDING -> { SortOrderDirection.AUTHOR_DESCENDING }
+                                        SortOrderDirection.AUTHOR_ASCENDING -> { SortOrderDirection.AUTHOR_ASCENDING }
+                                        SortOrderDirection.PUBLISHER_DESCENDING -> { SortOrderDirection.AUTHOR_DESCENDING }
+                                        SortOrderDirection.PUBLISHER_ASCENDING -> { SortOrderDirection.AUTHOR_ASCENDING }
+                                        else -> { SortOrderDirection.AUTHOR_DESCENDING }
+                                    }
+                                }
+                                4 -> {   // PUBLISHER
+                                    when (filterState.value?.sortOrderDirection) {
+                                        SortOrderDirection.CREATE_NEWEST -> { SortOrderDirection.PUBLISHER_DESCENDING}
+                                        SortOrderDirection.CREATE_OLDEST -> { SortOrderDirection.PUBLISHER_ASCENDING }
+                                        SortOrderDirection.UPDATE_NEWEST -> { SortOrderDirection.PUBLISHER_DESCENDING }
+                                        SortOrderDirection.UPDATE_OLDEST -> { SortOrderDirection.PUBLISHER_ASCENDING }
+                                        SortOrderDirection.TITLE_DESCENDING -> { SortOrderDirection.PUBLISHER_DESCENDING }
+                                        SortOrderDirection.TITLE_ASCENDING -> { SortOrderDirection.PUBLISHER_ASCENDING }
+                                        SortOrderDirection.AUTHOR_DESCENDING -> { SortOrderDirection.PUBLISHER_DESCENDING }
+                                        SortOrderDirection.AUTHOR_ASCENDING -> { SortOrderDirection.PUBLISHER_ASCENDING }
+                                        SortOrderDirection.PUBLISHER_DESCENDING -> { SortOrderDirection.PUBLISHER_DESCENDING }
+                                        SortOrderDirection.PUBLISHER_ASCENDING -> { SortOrderDirection.PUBLISHER_ASCENDING }
+                                        else -> { SortOrderDirection.PUBLISHER_DESCENDING }
+                                    }
+                                }
+                                else -> {  // OTHER (CREATE DATE)
+                                    when (filterState.value?.sortOrderDirection) {
+                                        SortOrderDirection.CREATE_NEWEST -> { SortOrderDirection.CREATE_NEWEST }
+                                        SortOrderDirection.CREATE_OLDEST -> { SortOrderDirection.CREATE_OLDEST }
+                                        SortOrderDirection.UPDATE_NEWEST -> { SortOrderDirection.CREATE_NEWEST }
+                                        SortOrderDirection.UPDATE_OLDEST -> { SortOrderDirection.CREATE_OLDEST }
+                                        SortOrderDirection.TITLE_DESCENDING -> { SortOrderDirection.CREATE_NEWEST }
+                                        SortOrderDirection.TITLE_ASCENDING -> { SortOrderDirection.CREATE_OLDEST }
+                                        SortOrderDirection.AUTHOR_DESCENDING -> { SortOrderDirection.CREATE_NEWEST }
+                                        SortOrderDirection.AUTHOR_ASCENDING -> { SortOrderDirection.CREATE_OLDEST }
+                                        SortOrderDirection.PUBLISHER_DESCENDING -> { SortOrderDirection.CREATE_NEWEST }
+                                        SortOrderDirection.PUBLISHER_ASCENDING -> { SortOrderDirection.CREATE_OLDEST }
+                                        else -> { SortOrderDirection.CREATE_NEWEST }
+                                    }
                                 }
                             }
                             listViewModel.setFilterState(
@@ -352,29 +437,60 @@ fun ShowFilterDirectionArea(listViewModel: ListViewModel)
         RadioButton(
             selected = filterState.value?.sortOrderDirection in setOf(
                 SortOrderDirection.CREATE_NEWEST,
-                SortOrderDirection.UPDATE_NEWEST
+                SortOrderDirection.UPDATE_NEWEST,
+                SortOrderDirection.TITLE_DESCENDING,
+                SortOrderDirection.AUTHOR_DESCENDING,
+                SortOrderDirection.PUBLISHER_DESCENDING,
             ),
             onClick = {
                 listViewModel.setFilterState(
                     filterState.value?.copy(
-                        sortOrderDirection = if (filterState.value?.sortOrderDirection == SortOrderDirection.CREATE_NEWEST || filterState.value?.sortOrderDirection == SortOrderDirection.CREATE_OLDEST) {
-                            SortOrderDirection.CREATE_NEWEST
-                        } else {
-                            SortOrderDirection.UPDATE_NEWEST
+                        sortOrderDirection = when (filterState.value?.sortOrderDirection) {
+                            SortOrderDirection.CREATE_NEWEST -> { SortOrderDirection.CREATE_NEWEST }
+                            SortOrderDirection.CREATE_OLDEST -> { SortOrderDirection.CREATE_NEWEST }
+                            SortOrderDirection.UPDATE_NEWEST -> { SortOrderDirection.UPDATE_NEWEST }
+                            SortOrderDirection.UPDATE_OLDEST -> { SortOrderDirection.UPDATE_NEWEST }
+                            SortOrderDirection.TITLE_DESCENDING -> { SortOrderDirection.TITLE_DESCENDING }
+                            SortOrderDirection.TITLE_ASCENDING -> { SortOrderDirection.TITLE_DESCENDING }
+                            SortOrderDirection.AUTHOR_DESCENDING -> { SortOrderDirection.AUTHOR_DESCENDING }
+                            SortOrderDirection.AUTHOR_ASCENDING -> { SortOrderDirection.AUTHOR_DESCENDING }
+                            SortOrderDirection.PUBLISHER_DESCENDING -> { SortOrderDirection.PUBLISHER_DESCENDING }
+                            SortOrderDirection.PUBLISHER_ASCENDING -> { SortOrderDirection.PUBLISHER_DESCENDING }
+                            else -> { SortOrderDirection.CREATE_NEWEST }
                         }
                     )
                 )
             }
         )
         Text(
-            text = stringResource(R.string.dialog_filter_sort_order_newest),
+            text = when (filterState.value?.sortOrderDirection) {
+                SortOrderDirection.CREATE_NEWEST -> { stringResource(R.string.dialog_filter_sort_order_newest) }
+                SortOrderDirection.CREATE_OLDEST -> { stringResource(R.string.dialog_filter_sort_order_newest) }
+                SortOrderDirection.UPDATE_NEWEST -> { stringResource(R.string.dialog_filter_sort_order_newest) }
+                SortOrderDirection.UPDATE_OLDEST -> { stringResource(R.string.dialog_filter_sort_order_newest) }
+                SortOrderDirection.TITLE_DESCENDING -> { stringResource(R.string.dialog_filter_sort_order_descending) }
+                SortOrderDirection.TITLE_ASCENDING -> { stringResource(R.string.dialog_filter_sort_order_descending) }
+                SortOrderDirection.AUTHOR_DESCENDING -> { stringResource(R.string.dialog_filter_sort_order_descending) }
+                SortOrderDirection.AUTHOR_ASCENDING -> { stringResource(R.string.dialog_filter_sort_order_descending) }
+                SortOrderDirection.PUBLISHER_DESCENDING -> { stringResource(R.string.dialog_filter_sort_order_descending) }
+                SortOrderDirection.PUBLISHER_ASCENDING -> { stringResource(R.string.dialog_filter_sort_order_descending) }
+                else -> { stringResource(R.string.dialog_filter_sort_order_newest) }
+            },
             modifier = Modifier.clickable {
                 listViewModel.setFilterState(
                     filterState.value?.copy(
-                        sortOrderDirection = if (filterState.value?.sortOrderDirection == SortOrderDirection.CREATE_NEWEST || filterState.value?.sortOrderDirection == SortOrderDirection.CREATE_OLDEST) {
-                            SortOrderDirection.CREATE_NEWEST
-                        } else {
-                            SortOrderDirection.UPDATE_NEWEST
+                        sortOrderDirection = when (filterState.value?.sortOrderDirection) {
+                            SortOrderDirection.CREATE_NEWEST -> { SortOrderDirection.CREATE_NEWEST }
+                            SortOrderDirection.CREATE_OLDEST -> { SortOrderDirection.CREATE_NEWEST }
+                            SortOrderDirection.UPDATE_NEWEST -> { SortOrderDirection.UPDATE_NEWEST }
+                            SortOrderDirection.UPDATE_OLDEST -> { SortOrderDirection.UPDATE_NEWEST }
+                            SortOrderDirection.TITLE_DESCENDING -> { SortOrderDirection.TITLE_DESCENDING }
+                            SortOrderDirection.TITLE_ASCENDING -> { SortOrderDirection.TITLE_DESCENDING }
+                            SortOrderDirection.AUTHOR_DESCENDING -> { SortOrderDirection.AUTHOR_DESCENDING }
+                            SortOrderDirection.AUTHOR_ASCENDING -> { SortOrderDirection.AUTHOR_DESCENDING }
+                            SortOrderDirection.PUBLISHER_DESCENDING -> { SortOrderDirection.PUBLISHER_DESCENDING }
+                            SortOrderDirection.PUBLISHER_ASCENDING -> { SortOrderDirection.PUBLISHER_DESCENDING }
+                            else -> { SortOrderDirection.CREATE_NEWEST }
                         }
                     )
                 )
@@ -383,29 +499,60 @@ fun ShowFilterDirectionArea(listViewModel: ListViewModel)
         RadioButton(
             selected = filterState.value?.sortOrderDirection in setOf(
                 SortOrderDirection.CREATE_OLDEST,
-                SortOrderDirection.UPDATE_OLDEST
+                SortOrderDirection.UPDATE_OLDEST,
+                SortOrderDirection.TITLE_ASCENDING,
+                SortOrderDirection.AUTHOR_ASCENDING,
+                SortOrderDirection.PUBLISHER_ASCENDING,
             ),
             onClick = {
                 listViewModel.setFilterState(
                     filterState.value?.copy(
-                        sortOrderDirection = if (filterState.value?.sortOrderDirection == SortOrderDirection.CREATE_NEWEST || filterState.value?.sortOrderDirection == SortOrderDirection.CREATE_OLDEST) {
-                            SortOrderDirection.CREATE_OLDEST
-                        } else {
-                            SortOrderDirection.UPDATE_OLDEST
+                        sortOrderDirection = when (filterState.value?.sortOrderDirection) {
+                            SortOrderDirection.CREATE_NEWEST -> { SortOrderDirection.CREATE_OLDEST }
+                            SortOrderDirection.CREATE_OLDEST -> { SortOrderDirection.CREATE_OLDEST }
+                            SortOrderDirection.UPDATE_NEWEST -> { SortOrderDirection.UPDATE_OLDEST }
+                            SortOrderDirection.UPDATE_OLDEST -> { SortOrderDirection.UPDATE_OLDEST }
+                            SortOrderDirection.TITLE_DESCENDING -> { SortOrderDirection.TITLE_ASCENDING }
+                            SortOrderDirection.TITLE_ASCENDING -> { SortOrderDirection.TITLE_ASCENDING }
+                            SortOrderDirection.AUTHOR_DESCENDING -> { SortOrderDirection.AUTHOR_ASCENDING }
+                            SortOrderDirection.AUTHOR_ASCENDING -> { SortOrderDirection.AUTHOR_ASCENDING }
+                            SortOrderDirection.PUBLISHER_DESCENDING -> { SortOrderDirection.PUBLISHER_ASCENDING }
+                            SortOrderDirection.PUBLISHER_ASCENDING -> { SortOrderDirection.PUBLISHER_ASCENDING }
+                            else -> { SortOrderDirection.CREATE_OLDEST }
                         }
                     )
                 )
             }
         )
         Text(
-            text = stringResource(R.string.dialog_filter_sort_order_oldest),
+            text = when (filterState.value?.sortOrderDirection) {
+                SortOrderDirection.CREATE_NEWEST -> { stringResource(R.string.dialog_filter_sort_order_oldest) }
+                SortOrderDirection.CREATE_OLDEST -> { stringResource(R.string.dialog_filter_sort_order_oldest) }
+                SortOrderDirection.UPDATE_NEWEST -> { stringResource(R.string.dialog_filter_sort_order_oldest) }
+                SortOrderDirection.UPDATE_OLDEST -> { stringResource(R.string.dialog_filter_sort_order_oldest) }
+                SortOrderDirection.TITLE_DESCENDING -> { stringResource(R.string.dialog_filter_sort_order_ascending) }
+                SortOrderDirection.TITLE_ASCENDING -> { stringResource(R.string.dialog_filter_sort_order_ascending) }
+                SortOrderDirection.AUTHOR_DESCENDING -> { stringResource(R.string.dialog_filter_sort_order_ascending) }
+                SortOrderDirection.AUTHOR_ASCENDING -> { stringResource(R.string.dialog_filter_sort_order_ascending) }
+                SortOrderDirection.PUBLISHER_DESCENDING -> { stringResource(R.string.dialog_filter_sort_order_ascending) }
+                SortOrderDirection.PUBLISHER_ASCENDING -> { stringResource(R.string.dialog_filter_sort_order_ascending) }
+                else -> { stringResource(R.string.dialog_filter_sort_order_oldest) }
+            },
             modifier = Modifier.clickable {
                 listViewModel.setFilterState(
                     filterState.value?.copy(
-                        sortOrderDirection = if (filterState.value?.sortOrderDirection == SortOrderDirection.CREATE_NEWEST || filterState.value?.sortOrderDirection == SortOrderDirection.CREATE_OLDEST) {
-                            SortOrderDirection.CREATE_OLDEST
-                        } else {
-                            SortOrderDirection.UPDATE_OLDEST
+                        sortOrderDirection = when (filterState.value?.sortOrderDirection) {
+                            SortOrderDirection.CREATE_NEWEST -> { SortOrderDirection.CREATE_OLDEST }
+                            SortOrderDirection.CREATE_OLDEST -> { SortOrderDirection.CREATE_OLDEST }
+                            SortOrderDirection.UPDATE_NEWEST -> { SortOrderDirection.UPDATE_OLDEST }
+                            SortOrderDirection.UPDATE_OLDEST -> { SortOrderDirection.UPDATE_OLDEST }
+                            SortOrderDirection.TITLE_DESCENDING -> { SortOrderDirection.TITLE_ASCENDING }
+                            SortOrderDirection.TITLE_ASCENDING -> { SortOrderDirection.TITLE_ASCENDING }
+                            SortOrderDirection.AUTHOR_DESCENDING -> { SortOrderDirection.AUTHOR_ASCENDING }
+                            SortOrderDirection.AUTHOR_ASCENDING -> { SortOrderDirection.AUTHOR_ASCENDING }
+                            SortOrderDirection.PUBLISHER_DESCENDING -> { SortOrderDirection.PUBLISHER_ASCENDING }
+                            SortOrderDirection.PUBLISHER_ASCENDING -> { SortOrderDirection.PUBLISHER_ASCENDING }
+                            else -> { SortOrderDirection.CREATE_OLDEST }
                         }
                     )
                 )

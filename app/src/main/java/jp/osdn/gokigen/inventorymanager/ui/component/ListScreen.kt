@@ -91,15 +91,18 @@ fun CommandPanel(navController: NavHostController, dataListModel : ListViewModel
         }
         else { "" }
         val rating = if (filterInfo.value?.isOperatorChecked == true) { " $ratingOperator ${stringResource(R.string.label_rating_star)}${filterInfo.value?.selectedFilterRating}" } else { "" }
-        val direction = if ((filterInfo.value?.sortOrderDirection == SortOrderDirection.CREATE_OLDEST)||(filterInfo.value?.sortOrderDirection == SortOrderDirection.UPDATE_OLDEST))
-        {
-            // OLD -> New の順番
-            stringResource(R.string.dialog_info_sort_order_oldest)
-        }
-        else
-        {
-            // NEW -> OLD の順番
-            stringResource(R.string.dialog_info_sort_order_newest)
+        val direction = when (filterInfo.value?.sortOrderDirection) {
+            SortOrderDirection.CREATE_NEWEST -> { stringResource(R.string.dialog_info_sort_order_newest) }
+            SortOrderDirection.CREATE_OLDEST -> { stringResource(R.string.dialog_info_sort_order_oldest) }
+            SortOrderDirection.UPDATE_NEWEST -> { stringResource(R.string.dialog_info_sort_order_newest) }
+            SortOrderDirection.UPDATE_OLDEST -> { stringResource(R.string.dialog_info_sort_order_oldest) }
+            SortOrderDirection.TITLE_DESCENDING -> { stringResource(R.string.dialog_info_sort_order_newest) }
+            SortOrderDirection.TITLE_ASCENDING -> { stringResource(R.string.dialog_info_sort_order_oldest) }
+            SortOrderDirection.AUTHOR_DESCENDING -> { stringResource(R.string.dialog_info_sort_order_newest) }
+            SortOrderDirection.AUTHOR_ASCENDING -> { stringResource(R.string.dialog_info_sort_order_oldest) }
+            SortOrderDirection.PUBLISHER_DESCENDING -> { stringResource(R.string.dialog_info_sort_order_newest) }
+            SortOrderDirection.PUBLISHER_ASCENDING -> { stringResource(R.string.dialog_info_sort_order_oldest) }
+            else -> { stringResource(R.string.dialog_info_sort_order_newest) }
         }
         "${stringResource(R.string.label_data_count)} ${listCount.value} $direction $category $rating"
     }

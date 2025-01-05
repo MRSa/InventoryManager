@@ -160,14 +160,7 @@ class ListViewModel: ViewModel(), DataExporter.IExportProgressCallback, Recogniz
             Log.v(TAG, "setFilterState(): NULL...")
             return
         }
-        val updateFilterState = FilterState()
-        updateFilterState.isCategoryChecked = filterState.isCategoryChecked
-        updateFilterState.selectedCategory = filterState.selectedCategory
-        updateFilterState.sortOrderDirection = filterState.sortOrderDirection
-        updateFilterState.isOperatorChecked = filterState.isOperatorChecked
-        updateFilterState.selectedOperatorIndex = filterState.selectedOperatorIndex
-        updateFilterState.selectedFilterRating = filterState.selectedFilterRating
-        filterStatus.value = updateFilterState
+        filterStatus.value = filterState.copy()
     }
 
     fun applyFilter(filterState: FilterState)

@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.HorizontalDivider
@@ -24,7 +25,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
@@ -73,7 +78,7 @@ fun DetailScreen(navController: NavHostController, viewModel : DetailInventoryVi
                 .fillMaxSize()
                 .verticalScroll(scrollState)
             ) {
-                ReturnToListScreen(navController)
+                ReturnToListScreenAndDeleteButton(navController, viewModel, id)
                 Spacer(Modifier.size(padding))
                 // HorizontalDivider(thickness = 1.dp)
 
@@ -589,9 +594,10 @@ fun ShowCapturedImage(id: Long, imageFile1: String, imageFile2: String, imageFil
 }
 
 @Composable
-fun ReturnToListScreen(navController: NavHostController)
+fun ReturnToListScreenAndDeleteButton(navController: NavHostController, viewModel : DetailInventoryViewModel, id: Long)
 {
     val density = LocalDensity.current
+    var isConfirmDelete by remember { mutableStateOf(false) }
     Spacer(Modifier.size(12.dp))
     Row(verticalAlignment = Alignment.CenterVertically) {
         Icon(
@@ -613,6 +619,41 @@ fun ReturnToListScreen(navController: NavHostController)
                     navController.popBackStack()
                 }
             })
+        )
+        Spacer(Modifier.weight(1.0f))
+        IconButton(
+            onClick = {
+                // show dialog to Delete
+                isConfirmDelete = true
+            }
+        ) {
+            Icon(
+                painter = painterResource(R.drawable.baseline_delete_24),
+                contentDescription = "Delete"
+            )
+        }
+    }
+    if (isConfirmDelete) {
+        // Delete Confirmation
+
+        AlertDialog(
+            onDismissRequest = { isConfirmDelete = false },
+            title = { Text(text = stringResource(R.string.dialog_title_delete_confirmation)) },
+            text = { Text(text = "${stringResource(R.string.dialog_message_delete_confirmation_1)} : ${viewModel.detailData.value?.title}\n${stringResource(R.string.dialog_message_delete_confirmation_2)}") },
+            confirmButton = {
+                Button(onClick = {
+                    isConfirmDelete = false
+                    viewModel.deleteContent(id)
+                    navController.popBackStack()
+                }) {
+                    Text(text = stringResource(R.string.dialog_button_delete_start))
+                }
+            },
+            dismissButton = {
+                Button(onClick = { isConfirmDelete = false }) {
+                    Text(text = stringResource(R.string.dialog_button_cancel))
+                }
+            }
         )
     }
 }

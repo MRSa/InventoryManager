@@ -221,6 +221,26 @@ class DetailInventoryViewModel: ViewModel(), RecognizeFromIsbnCallback {
         }
     }
 
+    fun deleteContent(id: Long)
+    {
+        try
+        {
+            val thread = Thread {
+                val storageDao = AppSingleton.db.storageDao()
+                val content = storageDao.findById(id)
+                if (content != null)
+                {
+                    storageDao.delete(content)
+                }
+            }
+            thread.start()
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
+    }
+
     override fun finishRecognizedDataFromIsbn(needUpdate: Boolean)
     {
         isUpdate.value = needUpdate

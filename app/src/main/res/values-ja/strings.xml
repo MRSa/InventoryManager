@@ -122,6 +122,10 @@
     <string name="dialog_info_sort_order_newest">↑</string>
     <string name="dialog_info_sort_order_oldest">↓</string>
     <string name="message_not_found">画面が見つかりません</string>
+    <string name="dialog_title_delete_confirmation">データの削除</string>
+    <string name="dialog_message_delete_confirmation_1">表示中のデータを削除します。(元には戻せません) </string>
+    <string name="dialog_message_delete_confirmation_2"> 実行しますか？ </string>
+    <string name="dialog_button_delete_start">削除</string>
 
     <!--  Use for xml/preference_main.xml -->
     <string name="pref_cat_application_control">A01f 制御</string>

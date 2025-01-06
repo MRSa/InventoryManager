@@ -122,6 +122,10 @@
     <string name="dialog_info_sort_order_newest">↑</string>
     <string name="dialog_info_sort_order_oldest">↓</string>
     <string name="message_not_found">Not found the back screen</string>
+    <string name="dialog_title_delete_confirmation">Delete Confirmation</string>
+    <string name="dialog_message_delete_confirmation_1">Delete </string>
+    <string name="dialog_message_delete_confirmation_2">Do you really delete? </string>
+    <string name="dialog_button_delete_start">Delete</string>
 
     <!--  Use for xml/preference_main.xml -->
     <string name="pref_cat_application_control">App. Control</string>

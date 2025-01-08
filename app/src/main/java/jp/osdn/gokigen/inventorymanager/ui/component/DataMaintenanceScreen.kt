@@ -31,6 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -56,7 +57,7 @@ fun DataImportScreen(navController: NavHostController, viewModel: DataImportView
             HorizontalDivider(thickness = 1.dp)
             DataImportCommandPanel(navController, viewModel)
             HorizontalDivider(thickness = 1.dp)
-            FilePickerForTargetFile(viewModel, dataImporter)
+            FilePickerForImportTargetFile(viewModel, dataImporter)
             Spacer(modifier = Modifier.weight(1.0f))
             ShowImportReadyDialog(viewModel, dataImporter)
             ShowImportFinishDialog(viewModel)
@@ -87,7 +88,7 @@ fun DataImportCommandPanel(navController: NavHostController, viewModel: DataImpo
         }
         //Spacer(modifier = Modifier.weight(1f))
         Text(
-            text = stringResource(id = R.string.button_label_data_import),
+            text = stringResource(id = R.string.label_return_to_main_screen),
             fontSize = 22.sp,
             textAlign = TextAlign.Center,
             color = MaterialTheme.colorScheme.primary,
@@ -105,7 +106,7 @@ fun DataImportCommandPanel(navController: NavHostController, viewModel: DataImpo
 
 
 @Composable
-fun FilePickerForTargetFile(viewModel: DataImportViewModel, dataImporter: DataImporter)
+fun FilePickerForImportTargetFile(viewModel: DataImportViewModel, dataImporter: DataImporter)
 {
     val density = LocalDensity.current
     val scope = rememberCoroutineScope()
@@ -137,8 +138,18 @@ fun FilePickerForTargetFile(viewModel: DataImportViewModel, dataImporter: DataIm
         modifier = Modifier.padding(vertical = 4.dp, horizontal = 6.dp)
     ) {
         Text(
+            text = stringResource(R.string.label_data_import),
+            modifier = Modifier.padding(start = 0.dp),
+            fontWeight = FontWeight.Bold,
+            fontSize = 22.sp,
+            color = MaterialTheme.colorScheme.primary,
+        )
+        Spacer(modifier = Modifier.padding(4.dp))
+        Text(
             text = message,
-            modifier = Modifier.clickable { filePickerLauncher.launch("Application/zip") },
+            modifier = Modifier
+                .padding(start = 6.dp)
+                .clickable { filePickerLauncher.launch("Application/zip") },
             fontSize = with(density) { 18.dp.toSp() }
         )
         Row(
@@ -152,7 +163,7 @@ fun FilePickerForTargetFile(viewModel: DataImportViewModel, dataImporter: DataIm
                 Text(stringResource(R.string.label_select_file))
             }
         }
-        HorizontalDivider(thickness = 1.dp)
+        Spacer(modifier = Modifier.padding(2.dp))
         Button(
             enabled = (targetUri.value != null),
             modifier = Modifier.padding(vertical = 4.dp, horizontal = 16.dp),
@@ -162,7 +173,8 @@ fun FilePickerForTargetFile(viewModel: DataImportViewModel, dataImporter: DataIm
         ) {
             Text(stringResource(R.string.label_analyze_file))
         }
-        // Spacer(modifier = Modifier.weight(1f))
+        HorizontalDivider(thickness = 1.dp)
+        Spacer(modifier = Modifier.padding(4.dp))
     }
 }
 

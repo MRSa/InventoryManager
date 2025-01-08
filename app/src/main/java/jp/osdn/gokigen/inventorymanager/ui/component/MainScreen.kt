@@ -67,7 +67,7 @@ fun MainScreen(navController: NavHostController, cameraControl: ICameraControl)
                 modifier = Modifier.padding(vertical = 8.dp, horizontal = 24.dp).fillMaxWidth(),
                 onClick = { navController.navigate("DataImportScreen") }
             ) {
-                Text(stringResource(R.string.button_label_data_import))
+                Text(stringResource(R.string.button_label_data_maintenance))
             }
             Button(
                 modifier = Modifier.padding(vertical = 8.dp, horizontal = 24.dp).fillMaxWidth(),

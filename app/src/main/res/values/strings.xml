@@ -6,7 +6,7 @@
     <string name="label_main_screen_message">Please select below</string>
     <string name="button_label_list">Inventory List</string>
     <string name="button_label_register">Register</string>
-    <string name="button_label_data_import">Import</string>
+    <string name="button_label_data_maintenance">Maintenance (Import, etc)</string>
     <string name="button_label_preference">Preferences</string>
     <string name="title_label_preference">Preferences</string>
     <string name="screen_title_registry">Register Information</string>
@@ -17,6 +17,7 @@
     <string name="label_register_text">Text </string>
     <string name="label_register_bcr">Barcode </string>
     <string name="label_error_read_text">Read Error</string>
+    <string name="label_data_import">Import</string>
 
     <string name="label_data_recorded">Recorded the data.</string>
     <string name="label_data_updated">Updated the data. </string>

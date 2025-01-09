@@ -1,6 +1,8 @@
 package jp.osdn.gokigen.inventorymanager.storage
 
 data class FilterState(
+    var isTitleChecked: Boolean = false,
+    var targetTitle: String = "",
     var isCategoryChecked: Boolean = false,
     var selectedCategory: String = "",
     var isOperatorChecked: Boolean = false,

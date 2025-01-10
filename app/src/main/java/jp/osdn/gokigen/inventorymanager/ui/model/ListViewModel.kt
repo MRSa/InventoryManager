@@ -194,13 +194,6 @@ class ListViewModel: ViewModel(), DataExporter.IExportProgressCallback, Recogniz
         }
     }
 
-    fun setFilterTitle(value: String)
-    {
-        filterStatus.value = filterStatus.value?.copy(targetTitle = value)
-        //category.value = value
-        //isEdited.value = true
-    }
-
     override fun startExportFile(fileName: String) {
         Log.v(TAG, "startExportFile(): $fileName")
         isExporting.value = true

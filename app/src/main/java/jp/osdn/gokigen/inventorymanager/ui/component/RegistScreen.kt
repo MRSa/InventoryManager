@@ -390,27 +390,6 @@ fun TextDataInputArea(viewModel: RegisterInformationViewModel)
             )
         }
 
-        // ----- テキスト（文字認識データ）
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(50.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = stringResource(R.string.label_register_text),
-                modifier = Modifier.weight(1f).padding(start = 2.dp),
-                fontSize = 14.sp
-            )
-            TextField(
-                enabled = false,
-                value = area5.value ?: "",
-                singleLine = true,
-                onValueChange = viewModel::setTextReaderArea,
-                modifier = Modifier.weight(5.0f)
-            )
-        }
-
         // ----- バーコードデータ
         Row(
             modifier = Modifier
@@ -428,6 +407,27 @@ fun TextDataInputArea(viewModel: RegisterInformationViewModel)
                 value = area6.value ?: "",
                 singleLine = true,
                 onValueChange = viewModel::setBarcodeReaderArea,
+                modifier = Modifier.weight(5.0f)
+            )
+        }
+
+        // ----- テキスト（文字認識データ）
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(50.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = stringResource(R.string.label_register_text),
+                modifier = Modifier.weight(1f).padding(start = 2.dp),
+                fontSize = 14.sp
+            )
+            TextField(
+                enabled = false,
+                value = area5.value ?: "",
+                singleLine = true,
+                onValueChange = viewModel::setTextReaderArea,
                 modifier = Modifier.weight(5.0f)
             )
         }

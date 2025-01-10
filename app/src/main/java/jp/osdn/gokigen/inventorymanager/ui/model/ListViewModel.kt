@@ -240,6 +240,7 @@ class ListViewModel: ViewModel(), DataExporter.IExportProgressCallback, Recogniz
     {
         isUpdatingFromIsbn.value = false
         enableFilter.value = FilterDialogCondition.READY
+        update() // ISBNの更新をしたときには、一覧の情報を更新する (フィルタも強制解除)
     }
 
     enum class FilterDialogCondition {

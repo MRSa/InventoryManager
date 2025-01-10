@@ -6,7 +6,7 @@
     <string name="label_main_screen_message">下記より操作を選択してください</string>
     <string name="button_label_list">一覧</string>
     <string name="button_label_register">情報の登録</string>
-    <string name="button_label_data_import">一括取り込み（インポート）</string>
+    <string name="button_label_data_maintenance">メンテナンス（一括取り込み など）</string>
     <string name="button_label_preference">設定</string>
     <string name="title_label_preference">設定</string>
     <string name="screen_title_registry">情報の登録</string>
@@ -17,6 +17,7 @@
     <string name="label_register_text">テキスト </string>
     <string name="label_register_bcr">バーコード </string>
     <string name="label_error_read_text">読み込み失敗</string>
+    <string name="label_data_import">一括取り込み（インポート）</string>
 
     <string name="label_data_recorded">記録しました。 </string>
     <string name="label_data_updated">データを更新しました。 </string>

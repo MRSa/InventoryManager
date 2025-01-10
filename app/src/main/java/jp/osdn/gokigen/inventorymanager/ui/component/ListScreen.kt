@@ -79,7 +79,8 @@ fun CommandPanel(navController: NavHostController, dataListModel : ListViewModel
     val isFilterApplying = dataListModel.isFilterApplying.observeAsState()
 
     val message = if (isFilterApplying.value == true) {
-        val category = if (filterInfo.value?.isCategoryChecked == true) { "(${filterInfo.value?.selectedCategory}) " } else { "" }
+        val category = if (filterInfo.value?.isCategoryChecked == true) { " (${filterInfo.value?.selectedCategory})" } else { "" }
+        val filterTitle = if (filterInfo.value?.isTitleChecked == true) { " [${filterInfo.value?.targetTitle}]" } else { "" }
         val ratingOperator = if (filterInfo.value?.isOperatorChecked == true) {
             when (filterInfo.value?.selectedOperatorIndex) {
                 0 -> { stringResource(R.string.filter_operation_equal) }
@@ -104,7 +105,7 @@ fun CommandPanel(navController: NavHostController, dataListModel : ListViewModel
             SortOrderDirection.PUBLISHER_ASCENDING -> { stringResource(R.string.dialog_info_sort_order_oldest) }
             else -> { stringResource(R.string.dialog_info_sort_order_newest) }
         }
-        "${stringResource(R.string.label_data_count)} ${listCount.value} $direction $category $rating"
+        "${stringResource(R.string.label_data_count)} ${listCount.value} $direction$category$filterTitle $rating"
     }
     else
     {

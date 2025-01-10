@@ -21,6 +21,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -57,6 +58,8 @@ fun ListFilterDialog(
             Column {
                 ShowFilterCategoryArea(listViewModel)
                 Spacer(modifier = Modifier.height(4.dp))
+                ShowFilterTitleInputArea(listViewModel)
+                Spacer(modifier = Modifier.height(6.dp))
                 ShowFilterRatingArea(listViewModel)
                 Spacer(modifier = Modifier.height(16.dp))
                 ShowFilterOrderArea(listViewModel)
@@ -138,6 +141,43 @@ fun ShowFilterCategoryArea(listViewModel: ListViewModel)
         }
     }
 }
+
+@Composable
+fun ShowFilterTitleInputArea(listViewModel: ListViewModel)
+{
+    val filterState = listViewModel.filterState.observeAsState()
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Start
+    ) {
+        Checkbox(
+            checked = filterState.value?.isTitleChecked ?: false,
+            onCheckedChange = {
+                listViewModel.setFilterState(
+                    filterState.value?.copy(isTitleChecked = it)
+                )
+            }
+        )
+        Text(
+            text = "${stringResource(R.string.label_title)} : ",
+            modifier = Modifier.clickable {
+                val checked = filterState.value?.isTitleChecked ?: false
+                listViewModel.setFilterState(
+                    filterState.value?.copy(isTitleChecked = !checked)
+                )
+            }
+        )
+        Spacer(modifier = Modifier.padding((4.dp)))
+        TextField(
+            enabled = true,
+            value = filterState.value?.targetTitle ?: "",
+            singleLine = true,
+            onValueChange = { value -> listViewModel.setFilterState(filterState.value?.copy(isTitleChecked = true, targetTitle = value)) },
+        )
+    }
+}
+
+
 
 @Composable
 fun ShowFilterRatingArea(listViewModel: ListViewModel)

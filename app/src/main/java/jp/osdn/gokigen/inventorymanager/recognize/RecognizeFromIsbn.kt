@@ -32,7 +32,9 @@ class RecognizeFromIsbn(private val activity: AppCompatActivity)
                 IPreferencePropertyAccessor.PREFERENCE_OVERWRITE_FROM_ISBN_TO_TITLE_DEFAULT_VALUE
             )
             Log.v(TAG, "doRecognizeAllFromIsbn($isOverwrite)")
-            Thread { recognizeAllFromIsbn(isOverwrite, callback) }.start()
+            Thread {
+                recognizeAllFromIsbn(isOverwrite, callback)
+            }.start()
         }
         catch (e: Exception)
         {

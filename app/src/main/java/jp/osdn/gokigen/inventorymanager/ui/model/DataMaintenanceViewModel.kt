@@ -1,18 +1,28 @@
 package jp.osdn.gokigen.inventorymanager.ui.model
 
 import android.content.ContentResolver
+import android.content.Context
 import android.net.Uri
 import android.util.Log
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import jp.osdn.gokigen.inventorymanager.AppSingleton
+import jp.osdn.gokigen.inventorymanager.R
 import jp.osdn.gokigen.inventorymanager.import.DataImporter
 import jp.osdn.gokigen.inventorymanager.import.DataImporter.ImportProcess
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import java.util.Date
 
-class DataImportViewModel: ViewModel(), DataImporter.IExtractProgress, DataImporter.IImportProgress, DataImporter.IExtractPostProcess
+class DataMaintenanceViewModel: ViewModel(), DataImporter.IExtractProgress, DataImporter.IImportProgress, DataImporter.IExtractPostProcess
 {
     private lateinit var contentResolver: ContentResolver
+
+    private val storageDao = AppSingleton.db.storageDao()
 
     private val targetUri : MutableLiveData<Uri> by lazy { MutableLiveData<Uri>() }
     val targetFileUri: LiveData<Uri> = targetUri
@@ -23,9 +33,6 @@ class DataImportViewModel: ViewModel(), DataImporter.IExtractProgress, DataImpor
     private val readyToImportData : MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val readyToImport: LiveData<Boolean> = readyToImportData
 
-    //private val finishedImportProcess : MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
-    //val finishedImport: LiveData<Boolean> = finishedImportProcess
-
     private val dataCountToImport : MutableLiveData<Int> by lazy { MutableLiveData<Int>() }
     val importDataCount: LiveData<Int> = dataCountToImport
 
@@ -34,6 +41,15 @@ class DataImportViewModel: ViewModel(), DataImporter.IExtractProgress, DataImpor
 
     private val currentImportProcess : MutableLiveData<ImportProcess> by lazy { MutableLiveData<ImportProcess>() }
     val currentExecutingProcess: LiveData<ImportProcess> = currentImportProcess
+
+    private val orgCategory : MutableLiveData<String> by lazy { MutableLiveData<String>() }
+    val renameOriginalCategory : LiveData<String> = orgCategory
+
+    private val newCategory : MutableLiveData<String> by lazy { MutableLiveData<String>() }
+    val renameNewCategory : LiveData<String> = newCategory
+
+    private val categories = MutableLiveData<List<String>>()
+    val categoryList: LiveData<List<String>> = categories
 
     fun initializeViewModel(activity: AppCompatActivity)
     {
@@ -45,6 +61,9 @@ class DataImportViewModel: ViewModel(), DataImporter.IExtractProgress, DataImpor
             readyToImportData.value = false
             dataCountToImport.value = 0
             currentImportDataCount.value = 0
+
+            orgCategory.value = ""
+            newCategory.value = ""
         }
         catch (e: Exception)
         {
@@ -172,8 +191,75 @@ class DataImportViewModel: ViewModel(), DataImporter.IExtractProgress, DataImpor
         currentImportProcess.value = status
     }
 
+    fun initializeCategories()
+    {
+        Thread {
+            try
+            {
+                // ----- Roomは、別Thread で実行しないとダメ...
+                val listOfCategory = storageDao.getCategories()
+                CoroutineScope(Dispatchers.Main).launch {
+                    // ---- これで値を設定できたはずだが...
+                    categories.value = listOfCategory
+                    Log.v(TAG, " _____ Categories: ${categories.value?.size}")
+                    val categoryList = categories.value ?: ArrayList()
+                    for (category in categoryList)
+                    {
+                        Log.v(TAG, "  category: $category")
+                    }
+                }
+            }
+            catch (e: Exception)
+            {
+                e.printStackTrace()
+            }
+        }.start()
+    }
+
+    fun setRenameOriginalCategory(target: String)
+    {
+        try
+        {
+            orgCategory.value = target
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
+    }
+
+    fun setRenameNewCategory(target: String)
+    {
+        try
+        {
+            newCategory.value = target
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
+    }
+
+    fun executeChangeCategory(context: Context, orgCategory: String, newCategory: String)
+    {
+        Thread {
+            try
+            {
+                // ---- Roomなので別スレッドで実行する
+                storageDao.updateCategory(orgCategory, newCategory, Date())
+                CoroutineScope(Dispatchers.Main).launch {
+                    Toast.makeText(context, "${context.getString(R.string.result_update_category)} $orgCategory -> $newCategory", Toast.LENGTH_SHORT).show()
+                }
+            }
+            catch (e: Exception)
+            {
+                e.printStackTrace()
+            }
+        }.start()
+    }
+
     companion object
     {
-        private val TAG = DataImportViewModel::class.java.simpleName
+        private val TAG = DataMaintenanceViewModel::class.java.simpleName
     }
 }

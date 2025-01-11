@@ -56,6 +56,7 @@
     <string name="label_rating_star">★</string>
     <string name="label_text_recognition">文字認識</string>
     <string name="button_label_update">データ更新</string>
+    <string name="result_data_entry">登録しました </string>
 
     <string name="label_operation_equal">一致 (=)</string>
     <string name="label_operation_not_equal">以外 (!=)</string>
@@ -90,6 +91,15 @@
     <string name="dialog_message_finish_import">一括取り込みが完了しました。</string>
     <string name="dialog_title_finish_failure_import">インポート失敗</string>
     <string name="dialog_message_finish_failure_import">ファイル形式が正しくないため、一括取り込みに失敗しました。一括取り込みするファイルを選び直してください。</string>
+
+    <string name="label_data_batch_rename_category">カテゴリ名の一括変更</string>
+    <string name="label_original_category">変更前 : </string>
+    <string name="label_new_category">変更後 : </string>
+    <string name="label_change_category">一括変更</string>
+    <string name="dialog_title_start_rename_category">カテゴリ名の一括変更</string>
+    <string name="dialog_message_start_rename_category_1">実行してもよろしいですか？\n\n  変更内容： </string>
+    <string name="dialog_message_start_rename_category_2"> </string>
+    <string name="result_update_category">カテゴリ名の一括変更が終了しました。</string>
 
     <string name="label_data_start_export">エクスポートを開始… </string>
     <string name="label_data_exporting">データエクスポート中… </string>

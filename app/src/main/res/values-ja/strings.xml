@@ -34,6 +34,9 @@
     <string name="label_switch_exports_only_one_file">1つのファイルにまとめてエクスポート</string>
     <string name="description_switch_exports_only_one_file">ONにすると、データを１つのファイルにまとめてエクスポートします。</string>
 
+    <string name="label_switch_append_text_recognition">文字認識結果を消さずに末尾へ追加</string>
+    <string name="description_switch_append_text_recognition">ONにすると、文字認識結果を消さずにどんどん繋げていくようになります。</string>
+
     <string name="label_return_to_list_screen">一覧画面に戻る</string>
     <string name="label_return_to_main_screen">メイン画面に戻る</string>
 

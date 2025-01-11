@@ -10,6 +10,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -21,7 +22,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -266,6 +269,7 @@ fun RegistScreen(
 @Composable
 fun TextDataInputArea(viewModel: RegisterInformationViewModel)
 {
+    val isShowTextRecognitionEditDialog = viewModel.isShowTextRecognitionEditDialog.observeAsState()
     val area1 = viewModel.registerInformationLabel01.observeAsState()
     val area2 = viewModel.registerInformationLabel02.observeAsState()
     val area3 = viewModel.registerInformationLabel03.observeAsState()
@@ -411,7 +415,12 @@ fun TextDataInputArea(viewModel: RegisterInformationViewModel)
             )
         }
 
+
+        Spacer(Modifier.size(8.dp))
+
         // ----- テキスト（文字認識データ）
+        var isTextRecognitionEnabled by remember { mutableStateOf(false) }
+        isTextRecognitionEnabled = area5.value?.isNotEmpty() ?: false
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -419,19 +428,66 @@ fun TextDataInputArea(viewModel: RegisterInformationViewModel)
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = stringResource(R.string.label_register_text),
-                modifier = Modifier.weight(1f).padding(start = 2.dp),
+                text = stringResource(R.string.label_text_recognition),
+                modifier = Modifier.weight(1.0f).padding(start = 2.dp),
                 fontSize = 14.sp
             )
+
+            IconButton(
+                modifier = Modifier.weight(1f).padding(0.dp),
+                onClick = { viewModel.setShowTextRecognitionEditDialog(true) },
+                enabled = isTextRecognitionEnabled
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.baseline_edit_24),
+                    contentDescription = "Clear"
+                )
+            }
+
             TextField(
                 enabled = false,
                 value = area5.value ?: "",
                 singleLine = true,
                 onValueChange = viewModel::setTextReaderArea,
-                modifier = Modifier.weight(5.0f)
+                modifier = Modifier.weight(5.0f).padding(end = 4.dp)
             )
         }
     }
+    if (isShowTextRecognitionEditDialog.value == true)
+    {
+        // 文字認識したデータを表示するダイアログの表示...
+        ShowTextRecognitionEditDialog(viewModel)
+    }
+}
+
+@Composable
+fun ShowTextRecognitionEditDialog(viewModel: RegisterInformationViewModel)
+{
+    val textRecognitionData = viewModel.registerInformationLabel05.observeAsState()
+    AlertDialog(
+        onDismissRequest = { viewModel.setShowTextRecognitionEditDialog(false) },
+        title = { Text(stringResource(R.string.label_text_recognition)) },
+        text = {
+            val scrollState = rememberScrollState()
+            Column(
+                modifier = Modifier
+                    .verticalScroll(scrollState)
+            ) {
+                TextField(
+                    enabled = true,
+                    value = textRecognitionData.value ?: "",
+                    singleLine = false,
+                    onValueChange = viewModel::setTextReaderArea
+                )
+            }
+        },
+        confirmButton = {
+            Button(onClick = { viewModel.setShowTextRecognitionEditDialog(false) }) {
+                Text(text = stringResource(R.string.dialog_button_close))
+            }
+        },
+        dismissButton = null
+    )
 }
 
 @Composable

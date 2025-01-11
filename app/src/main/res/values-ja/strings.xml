@@ -77,6 +77,7 @@
     <string name="dialog_title_start_import">インポートの開始</string>
     <string name="dialog_button_ok">OK</string>
     <string name="dialog_button_cancel">Cancel</string>
+    <string name="dialog_button_close">閉じる</string>
     <string name="dialog_button_dismiss">確認</string>
     <string name="dialog_message_start_import_1">一括取り込み（インポート）を </string>
     <string name="dialog_message_start_import_2"> 件行います。\nよろしいですか？</string>

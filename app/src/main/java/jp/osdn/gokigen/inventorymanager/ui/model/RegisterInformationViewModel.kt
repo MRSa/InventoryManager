@@ -54,6 +54,9 @@ class RegisterInformationViewModel: ViewModel(), ICameraStatusReceiver, ICameraS
     private val isEdited : MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val isDataEdited : LiveData<Boolean> = isEdited
 
+    private val isShowTextRecognitionEdit : MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
+    val isShowTextRecognitionEditDialog : LiveData<Boolean> = isShowTextRecognitionEdit
+
     val registerInformationCategory: LiveData<String> = category
     val registerInformationLabel01: LiveData<String> = labelData1
     val registerInformationLabel02: LiveData<String> = labelData2
@@ -144,6 +147,7 @@ class RegisterInformationViewModel: ViewModel(), ICameraStatusReceiver, ICameraS
             infoData.value = context.getString(R.string.label_explain_register_next)
 
             isEdited.value = false
+            isShowTextRecognitionEdit.value = false
         }
         catch (e: Exception)
         {
@@ -209,6 +213,18 @@ class RegisterInformationViewModel: ViewModel(), ICameraStatusReceiver, ICameraS
     fun getProductIdValue(): String { return(prodValue) }
     fun getTextValue(): String { return(textValue) }
     fun getUrlValue(): String { return(urlValue) }
+
+    fun setShowTextRecognitionEditDialog(isShow: Boolean)
+    {
+        try
+        {
+            isShowTextRecognitionEdit.value = isShow
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
+    }
 
     /* ICameraStatusReceiver */
     override fun onStatusNotify(message: String?) {

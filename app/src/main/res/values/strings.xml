@@ -34,6 +34,9 @@
     <string name="label_switch_exports_only_one_file">Exports all data into one file</string>
     <string name="description_switch_exports_only_one_file">When enabled, all data will be exported as a single archive file.</string>
 
+    <string name="label_switch_append_text_recognition">Add text recognition results to the end</string>
+    <string name="description_switch_append_text_recognition">When enabled, the recognized text will be appended to the end of the current result.</string>
+
     <string name="label_return_to_list_screen">Return to Inventory List</string>
     <string name="label_return_to_main_screen">Return to Main</string>
 
@@ -74,6 +77,7 @@
     <string name="dialog_title_start_import">Start Import</string>
     <string name="dialog_button_ok">OK</string>
     <string name="dialog_button_cancel">Cancel</string>
+    <string name="dialog_button_close">Close</string>
     <string name="dialog_button_dismiss">Dismiss</string>
     <string name="dialog_message_start_import_1">Do you want to import </string>
     <string name="dialog_message_start_import_2"> data items? </string>

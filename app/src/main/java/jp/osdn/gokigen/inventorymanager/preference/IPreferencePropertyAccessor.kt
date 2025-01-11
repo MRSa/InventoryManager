@@ -15,6 +15,9 @@ interface IPreferencePropertyAccessor
         const val PREFERENCE_EXPORT_ARCHIVE_ONLY_ONE_FILE = "export_archive_one"
         const val PREFERENCE_EXPORT_ARCHIVE_ONLY_ONE_FILE_DEFAULT_VALUE = true
 
+        const val PREFERENCE_APPEND_TEXT_RECOGNITION = "append_text_recognition"
+        const val PREFERENCE_APPEND_TEXT_RECOGNITION_DEFAULT_VALUE = false
+
         // --- CAMERA CONNECTION METHOD PREFERENCES
         const val PREFERENCE_CAMERA_METHOD_INDEX = "camera_method"
         const val PREFERENCE_CAMERA_METHOD_INDEX_DEFAULT_VALUE = "1"

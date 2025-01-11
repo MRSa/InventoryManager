@@ -62,6 +62,9 @@ fun PreferenceScreen(navController: NavHostController, prefsModel: PreferenceVie
             SwitchArchiveOnlyOneFile(prefsModel)
             Spacer(Modifier.size(padding))
             HorizontalDivider(thickness = 1.dp)
+            SwitchAppendTextRecognition(prefsModel)
+            Spacer(Modifier.size(padding))
+            HorizontalDivider(thickness = 1.dp)
             ShowAboutGokigen()
             Spacer(Modifier.size(padding))
             HorizontalDivider(thickness = 1.dp)
@@ -205,6 +208,37 @@ fun SwitchArchiveOnlyOneFile(prefsModel: PreferenceViewModel)
         )
     }
     Text(text = stringResource(R.string.description_switch_exports_only_one_file),
+        color = MaterialTheme.colorScheme.secondary,
+        fontSize = with(density) { 14.dp.toSp() },)
+}
+
+@Composable
+fun SwitchAppendTextRecognition(prefsModel: PreferenceViewModel)
+{
+    val density = LocalDensity.current
+    val scope = rememberCoroutineScope()
+    val appendTextRecognition = prefsModel.appendTextRecognition.observeAsState()
+    Row (
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.padding(horizontal = 4.dp)
+    ) {
+        Switch(
+            checked = appendTextRecognition.value?: false,
+            onCheckedChange = {
+                scope.launch {
+                    prefsModel.setAppendTextRecognition(!(appendTextRecognition.value?: false))
+                }
+            })
+        Spacer(modifier = Modifier.width(8.dp))
+        Text(text = stringResource(R.string.label_switch_append_text_recognition),
+            fontSize = with(density) { 18.dp.toSp() },
+            color = MaterialTheme.colorScheme.primary,
+            modifier = Modifier.clickable( onClick = {
+                scope.launch { prefsModel.setAppendTextRecognition(!(appendTextRecognition.value?: false)) }
+            })
+        )
+    }
+    Text(text = stringResource(R.string.description_switch_append_text_recognition),
         color = MaterialTheme.colorScheme.secondary,
         fontSize = with(density) { 14.dp.toSp() },)
 }

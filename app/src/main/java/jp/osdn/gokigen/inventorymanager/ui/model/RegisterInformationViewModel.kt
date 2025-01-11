@@ -1,13 +1,16 @@
 package jp.osdn.gokigen.inventorymanager.ui.model
 
 import android.content.Context
+import android.content.SharedPreferences
 import android.graphics.Bitmap
 import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.graphics.drawable.toBitmap
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.preference.PreferenceManager
 import com.google.mlkit.vision.barcode.BarcodeScanning
 import com.google.mlkit.vision.barcode.common.Barcode
 import com.google.mlkit.vision.common.InputImage
@@ -21,10 +24,13 @@ import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatusReceiver
 import jp.osdn.gokigen.gokigenassets.liveview.image.IImageProvider
 import jp.osdn.gokigen.gokigenassets.scene.IInformationReceiver
 import jp.osdn.gokigen.inventorymanager.R
+import jp.osdn.gokigen.inventorymanager.preference.IPreferencePropertyAccessor
 
 
 class RegisterInformationViewModel: ViewModel(), ICameraStatusReceiver, ICameraShutterNotify, IInformationReceiver
 {
+    private lateinit var preference : SharedPreferences
+
     private val category : MutableLiveData<String> by lazy { MutableLiveData<String>() }
     private val labelData1 : MutableLiveData<String> by lazy { MutableLiveData<String>() }
     private val labelData2 : MutableLiveData<String> by lazy { MutableLiveData<String>() }
@@ -47,6 +53,9 @@ class RegisterInformationViewModel: ViewModel(), ICameraStatusReceiver, ICameraS
 
     private val isEdited : MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val isDataEdited : LiveData<Boolean> = isEdited
+
+    private val isShowTextRecognitionEdit : MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
+    val isShowTextRecognitionEditDialog : LiveData<Boolean> = isShowTextRecognitionEdit
 
     val registerInformationCategory: LiveData<String> = category
     val registerInformationLabel01: LiveData<String> = labelData1
@@ -76,6 +85,8 @@ class RegisterInformationViewModel: ViewModel(), ICameraStatusReceiver, ICameraS
     private var isReadImage4 : Boolean = false
     private var isReadImage5 : Boolean = false
 
+    private var isAppendTextRecognition : Boolean = false
+
     //private val bcrOptions = BarcodeScannerOptions.Builder()
     //    .setBarcodeFormats(
     //        Barcode.FORMAT_ALL_FORMATS,
@@ -88,12 +99,18 @@ class RegisterInformationViewModel: ViewModel(), ICameraStatusReceiver, ICameraS
     private val recognizerOptions = JapaneseTextRecognizerOptions.Builder().build()
     private var recognizer: TextRecognizer = TextRecognition.getClient(recognizerOptions)
 
-    fun initializeViewModel(context: Context)
+    fun initializeViewModel(activity: AppCompatActivity)
     {
         try
         {
             Log.v(TAG, "RegisterInformationViewModel::initializeViewModel()")
-            resetData(context)
+            resetData(activity)
+
+            preference = PreferenceManager.getDefaultSharedPreferences(activity)
+            isAppendTextRecognition = preference.getBoolean(
+                IPreferencePropertyAccessor.PREFERENCE_APPEND_TEXT_RECOGNITION,
+                IPreferencePropertyAccessor.PREFERENCE_APPEND_TEXT_RECOGNITION_DEFAULT_VALUE
+            )
         }
         catch (e: Exception)
         {
@@ -130,6 +147,7 @@ class RegisterInformationViewModel: ViewModel(), ICameraStatusReceiver, ICameraS
             infoData.value = context.getString(R.string.label_explain_register_next)
 
             isEdited.value = false
+            isShowTextRecognitionEdit.value = false
         }
         catch (e: Exception)
         {
@@ -195,6 +213,18 @@ class RegisterInformationViewModel: ViewModel(), ICameraStatusReceiver, ICameraS
     fun getProductIdValue(): String { return(prodValue) }
     fun getTextValue(): String { return(textValue) }
     fun getUrlValue(): String { return(urlValue) }
+
+    fun setShowTextRecognitionEditDialog(isShow: Boolean)
+    {
+        try
+        {
+            isShowTextRecognitionEdit.value = isShow
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
+    }
 
     /* ICameraStatusReceiver */
     override fun onStatusNotify(message: String?) {
@@ -297,7 +327,11 @@ class RegisterInformationViewModel: ViewModel(), ICameraStatusReceiver, ICameraS
     {
         try
         {
-            labelData5.value = value.text
+            isAppendTextRecognition = preference.getBoolean(
+                IPreferencePropertyAccessor.PREFERENCE_APPEND_TEXT_RECOGNITION,
+                IPreferencePropertyAccessor.PREFERENCE_APPEND_TEXT_RECOGNITION_DEFAULT_VALUE
+            )
+            labelData5.value = if (isAppendTextRecognition) { labelData5.value + value.text } else { value.text }
             infoData.value = "text recognized : ${value.text.length}"
             Log.v(TAG, "recognizedText() : ${value.text}")
         }

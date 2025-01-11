@@ -30,7 +30,7 @@ class DataExporter(private val activity: AppCompatActivity)
     private val storageDao = AppSingleton.db.storageDao()
     private var isExporting = false
 
-    fun doExport(baseDirectory: String = "inventory", fileName: String = "inventoryDataExport.json", callback : IExportProgressCallback? = null)
+    fun doExport(baseDirectory: String = "gokigen_bookshelf_", fileName: String = "GokigenBookshelfExport.json", callback : IExportProgressCallback? = null)
     {
         try
         {

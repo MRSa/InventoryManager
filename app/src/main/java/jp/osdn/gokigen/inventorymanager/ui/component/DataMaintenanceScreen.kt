@@ -2,6 +2,7 @@ package jp.osdn.gokigen.inventorymanager.ui.component
 
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
@@ -18,34 +20,42 @@ import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import jp.osdn.gokigen.inventorymanager.R
 import jp.osdn.gokigen.inventorymanager.import.DataImporter
 import jp.osdn.gokigen.inventorymanager.import.GetPickFilePermission
-import jp.osdn.gokigen.inventorymanager.ui.model.DataImportViewModel
+import jp.osdn.gokigen.inventorymanager.ui.model.DataMaintenanceViewModel
 import kotlinx.coroutines.launch
 import java.io.File
 import java.util.Locale.US
 
 @Composable
-fun DataImportScreen(navController: NavHostController, viewModel: DataImportViewModel, dataImporter: DataImporter)
+fun DataImportScreen(navController: NavHostController, viewModel: DataMaintenanceViewModel, dataImporter: DataImporter)
 {
     val scrollState = rememberScrollState()
     MaterialTheme {
@@ -58,6 +68,9 @@ fun DataImportScreen(navController: NavHostController, viewModel: DataImportView
             DataImportCommandPanel(navController, viewModel)
             HorizontalDivider(thickness = 1.dp)
             FilePickerForImportTargetFile(viewModel, dataImporter)
+            HorizontalDivider(thickness = 1.dp)
+            BatchRenameCategoryName(viewModel)
+            HorizontalDivider(thickness = 1.dp)
             Spacer(modifier = Modifier.weight(1.0f))
             ShowImportReadyDialog(viewModel, dataImporter)
             ShowImportFinishDialog(viewModel)
@@ -66,7 +79,7 @@ fun DataImportScreen(navController: NavHostController, viewModel: DataImportView
 }
 
 @Composable
-fun DataImportCommandPanel(navController: NavHostController, viewModel: DataImportViewModel)
+fun DataImportCommandPanel(navController: NavHostController, viewModel: DataMaintenanceViewModel)
 {
     val importing = viewModel.dataImporting.observeAsState()
     val buttonEnable = (importing.value != true)
@@ -76,7 +89,7 @@ fun DataImportCommandPanel(navController: NavHostController, viewModel: DataImpo
             enabled = buttonEnable,
             modifier = Modifier,
             onClick = {
-                if (navController.currentBackStackEntry?.destination?.route == "DataImportScreen")
+                if (navController.currentBackStackEntry?.destination?.route == "DataMaintenanceScreen")
                 {
                     navController.popBackStack()
                 }
@@ -95,7 +108,7 @@ fun DataImportCommandPanel(navController: NavHostController, viewModel: DataImpo
             modifier = Modifier
                 .align(Alignment.CenterVertically)
                 .clickable {
-                    if (navController.currentBackStackEntry?.destination?.route == "DataImportScreen")
+                    if (navController.currentBackStackEntry?.destination?.route == "DataMaintenanceScreen")
                     {
                         navController.popBackStack()
                     }
@@ -106,9 +119,8 @@ fun DataImportCommandPanel(navController: NavHostController, viewModel: DataImpo
 
 
 @Composable
-fun FilePickerForImportTargetFile(viewModel: DataImportViewModel, dataImporter: DataImporter)
+fun FilePickerForImportTargetFile(viewModel: DataMaintenanceViewModel, dataImporter: DataImporter)
 {
-    val density = LocalDensity.current
     val scope = rememberCoroutineScope()
     val filePickerLauncher = rememberLauncherForActivityResult(GetPickFilePermission()) { modelUri ->
         if (modelUri != null)
@@ -150,7 +162,7 @@ fun FilePickerForImportTargetFile(viewModel: DataImportViewModel, dataImporter: 
             modifier = Modifier
                 .padding(start = 6.dp)
                 .clickable { filePickerLauncher.launch("Application/zip") },
-            fontSize = with(density) { 18.dp.toSp() }
+            fontSize = 16.sp
         )
         Row(
             modifier = Modifier.fillMaxWidth()
@@ -173,13 +185,137 @@ fun FilePickerForImportTargetFile(viewModel: DataImportViewModel, dataImporter: 
         ) {
             Text(stringResource(R.string.label_analyze_file))
         }
-        HorizontalDivider(thickness = 1.dp)
-        Spacer(modifier = Modifier.padding(4.dp))
     }
 }
 
 @Composable
-fun ShowImportReadyDialog(viewModel: DataImportViewModel, dataImporter: DataImporter)
+fun BatchRenameCategoryName(viewModel: DataMaintenanceViewModel)
+{
+    val scope = rememberCoroutineScope()
+    val originalCategory = viewModel.renameOriginalCategory.observeAsState()
+    val newCategory = viewModel.renameNewCategory.observeAsState()
+    var isCategoryExpanded by remember { mutableStateOf(false) }
+    val categoryList = viewModel.categoryList.observeAsState()
+
+    var changeCategoryConfirm by remember { mutableStateOf(false) }
+
+    Column(
+        modifier = Modifier.padding(vertical = 4.dp, horizontal = 6.dp)
+    ) {
+        Text(
+            text = stringResource(R.string.label_data_batch_rename_category),
+            modifier = Modifier.padding(start = 0.dp),
+            fontWeight = FontWeight.Bold,
+            fontSize = 22.sp,
+            color = MaterialTheme.colorScheme.primary,
+        )
+        Spacer(modifier = Modifier.padding(4.dp))
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text(
+                text = stringResource(R.string.label_original_category),
+                modifier = Modifier
+                    .padding(start = 6.dp)
+                    .clickable {
+                        scope.launch { viewModel.initializeCategories() }
+                        isCategoryExpanded = true
+                    },
+                fontSize = 14.sp
+            )
+            Spacer(modifier = Modifier.padding((4.dp)))
+            Text(
+                text = originalCategory.value ?: "",
+                modifier = Modifier
+                    .clickable {
+                        scope.launch { viewModel.initializeCategories() }
+                        isCategoryExpanded = true
+                    }
+                    .border(
+                        width = Dp.Hairline,
+                        color = MaterialTheme.colorScheme.secondary,
+                        shape = RoundedCornerShape(size = 1.dp)
+                    )
+                    .padding(6.dp)
+            )
+            DropdownMenu(
+                expanded = isCategoryExpanded,
+                onDismissRequest = { isCategoryExpanded = false },
+            ) {
+                categoryList.value?.forEach { category ->
+                    DropdownMenuItem(
+                        text = { Text(text = category, fontSize = 14.sp) },
+                        onClick = {
+                            viewModel.setRenameOriginalCategory(category)
+                            isCategoryExpanded = false
+                        }
+                    )
+                }
+            }
+        }
+        Spacer(modifier = Modifier.padding(4.dp))
+
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text(
+                text = stringResource(R.string.label_new_category),
+                modifier = Modifier
+                    .padding(start = 6.dp)
+                    .clickable {
+                        scope.launch { viewModel.initializeCategories() }
+                        isCategoryExpanded = true
+                    },
+                fontSize = 14.sp
+            )
+            Spacer(modifier = Modifier.padding((4.dp)))
+            TextField(
+                enabled = true,
+                value = newCategory.value ?: "",
+                singleLine = true,
+                onValueChange = { value -> viewModel.setRenameNewCategory(value) },
+            )
+        }
+        Spacer(modifier = Modifier.padding(2.dp))
+        Button(
+            enabled = (originalCategory.value != newCategory.value),
+            modifier = Modifier.padding(vertical = 4.dp, horizontal = 16.dp),
+            onClick = { changeCategoryConfirm = true }
+        ) {
+            Text(stringResource(R.string.label_change_category))
+        }
+        Spacer(modifier = Modifier.padding(2.dp))
+    }
+
+    if (changeCategoryConfirm) {
+        val context = LocalContext.current
+        AlertDialog(
+            onDismissRequest = { changeCategoryConfirm = false },
+            title = { Text(text = stringResource(R.string.dialog_title_start_rename_category)) },
+            text = { Text(text = "${stringResource(R.string.dialog_message_start_rename_category_1)} ${originalCategory.value ?: ""} -> ${newCategory.value ?: ""} ${stringResource(R.string.dialog_message_start_rename_category_2)}") },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        viewModel.executeChangeCategory(context,originalCategory.value ?: "", newCategory.value ?: "")
+                        changeCategoryConfirm = false
+                    }
+                ) {
+                    Text(text = stringResource(R.string.dialog_button_ok))
+                }
+            },
+            dismissButton = {
+                Button(onClick = { changeCategoryConfirm = false }) {
+                    Text(text = stringResource(R.string.dialog_button_cancel))
+                }
+            }
+        )
+    }
+}
+
+@Composable
+fun ShowImportReadyDialog(viewModel: DataMaintenanceViewModel, dataImporter: DataImporter)
 {
     val isReadyToImport = viewModel.readyToImport.observeAsState()
     val dataCount = viewModel.importDataCount.observeAsState()
@@ -241,7 +377,7 @@ fun ShowImportReadyDialog(viewModel: DataImportViewModel, dataImporter: DataImpo
 }
 
 @Composable
-fun ShowImportFinishDialog(viewModel: DataImportViewModel)
+fun ShowImportFinishDialog(viewModel: DataMaintenanceViewModel)
 {
     val importProcess = viewModel.currentExecutingProcess.observeAsState()
     if (importProcess.value == DataImporter.ImportProcess.FINISH_SUCCESS)

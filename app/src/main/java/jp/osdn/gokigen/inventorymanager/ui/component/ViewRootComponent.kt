@@ -22,7 +22,7 @@ import jp.osdn.gokigen.inventorymanager.export.DataExporter
 import jp.osdn.gokigen.inventorymanager.import.DataImporter
 import jp.osdn.gokigen.inventorymanager.liaison.CameraLiaison
 import jp.osdn.gokigen.inventorymanager.recognize.RecognizeFromIsbn
-import jp.osdn.gokigen.inventorymanager.ui.model.DataImportViewModel
+import jp.osdn.gokigen.inventorymanager.ui.model.DataMaintenanceViewModel
 import jp.osdn.gokigen.inventorymanager.ui.model.DetailInventoryViewModel
 import jp.osdn.gokigen.inventorymanager.ui.model.ListViewModel
 import jp.osdn.gokigen.inventorymanager.ui.model.PreferenceViewModel
@@ -34,7 +34,7 @@ class ViewRootComponent @JvmOverloads constructor(context: Context, attrs: Attri
     private lateinit var myRegistViewModel : RegisterInformationViewModel
     private lateinit var myPreferenceViewModel : PreferenceViewModel
     private lateinit var myDetailViewModel : DetailInventoryViewModel
-    private lateinit var myDataImportViewModel : DataImportViewModel
+    private lateinit var myDataMaintenanceViewModel : DataMaintenanceViewModel
     private lateinit var myLiaison : CameraLiaison
     private lateinit var myExporter : DataExporter
     private lateinit var myImporter : DataImporter
@@ -45,7 +45,7 @@ class ViewRootComponent @JvmOverloads constructor(context: Context, attrs: Attri
         registScreenViewModel: RegisterInformationViewModel,
         preferenceViewModel: PreferenceViewModel,
         detailViewModel: DetailInventoryViewModel,
-        dataImportViewModel: DataImportViewModel,
+        dataMaintenanceViewModel: DataMaintenanceViewModel,
         liaison: CameraLiaison,
         exporter: DataExporter,
         importer: DataImporter,
@@ -55,7 +55,7 @@ class ViewRootComponent @JvmOverloads constructor(context: Context, attrs: Attri
         this.myRegistViewModel = registScreenViewModel
         this.myPreferenceViewModel = preferenceViewModel
         this.myDetailViewModel = detailViewModel
-        this.myDataImportViewModel = dataImportViewModel
+        this.myDataMaintenanceViewModel = dataMaintenanceViewModel
         this.myLiaison = liaison
         this.myExporter = exporter
         this.myImporter = importer
@@ -78,7 +78,7 @@ class ViewRootComponent @JvmOverloads constructor(context: Context, attrs: Attri
                 listModel = this.myViewModel,
                 preferenceViewModel = this.myPreferenceViewModel,
                 detailViewModel = this.myDetailViewModel,
-                dataImportViewModel = myDataImportViewModel,
+                dataMaintenanceViewModel = myDataMaintenanceViewModel,
                 onTouchListener = LiveViewOnTouchListener(cameraControl),
                 anotherDrawer = this.myLiaison.getAnotherDrawer(),
                 exporter = this.myExporter,
@@ -102,7 +102,7 @@ fun NavigationMain(
     listModel : ListViewModel,
     preferenceViewModel: PreferenceViewModel,
     detailViewModel: DetailInventoryViewModel,
-    dataImportViewModel: DataImportViewModel,
+    dataMaintenanceViewModel: DataMaintenanceViewModel,
     onTouchListener: LiveViewOnTouchListener,
     anotherDrawer: IAnotherDrawer?,
     exporter: DataExporter,
@@ -131,8 +131,8 @@ fun NavigationMain(
             composable("PreferenceScreen") {
                 PreferenceScreen(navController = navController, prefsModel = preferenceViewModel)
             }
-            composable("DataImportScreen") {
-                DataImportScreen(navController = navController, viewModel = dataImportViewModel, dataImporter = importer)
+            composable("DataMaintenanceScreen") {
+                DataImportScreen(navController = navController, viewModel = dataMaintenanceViewModel, dataImporter = importer)
             }
         }
     }

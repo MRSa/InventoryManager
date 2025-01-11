@@ -25,7 +25,7 @@ import jp.osdn.gokigen.inventorymanager.import.DataImporter
 import jp.osdn.gokigen.inventorymanager.recognize.RecognizeFromIsbn
 import jp.osdn.gokigen.inventorymanager.storage.DataContent
 import jp.osdn.gokigen.inventorymanager.storage.InventoryDataHolder
-import jp.osdn.gokigen.inventorymanager.ui.model.DataImportViewModel
+import jp.osdn.gokigen.inventorymanager.ui.model.DataMaintenanceViewModel
 import jp.osdn.gokigen.inventorymanager.ui.model.DetailInventoryViewModel
 import jp.osdn.gokigen.inventorymanager.ui.model.PreferenceViewModel
 import jp.osdn.gokigen.inventorymanager.ui.model.RegisterInformationViewModel
@@ -38,7 +38,7 @@ class MainActivity : AppCompatActivity()
     private lateinit var myRegistViewModel : RegisterInformationViewModel
     private lateinit var myPreferenceViewModel : PreferenceViewModel
     private lateinit var myDetailViewModel : DetailInventoryViewModel
-    private lateinit var myDataImportViewModel : DataImportViewModel
+    private lateinit var myDataMaintenanceViewModel : DataMaintenanceViewModel
     private lateinit var liaison : CameraLiaison
     private val dataExporter =  DataExporter(this)
     private val dataImporter =  DataImporter(this)
@@ -73,8 +73,8 @@ class MainActivity : AppCompatActivity()
             myDetailViewModel = ViewModelProvider(this)[DetailInventoryViewModel::class.java]
             myDetailViewModel.initializeViewModel()
 
-            myDataImportViewModel = ViewModelProvider(this)[DataImportViewModel::class.java]
-            myDataImportViewModel.initializeViewModel(this)
+            myDataMaintenanceViewModel = ViewModelProvider(this)[DataMaintenanceViewModel::class.java]
+            myDataMaintenanceViewModel.initializeViewModel(this)
 
             ///////// SET ROOT VIEW /////////
             rootComponent = ViewRootComponent(applicationContext)
@@ -83,7 +83,7 @@ class MainActivity : AppCompatActivity()
                 registScreenViewModel = myRegistViewModel,
                 preferenceViewModel = myPreferenceViewModel,
                 detailViewModel = myDetailViewModel,
-                dataImportViewModel = myDataImportViewModel,
+                dataMaintenanceViewModel = myDataMaintenanceViewModel,
                 liaison = liaison,
                 exporter = dataExporter,
                 importer = dataImporter,

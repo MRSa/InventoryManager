@@ -56,6 +56,7 @@
     <string name="label_rating_star">★</string>
     <string name="label_text_recognition">Text recognition</string>
     <string name="button_label_update">Update</string>
+    <string name="result_data_entry">Data Entry</string>
 
     <string name="label_operation_equal">Equal (=)</string>
     <string name="label_operation_not_equal">Not Equal (≠)</string>
@@ -90,6 +91,15 @@
     <string name="dialog_message_finish_import">The import process is finished.</string>
     <string name="dialog_title_finish_failure_import">Failure Import</string>
     <string name="dialog_message_finish_failure_import">Import failed due to an incorrect file format. Please reselect the import file.</string>
+
+    <string name="label_data_batch_rename_category">Bulk category change</string>
+    <string name="label_original_category">Original Category : </string>
+    <string name="label_new_category">Updated Category : </string>
+    <string name="label_change_category">Change</string>
+    <string name="dialog_title_start_rename_category">Bulk category change</string>
+    <string name="dialog_message_start_rename_category_1">Are you sure you want to proceed with the bulk category change?\n\n  </string>
+    <string name="dialog_message_start_rename_category_2"> </string>
+    <string name="result_update_category">Bulk category change is finished.</string>
 
     <string name="label_data_start_export">Start data export… </string>
     <string name="label_data_exporting">Data exporting… </string>

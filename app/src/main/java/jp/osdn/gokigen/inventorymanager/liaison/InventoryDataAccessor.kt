@@ -182,7 +182,7 @@ class InventoryDataAccessor(private val activity: ComponentActivity)
             storageDao.setImageFileName(entryId, image1FileName, image2FileName, image3FileName, image4FileName, image5FileName, Date())
 
             activity.runOnUiThread {
-                Toast.makeText(activity, "Data Entry[$entryId]: $title $author", Toast.LENGTH_SHORT).show()
+                Toast.makeText(activity, "${activity.getString(R.string.result_data_entry)}[$entryId]: $title $author", Toast.LENGTH_SHORT).show()
             }
         }
         catch (e: Exception)

@@ -15,8 +15,8 @@ android {
         applicationId = "jp.osdn.gokigen.inventorymanager"
         minSdk = 24
         targetSdk = 35
-        versionCode = 10001
-        versionName = "1.0.1"
+        versionCode = 10100
+        versionName = "1.1.0"
     }
 
     buildTypes {
@@ -71,6 +71,4 @@ dependencies {
     implementation(libs.kotlinx.serialization)
     ksp(libs.androidx.room.compiler)
     annotationProcessor (libs.androidx.room.compiler)
-    debugImplementation(libs.androidx.ui.tooling)
-    debugImplementation(libs.androidx.ui.test.manifest)
 }

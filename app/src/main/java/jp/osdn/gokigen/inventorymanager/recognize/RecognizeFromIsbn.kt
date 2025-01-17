@@ -2,7 +2,7 @@ package jp.osdn.gokigen.inventorymanager.recognize
 
 import android.util.Log
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
+import androidx.activity.ComponentActivity
 import androidx.preference.PreferenceManager
 import jp.osdn.gokigen.gokigenassets.utils.communication.SimpleHttpClient
 import jp.osdn.gokigen.inventorymanager.AppSingleton
@@ -11,6 +11,7 @@ import jp.osdn.gokigen.inventorymanager.preference.IPreferencePropertyAccessor
 import java.util.Date
 
 data class UpdateRecordInformation(val id: Long, val title: String, val subTitle: String, val author: String, val publisher: String, val category: String)
+data class RecognizedData(val isHit: Boolean, val title: String, val subtitle: String, val author: String, val publisher: String)
 
 interface RecognizeFromIsbnCallback
 {
@@ -18,7 +19,7 @@ interface RecognizeFromIsbnCallback
     fun finishRecognizedDataFromIsbn(needUpdate: Boolean)
 }
 
-class RecognizeFromIsbn(private val activity: AppCompatActivity)
+class RecognizeFromIsbn(private val activity: ComponentActivity)
 {
     private val storageDao = AppSingleton.db.storageDao()
 
@@ -269,6 +270,96 @@ class RecognizeFromIsbn(private val activity: AppCompatActivity)
         {
             e.printStackTrace()
         }
+    }
+
+    fun recognizeInformationFromIsbn(isbn: String, title: String, subTitle: String, author: String, publisher: String) : RecognizedData
+    {
+        var newTitle = ""
+        var newSubtitle = ""
+        var newAuthor = ""
+        var newPublisher = ""
+        var isHit = false
+        try
+        {
+            val preferences = PreferenceManager.getDefaultSharedPreferences(activity)
+            val isOverWrite = preferences.getBoolean(IPreferencePropertyAccessor.PREFERENCE_OVERWRITE_FROM_ISBN_TO_TITLE, IPreferencePropertyAccessor.PREFERENCE_OVERWRITE_FROM_ISBN_TO_TITLE_DEFAULT_VALUE)
+
+            // 国立国会図書館のAPIにISBN番号で問い合わせを実行し、タイトル、著者、出版社を取得する
+            val urlToQuery = "https://ndlsearch.ndl.go.jp/api/sru?operation=searchRetrieve&query=isbn=$isbn"
+            val response = SimpleHttpClient().httpGet(urlToQuery, -1)
+
+            // PREFERENCE_OVERWRITE_FROM_ISBN_TO_TITLE が true あるいは 入力されていない場合は、問い合わせ結果を反映させる (ちょー手抜きの解析処理)
+            if ((isOverWrite)||(title.isEmpty()))
+            {
+                if (response.contains("&lt;dc:title&gt;")) {
+                    val startIndex = response.indexOf("&lt;dc:title&gt;")
+                    val endIndex = response.indexOf("&lt;/dc:title&gt;")
+                    newTitle = response.substring(startIndex + "&lt;dc:title&gt;".length, endIndex)
+                    isHit = newTitle.isNotEmpty()
+                }
+            }
+            else
+            {
+                newTitle = title
+            }
+
+            if ((isOverWrite)||(subTitle.isEmpty()))
+            {
+                if (response.contains("&lt;dc:description&gt;")) {
+                    val startIndex = response.indexOf("&lt;dc:description&gt;")
+                    val endIndex = response.indexOf("&lt;/dc:description&gt;")
+                    newSubtitle = response.substring(
+                        startIndex + "&lt;dc:description&gt;".length,
+                        endIndex
+                    )
+                    isHit = isHit || newSubtitle.isNotEmpty()
+                }
+            }
+            else
+            {
+                newSubtitle = subTitle
+            }
+
+            if ((isOverWrite)||(author.isEmpty()))
+            {
+                if (response.contains("&lt;dc:creator&gt;")) {
+                    val startIndex = response.indexOf("&lt;dc:creator&gt;")
+                    val endIndex = response.indexOf("&lt;/dc:creator&gt;")
+                    newAuthor = response.substring(
+                        startIndex + "&lt;dc:creator&gt;".length,
+                        endIndex
+                    )
+                    isHit = isHit || newAuthor.isNotEmpty()
+                }
+            }
+            else
+            {
+                newAuthor = author
+            }
+
+            if ((isOverWrite)||(publisher.isEmpty()))
+            {
+                if (response.contains("&lt;dc:publisher&gt;")) {
+                    val startIndex = response.indexOf("&lt;dc:publisher&gt;")
+                    val endIndex = response.indexOf("&lt;/dc:publisher&gt;")
+                    newPublisher = response.substring(
+                        startIndex + "&lt;dc:publisher&gt;".length,
+                        endIndex
+                    )
+                    isHit = isHit || newPublisher.isNotEmpty()
+                }
+            }
+            else
+            {
+                newPublisher = publisher
+            }
+            Log.v(TAG, "title: $newTitle, subTitle: $newSubtitle, author: $newAuthor, publisher: $newPublisher isHit: $isHit")
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
+        return (RecognizedData(isHit = isHit, title = newTitle, subtitle = newSubtitle,author = newAuthor, publisher = newPublisher))
     }
 
     interface RecognizeDataFromIsbnCallback

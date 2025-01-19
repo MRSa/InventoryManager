@@ -15,8 +15,8 @@ android {
         applicationId = "jp.osdn.gokigen.inventorymanager"
         minSdk = 24
         targetSdk = 35
-        versionCode = 10101
-        versionName = "1.1.1"
+        versionCode = 10200
+        versionName = "1.2.0"
     }
 
     buildTypes {

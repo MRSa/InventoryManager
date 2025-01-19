@@ -113,8 +113,6 @@
 
     <string name="label_data_start_update_record">ISBNによる情報更新を開始… </string>
     <string name="label_data_updating_record">情報更新中… </string>
-    <string name="label_data_updating_record_isbn">情報更新中(ISBN)… </string>
-    <string name="label_data_updating_record_prdid">情報更新中(Product ID)… </string>
     <string name="label_data_finish_update_record">情報更新を終了しました。</string>
     <string name="label_data_finish_update_record_counts"> 件</string>
     <string name="label_data_updated_from_isbn">情報を反映しました。</string>

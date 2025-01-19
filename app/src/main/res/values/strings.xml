@@ -113,8 +113,6 @@
 
     <string name="label_data_start_update_record">Start update record from ISBN Number… </string>
     <string name="label_data_updating_record">Updating records… </string>
-    <string name="label_data_updating_record_isbn">Updating records(ISBN)… </string>
-    <string name="label_data_updating_record_prdid">Updating records(Product ID)… </string>
     <string name="label_data_finish_update_record">Finished update </string>
     <string name="label_data_finish_update_record_counts"> records. </string>
     <string name="label_data_updated_from_isbn">Update the fields from ISBN.</string>

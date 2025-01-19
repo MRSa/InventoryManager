@@ -14,6 +14,6 @@ interface IRecognizedDataCallback
 interface IRecognizeDataFromInternetCallback
 {
     fun startRecognizeFromInternet()
-    fun progressRecognizeFromInternet(sequence: RecognizeDataProgress, count: Int, totalCount: Int)
+    fun progressRecognizeFromInternet(status: RecognizeDataProgress, count: Int, totalCount: Int)
     fun finishRecognizeFromInternet()
 }

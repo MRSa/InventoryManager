@@ -60,12 +60,16 @@ class RecognizeFromInternet(private val activity: ComponentActivity)
                 IPreferencePropertyAccessor.PREFERENCE_OVERWRITE_FROM_ISBN_TO_TITLE,
                 IPreferencePropertyAccessor.PREFERENCE_OVERWRITE_FROM_ISBN_TO_TITLE_DEFAULT_VALUE
             )
+            val useProductIdSearch = preferences.getBoolean(
+                IPreferencePropertyAccessor.PREFERENCE_CHECK_PRODUCT_ID,
+                IPreferencePropertyAccessor.PREFERENCE_CHECK_PRODUCT_ID_DEFAULT_VALUE
+            )
 
             Log.v(TAG, "doRecognizeFromIsbn($isOverwrite, $id)")
             Thread {
                 try
                 {
-                    recognizerFromIsbn.recognizeFromIsbn(id, isOverwrite, callback)
+                    recognizerFromIsbn.recognizeFromIsbn(id, isOverwrite, useProductIdSearch, callback)
                 }
                 catch (ee: Exception)
                 {

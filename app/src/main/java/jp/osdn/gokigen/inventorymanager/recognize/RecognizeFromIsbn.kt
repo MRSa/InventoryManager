@@ -15,17 +15,17 @@ class RecognizeFromIsbn(private val activity: ComponentActivity)
     private val storageDao = AppSingleton.db.storageDao()
     private val shoppingSearch = RecognizeFromProductId()
 
-    fun recognizeFromIsbn(id: Long, isOverwrite : Boolean, callback: IRecognizedDataCallback)
+    fun recognizeFromIsbn(id: Long, isOverwrite : Boolean, useProductIdSearch: Boolean, callback: IRecognizedDataCallback)
     {
         try
         {
             Log.v(TAG, "recognizeFromIsbn(id: $id, isOverwrite: $isOverwrite) : start")
             val data = storageDao.findById(id)
+            var needUpdate = false
 
             // ----- サーバからデータを取得する
             if ((data?.isbn?:"").isNotEmpty())
             {
-                var needUpdate = false
                 val isbn = data?.isbn?:""
                 val urlToQuery = "https://ndlsearch.ndl.go.jp/api/sru?operation=searchRetrieve&query=isbn=$isbn"
                 Log.v(TAG, " QUERY: $urlToQuery")
@@ -91,28 +91,47 @@ class RecognizeFromIsbn(private val activity: ComponentActivity)
                         callback.recognizedData(updateData, isOverwrite)
                     }
                 }
-                activity.runOnUiThread {
-                    // ----- 処理の終了を通知する
-                    callback.finishRecognizedData(needUpdate)
-
-                    // ----- 更新結果をToast表示
-                    val resultMessage = if (needUpdate) {
-                        activity.getString(R.string.label_data_updated_from_isbn)
-                    } else {
-                        activity.getString(R.string.label_no_data_from_isbn)
+            }
+            if ((data != null)&&(useProductIdSearch)&&(!needUpdate))
+            {
+                val recognizedData = shoppingSearch.recognizeInformationFromProductId(
+                    isOverWrite = isOverwrite,
+                    isbn = data.isbn ?: "",
+                    productId = data.productId ?: "",
+                    title = data.title ?: "",
+                    description = data.description ?: "",
+                    author = data.author ?: "",
+                    publisher = data.publisher ?: ""
+                )
+                if (recognizedData.isHit)
+                {
+                    val updateData = UpdateRecordInformation(
+                        id = id,
+                        title = recognizedData.title,
+                        subTitle = data.subTitle?:"",
+                        author = recognizedData.author,
+                        publisher = recognizedData.publisher,
+                        category = data.category?:"",
+                        description = recognizedData.appendData
+                    )
+                    needUpdate = true
+                    activity.runOnUiThread {
+                        // ----- 更新が必要な情報を提供する
+                        callback.recognizedData(updateData, isOverwrite)
                     }
-                    Toast.makeText(activity, resultMessage, Toast.LENGTH_SHORT).show()
                 }
             }
-            else
-            {
-                // --- データは何もないので、何もない、という。
-                activity.runOnUiThread {
-                    // ----- 処理の終了を通知する
-                    callback.finishRecognizedData(false)
+            activity.runOnUiThread {
+                // ----- 処理の終了を通知する
+                        callback.finishRecognizedData(needUpdate)
 
-                    Toast.makeText(activity, activity.getString(R.string.label_no_data_from_isbn), Toast.LENGTH_SHORT).show()
+                // ----- 更新結果をToast表示
+                val resultMessage = if (needUpdate) {
+                    activity.getString(R.string.label_data_updated_from_isbn)
+                } else {
+                    activity.getString(R.string.label_no_data_from_isbn)
                 }
+                Toast.makeText(activity, resultMessage, Toast.LENGTH_SHORT).show()
             }
         }
         catch (e: Exception)
@@ -233,8 +252,8 @@ class RecognizeFromIsbn(private val activity: ComponentActivity)
                                     id = data.id,
                                     title = recognizedData.title,
                                     subTitle = data.subTitle?:"",
-                                    author = recognizedData.author?:"",
-                                    publisher = recognizedData.publisher?:"",
+                                    author = recognizedData.author,
+                                    publisher = recognizedData.publisher,
                                     category = data.category?:"",
                                     description = recognizedData.appendData
                                 )
@@ -360,6 +379,6 @@ class RecognizeFromIsbn(private val activity: ComponentActivity)
     {
         private val TAG = RecognizeFromIsbn::class.java.simpleName
         private const val COMMUNICATION_TIMEOUT = 15000 // 15sec
-        private const val QUERY_WAIT_MS = 150L // 150ms
+        private const val QUERY_WAIT_MS = 1500L // 1500ms → 1.5sec
     }
 }

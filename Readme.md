@@ -19,3 +19,8 @@
   * Batch export registered items to a file.
   * Import registered items from a file.
   * Update item information using the ISBN number and data from the National Diet Library (Japan).
+
+-----
+
+* **Credit**
+  * Web Services by Yahoo! JAPAN ( https://developer.yahoo.co.jp/sitemap/ )

@@ -7,6 +7,13 @@ import kotlinx.serialization.json.Json
 class RecognizeFromProductId
 {
     // ========== Yahoo! JAPAN ショッピング商品検索（v3）にProduct番号で問い合わせを実行し、タイトル、出版社等を取得する
+    //  Yahoo!ショッピング出店API
+    //  　　　　- 利用約款 : https://developer.yahoo.co.jp/webapi/shopping/api_contract.html
+    //        - ご利用ガイド ： https://developer.yahoo.co.jp/start/
+    //        - クレジット表示 ： https://developer.yahoo.co.jp/attribution/
+    //        - ガイドライン ：　https://developer.yahoo.co.jp/guideline/
+    //        - 商品検索（v3） : https://developer.yahoo.co.jp/webapi/shopping/v3/itemsearch.html
+    //        - エラーメッセージおよびコード : https://developer.yahoo.co.jp/appendix/errors.html
     fun recognizeInformationFromProductId(isOverWrite: Boolean, isbn: String, productId: String, title: String, description: String, author: String, publisher: String) : RecognizedData
     {
         // ----- Product番号に ISBN番号が記載されているようなので...ISBN番号で検索する
@@ -104,7 +111,7 @@ class RecognizeFromProductId
     {
         private val TAG = RecognizeFromProductId::class.java.simpleName
         private const val COMMUNICATION_TIMEOUT = 15000 // 15sec
-        private const val QUERY_WAIT_MS = 2000L // 2000ms = 2s
+        private const val QUERY_WAIT_MS = 500L // 500ms → 0.5sec
         private const val YAHOO_CLIENT_ID = ""  // Yahoo! Client ID (コミット時削除)
     }
 }

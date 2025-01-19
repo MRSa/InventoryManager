@@ -249,7 +249,7 @@ fun ShowBusyDialogsAtListScreen(dataListModel: ListViewModel)
     val totalCount = dataListModel.currentTotalRecognizeCount.observeAsState()
     val currentStatus = dataListModel.recognizeStatus.observeAsState()
     val currentStatusMessage = when (currentStatus.value) {
-        RecognizeDataProgress.CHECK_ISBN -> stringResource(R.string.label_data_updating_record_isbn)
+        RecognizeDataProgress.CHECK_ISBN -> stringResource(R.string.label_data_updating_record)
         else -> stringResource(R.string.label_data_updating_record)
     }
     if (updateContentFromIsbn.value == true)

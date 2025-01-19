@@ -257,7 +257,7 @@ class DetailInventoryViewModel: ViewModel(), IRecognizedDataCallback {
                 subTitle = data.subTitle,
                 author = data.author,
                 publisher = data.publisher,
-                description = content.value?.description,
+                description = data.description,
                 isbn = content.value?.isbn,
                 productId = content.value?.productId,
                 urlStr = content.value?.urlStr,

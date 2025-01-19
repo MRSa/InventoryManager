@@ -216,3 +216,10 @@
 ## ライセンス
 
 - [https://github.com/MRSa/InventoryManager/blob/master/LICENSE.txt](https://github.com/MRSa/InventoryManager/blob/master/LICENSE.txt)
+
+### 使用する Web サービス
+
+本アプリでは、読み込んだバーコードの情報を使用して題名等を特定するために、以下のサービスを利用しています。
+
+- [国立国会図書館サーチ(API) https://ndlsearch.ndl.go.jp/](https://ndlsearch.ndl.go.jp/help/api/specifications)
+- [Webサービス by Yahoo! ( JAPAN https://developer.yahoo.co.jp/sitemap/ )](https://developer.yahoo.co.jp/sitemap/)

@@ -38,7 +38,7 @@
     <string name="description_switch_append_text_recognition">ONにすると、文字認識結果を消さずにどんどん繋げていくようになります。</string>
 
     <string name="label_switch_use_title_search_product_id">プロダクトIDを使用して情報を取得する</string>
-    <string name="description_switch_use_title_search_product_id">ONにすると、ISBNで情報取得に失敗した時、プロダクトIDを使いYahoo!商品検索APIで取得します。</string>
+    <string name="description_switch_use_title_search_product_id">ONにすると、ISBNで情報取得をしなかった時、プロダクトIDを使いYahoo!商品検索APIで取得します。</string>
 
     <string name="label_return_to_list_screen">一覧画面に戻る</string>
     <string name="label_return_to_main_screen">メイン画面に戻る</string>

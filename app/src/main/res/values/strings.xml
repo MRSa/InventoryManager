@@ -37,6 +37,9 @@
     <string name="label_switch_append_text_recognition">Add text recognition results to the end</string>
     <string name="description_switch_append_text_recognition">When enabled, the recognized text will be appended to the end of the current result.</string>
 
+    <string name="label_switch_use_title_search_product_id">Get information by product ID</string>
+    <string name="description_switch_use_title_search_product_id">When enabled, if the ISBN lookup fails, the system will attempt to retrieve the information from the Yahoo! JAPAN Shopping API using the product ID.</string>
+
     <string name="label_return_to_list_screen">Return to Inventory List</string>
     <string name="label_return_to_main_screen">Return to Main</string>
 
@@ -110,6 +113,8 @@
 
     <string name="label_data_start_update_record">Start update record from ISBN Number… </string>
     <string name="label_data_updating_record">Updating records… </string>
+    <string name="label_data_updating_record_isbn">Updating records(ISBN)… </string>
+    <string name="label_data_updating_record_prdid">Updating records(Product ID)… </string>
     <string name="label_data_finish_update_record">Finished update </string>
     <string name="label_data_finish_update_record_counts"> records. </string>
     <string name="label_data_updated_from_isbn">Update the fields from ISBN.</string>

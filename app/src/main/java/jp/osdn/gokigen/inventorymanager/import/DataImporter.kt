@@ -133,8 +133,9 @@ class DataImporter(private val activity: AppCompatActivity)
                 imageFile4 = "",
                 imageFile5 = "",
                 textRecognitionData = data.note,
-                level = 0,
-                counter = 0
+                description = data.description,
+                level = data.level,
+                counter = data.counter
             )
             entryId = storageDao.insertSingle(content)
 

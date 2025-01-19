@@ -24,6 +24,14 @@ class PreferenceValueInitializer
                 )
             }
 
+            if (!items.containsKey(IPreferencePropertyAccessor.PREFERENCE_CHECK_PRODUCT_ID))
+            {
+                editor.putBoolean(
+                    IPreferencePropertyAccessor.PREFERENCE_CHECK_PRODUCT_ID,
+                    IPreferencePropertyAccessor.PREFERENCE_CHECK_PRODUCT_ID_DEFAULT_VALUE
+                )
+            }
+
             if (!items.containsKey(IPreferencePropertyAccessor.PREFERENCE_OVERWRITE_FROM_ISBN_TO_TITLE))
             {
                 editor.putBoolean(

@@ -10,58 +10,12 @@ import jp.osdn.gokigen.inventorymanager.R
 import jp.osdn.gokigen.inventorymanager.preference.IPreferencePropertyAccessor
 import java.util.Date
 
-data class UpdateRecordInformation(val id: Long, val title: String, val subTitle: String, val author: String, val publisher: String, val category: String)
-data class RecognizedData(val isHit: Boolean, val title: String, val subtitle: String, val author: String, val publisher: String)
-
-interface RecognizeFromIsbnCallback
-{
-    fun recognizedDataFromIsbnCallback(data: UpdateRecordInformation, isOverwrite: Boolean)
-    fun finishRecognizedDataFromIsbn(needUpdate: Boolean)
-}
-
 class RecognizeFromIsbn(private val activity: ComponentActivity)
 {
     private val storageDao = AppSingleton.db.storageDao()
+    private val shoppingSearch = RecognizeFromProductId()
 
-    fun doRecognizeAllFromIsbn(callback: RecognizeDataFromIsbnCallback?)
-    {
-        try
-        {
-            val preferences = PreferenceManager.getDefaultSharedPreferences(activity)
-            val isOverwrite = preferences.getBoolean(
-                IPreferencePropertyAccessor.PREFERENCE_OVERWRITE_FROM_ISBN_TO_TITLE,
-                IPreferencePropertyAccessor.PREFERENCE_OVERWRITE_FROM_ISBN_TO_TITLE_DEFAULT_VALUE
-            )
-            Log.v(TAG, "doRecognizeAllFromIsbn($isOverwrite)")
-            Thread {
-                recognizeAllFromIsbn(isOverwrite, callback)
-            }.start()
-        }
-        catch (e: Exception)
-        {
-            e.printStackTrace()
-        }
-    }
-
-    fun doRecognizeFromIsbn(id: Long, callback: RecognizeFromIsbnCallback)
-    {
-        try
-        {
-            val preferences = PreferenceManager.getDefaultSharedPreferences(activity)
-            val isOverwrite = preferences.getBoolean(
-                IPreferencePropertyAccessor.PREFERENCE_OVERWRITE_FROM_ISBN_TO_TITLE,
-                IPreferencePropertyAccessor.PREFERENCE_OVERWRITE_FROM_ISBN_TO_TITLE_DEFAULT_VALUE
-            )
-            Log.v(TAG, "doRecognizeFromIsbn($isOverwrite, $id)")
-            Thread { recognizeFromIsbn(id, isOverwrite, callback) }.start()
-        }
-        catch (e: Exception)
-        {
-            e.printStackTrace()
-        }
-    }
-
-    private fun recognizeFromIsbn(id: Long, isOverwrite : Boolean, callback: RecognizeFromIsbnCallback)
+    fun recognizeFromIsbn(id: Long, isOverwrite : Boolean, callback: IRecognizedDataCallback)
     {
         try
         {
@@ -74,7 +28,8 @@ class RecognizeFromIsbn(private val activity: ComponentActivity)
                 var needUpdate = false
                 val isbn = data?.isbn?:""
                 val urlToQuery = "https://ndlsearch.ndl.go.jp/api/sru?operation=searchRetrieve&query=isbn=$isbn"
-                val response = SimpleHttpClient().httpGet(urlToQuery, -1)
+                Log.v(TAG, " QUERY: $urlToQuery")
+                val response = SimpleHttpClient().httpGet(urlToQuery, COMMUNICATION_TIMEOUT)
 
                 val title = if (response.contains("&lt;dc:title&gt;")) {
                     val startIndex = response.indexOf("&lt;dc:title&gt;")
@@ -130,15 +85,15 @@ class RecognizeFromIsbn(private val activity: ComponentActivity)
 
                 if (needUpdate)
                 {
-                    val updateData = UpdateRecordInformation(id, updateTitle, updateSubtitle, updateAuthor, updatePublisher, data?.category?:"")
+                    val updateData = UpdateRecordInformation(id, updateTitle, updateSubtitle, updateAuthor, updatePublisher, data?.category?:"", data?.description?:"")
                     activity.runOnUiThread {
                         // ----- 更新が必要な情報を提供する
-                        callback.recognizedDataFromIsbnCallback(updateData, isOverwrite)
+                        callback.recognizedData(updateData, isOverwrite)
                     }
                 }
                 activity.runOnUiThread {
                     // ----- 処理の終了を通知する
-                    callback.finishRecognizedDataFromIsbn(needUpdate)
+                    callback.finishRecognizedData(needUpdate)
 
                     // ----- 更新結果をToast表示
                     val resultMessage = if (needUpdate) {
@@ -154,7 +109,7 @@ class RecognizeFromIsbn(private val activity: ComponentActivity)
                 // --- データは何もないので、何もない、という。
                 activity.runOnUiThread {
                     // ----- 処理の終了を通知する
-                    callback.finishRecognizedDataFromIsbn(false)
+                    callback.finishRecognizedData(false)
 
                     Toast.makeText(activity, activity.getString(R.string.label_no_data_from_isbn), Toast.LENGTH_SHORT).show()
                 }
@@ -166,28 +121,32 @@ class RecognizeFromIsbn(private val activity: ComponentActivity)
         }
     }
 
-    private fun recognizeAllFromIsbn(isOverwrite: Boolean, callback: RecognizeDataFromIsbnCallback?)
+    fun recognizeAllFromIsbn(isOverWrite: Boolean, useProductIdSearch: Boolean, callback: IRecognizeDataFromInternetCallback?) : Int
     {
+        var updateCount = 0
         try
         {
-            activity.runOnUiThread {
-                callback?.startRecognizeFromIsbn()
-                Toast.makeText(activity, activity.getString(R.string.label_data_start_update_record), Toast.LENGTH_SHORT).show()
-            }
-
-            Log.v(TAG, "recognizeFromIsbn($isOverwrite) : start")
+            Log.v(TAG, "recognizeAllFromIsbn($isOverWrite) : start")
             val updateRecordList = ArrayList<UpdateRecordInformation>()
             updateRecordList.clear()
-            storageDao.getAll().forEach { data ->
+            val dataList = storageDao.getAll()
+            dataList.forEachIndexed { index, data ->
                 try
                 {
+                    // -----  データ更新の通知
+                    activity.runOnUiThread {
+                        callback?.progressRecognizeFromInternet(RecognizeDataProgress.CHECK_ISBN, (index + 1), dataList.size)
+                    }
+
                     // -----  データ更新用のリストを作る
+                    var needUpdate = false
                     if ((data.isbn?:"").isNotEmpty())
                     {
-                        var needUpdate = false
                         val isbn = data.isbn?:""
                         val urlToQuery = "https://ndlsearch.ndl.go.jp/api/sru?operation=searchRetrieve&query=isbn=$isbn"
-                        val response = SimpleHttpClient().httpGet(urlToQuery, -1)
+
+                        Log.v(TAG, " --- QUERY: $urlToQuery")
+                        val response = SimpleHttpClient().httpGet(urlToQuery, COMMUNICATION_TIMEOUT)
 
                         val title = if (response.contains("&lt;dc:title&gt;")) {
                             val startIndex = response.indexOf("&lt;dc:title&gt;")
@@ -221,31 +180,68 @@ class RecognizeFromIsbn(private val activity: ComponentActivity)
                             ""
                         }
 
-                        val updateTitle = if ((title.isNotEmpty())&&(((data.title?:"").isEmpty())||(isOverwrite))) {
+                        val updateTitle = if ((title.isNotEmpty())&&(((data.title?:"").isEmpty())||(isOverWrite))) {
                             needUpdate = true
                             title
                         } else { data.title ?: "" }
 
-                        val updateSubtitle = if ((subTitle.isNotEmpty())&&(((data.subTitle?:"").isEmpty())||(isOverwrite))) {
+                        val updateSubtitle = if ((subTitle.isNotEmpty())&&(((data.subTitle?:"").isEmpty())||(isOverWrite))) {
                             needUpdate = true
                             subTitle
                         } else { data.subTitle ?: "" }
 
-                        val updateAuthor = if ((author.isNotEmpty())&&(((data.author?:"").isEmpty())||(isOverwrite))) {
+                        val updateAuthor = if ((author.isNotEmpty())&&(((data.author?:"").isEmpty())||(isOverWrite))) {
                             needUpdate = true
                             author
                         } else { data.author ?: "" }
 
-                        val updatePublisher = if ((publisher.isNotEmpty())&&(((data.publisher?:"").isEmpty())||(isOverwrite))) {
+                        val updatePublisher = if ((publisher.isNotEmpty())&&(((data.publisher?:"").isEmpty())||(isOverWrite))) {
                             needUpdate = true
                             publisher
                         } else { data.publisher ?: "" }
 
                         if (needUpdate)
                         {
-                            updateRecordList.add(UpdateRecordInformation(data.id, updateTitle, updateSubtitle, updateAuthor, updatePublisher, data.category?:""))
+                            updateRecordList.add(
+                                UpdateRecordInformation(
+                                    id = data.id,
+                                    title = updateTitle,
+                                    subTitle = updateSubtitle,
+                                    author = updateAuthor,
+                                    publisher = updatePublisher,
+                                    category = data.category?:"",
+                                    description = data.description?:""
+                                )
+                            )
                         }
                     }
+                    if ((useProductIdSearch)&&(!needUpdate))
+                    {
+                        val recognizedData = shoppingSearch.recognizeInformationFromProductId(
+                            isOverWrite = isOverWrite,
+                            isbn = data.isbn ?: "",
+                            productId = data.productId ?: "",
+                            title = data.title ?: "",
+                            description = data.description ?: "",
+                            author = data.author ?: "",
+                            publisher = data.publisher ?: ""
+                        )
+                        if (recognizedData.isHit)
+                        {
+                            updateRecordList.add(
+                                UpdateRecordInformation(
+                                    id = data.id,
+                                    title = recognizedData.title,
+                                    subTitle = data.subTitle?:"",
+                                    author = recognizedData.author?:"",
+                                    publisher = recognizedData.publisher?:"",
+                                    category = data.category?:"",
+                                    description = recognizedData.appendData
+                                )
+                            )
+                        }
+                    }
+                    Thread.sleep(QUERY_WAIT_MS)
                 }
                 catch (ee: Exception)
                 {
@@ -258,18 +254,16 @@ class RecognizeFromIsbn(private val activity: ComponentActivity)
             for (item in updateRecordList)
             {
                 storageDao.updateContent(item.id, item.title, item.subTitle, item.author, item.publisher, item.category, updateDate = currentDate)
+                storageDao.updateDescription(item.id, item.description, updateDate = currentDate)
             }
             Log.v(TAG, " ----- recognizeFromIsbn() : update ${updateRecordList.size} records Done.")
-
-            activity.runOnUiThread {
-                callback?.finishRecognizeFromIsbn()
-                Toast.makeText(activity, "${activity.getString(R.string.label_data_finish_update_record)} ${updateRecordList.size} ${activity.getString(R.string.label_data_finish_update_record_counts)}", Toast.LENGTH_SHORT).show()
-            }
+            updateCount = updateRecordList.size
         }
         catch (e: Exception)
         {
             e.printStackTrace()
         }
+        return (updateCount)
     }
 
     fun recognizeInformationFromIsbn(isbn: String, title: String, subTitle: String, author: String, publisher: String) : RecognizedData
@@ -286,7 +280,7 @@ class RecognizeFromIsbn(private val activity: ComponentActivity)
 
             // 国立国会図書館のAPIにISBN番号で問い合わせを実行し、タイトル、著者、出版社を取得する
             val urlToQuery = "https://ndlsearch.ndl.go.jp/api/sru?operation=searchRetrieve&query=isbn=$isbn"
-            val response = SimpleHttpClient().httpGet(urlToQuery, -1)
+            val response = SimpleHttpClient().httpGet(urlToQuery, COMMUNICATION_TIMEOUT)
 
             // PREFERENCE_OVERWRITE_FROM_ISBN_TO_TITLE が true あるいは 入力されていない場合は、問い合わせ結果を反映させる (ちょー手抜きの解析処理)
             if ((isOverWrite)||(title.isEmpty()))
@@ -359,17 +353,13 @@ class RecognizeFromIsbn(private val activity: ComponentActivity)
         {
             e.printStackTrace()
         }
-        return (RecognizedData(isHit = isHit, title = newTitle, subtitle = newSubtitle,author = newAuthor, publisher = newPublisher))
-    }
-
-    interface RecognizeDataFromIsbnCallback
-    {
-        fun startRecognizeFromIsbn()
-        fun finishRecognizeFromIsbn()
+        return (RecognizedData(isHit = isHit, title = newTitle, appendData = newSubtitle, author = newAuthor, publisher = newPublisher))
     }
 
     companion object
     {
         private val TAG = RecognizeFromIsbn::class.java.simpleName
+        private const val COMMUNICATION_TIMEOUT = 15000 // 15sec
+        private const val QUERY_WAIT_MS = 150L // 150ms
     }
 }

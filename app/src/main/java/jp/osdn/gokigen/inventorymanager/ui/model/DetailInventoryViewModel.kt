@@ -5,14 +5,14 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import jp.osdn.gokigen.inventorymanager.AppSingleton
-import jp.osdn.gokigen.inventorymanager.recognize.RecognizeFromIsbnCallback
+import jp.osdn.gokigen.inventorymanager.recognize.IRecognizedDataCallback
 import jp.osdn.gokigen.inventorymanager.recognize.UpdateRecordInformation
 import jp.osdn.gokigen.inventorymanager.storage.DataContent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class DetailInventoryViewModel: ViewModel(), RecognizeFromIsbnCallback {
+class DetailInventoryViewModel: ViewModel(), IRecognizedDataCallback {
     private val content: MutableLiveData<DataContent> by lazy { MutableLiveData<DataContent>() }
     val detailData: LiveData<DataContent> = content
 
@@ -241,13 +241,13 @@ class DetailInventoryViewModel: ViewModel(), RecognizeFromIsbnCallback {
         }
     }
 
-    override fun finishRecognizedDataFromIsbn(needUpdate: Boolean)
+    override fun finishRecognizedData(needUpdate: Boolean)
     {
         isUpdate.value = needUpdate
         isQueryEnable.value = true
     }
 
-    override fun recognizedDataFromIsbnCallback(data: UpdateRecordInformation, isOverwrite: Boolean)
+    override fun recognizedData(data: UpdateRecordInformation, isOverwrite: Boolean)
     {
         try
         {

@@ -10,6 +10,7 @@ import jp.osdn.gokigen.inventorymanager.R
 import jp.osdn.gokigen.inventorymanager.export.InOutExportImage
 import jp.osdn.gokigen.inventorymanager.preference.IPreferencePropertyAccessor
 import jp.osdn.gokigen.inventorymanager.recognize.RecognizeFromIsbn
+import jp.osdn.gokigen.inventorymanager.recognize.RecognizeFromProductId
 import jp.osdn.gokigen.inventorymanager.storage.DataContent
 import java.util.Date
 
@@ -74,9 +75,17 @@ class InventoryDataAccessor(private val activity: ComponentActivity)
             var author = data3
             var publisher = data4
             var dataIsUpdated = false
+            var description = ""
 
             val preferences = PreferenceManager.getDefaultSharedPreferences(activity)
-            val isCheck = preferences.getBoolean(IPreferencePropertyAccessor.PREFERENCE_CHECK_ISBN_IMMEDIATELY, IPreferencePropertyAccessor.PREFERENCE_CHECK_ISBN_IMMEDIATELY_DEFAULT_VALUE)
+            val isCheck = preferences.getBoolean(
+                IPreferencePropertyAccessor.PREFERENCE_CHECK_ISBN_IMMEDIATELY,
+                IPreferencePropertyAccessor.PREFERENCE_CHECK_ISBN_IMMEDIATELY_DEFAULT_VALUE
+            )
+            val isOverWrite = preferences.getBoolean(
+                IPreferencePropertyAccessor.PREFERENCE_OVERWRITE_FROM_ISBN_TO_TITLE,
+                IPreferencePropertyAccessor.PREFERENCE_OVERWRITE_FROM_ISBN_TO_TITLE_DEFAULT_VALUE
+            )
             if (isCheck)
             {
                 // ----- 登録時にバーコードデータの情報から題名等を取得する設定だった場合...
@@ -93,29 +102,35 @@ class InventoryDataAccessor(private val activity: ComponentActivity)
 
                     // 結果をコピー
                     title = response.title
-                    subTitle = response.subtitle
+                    subTitle = response.appendData
                     author = response.author
                     publisher = response.publisher
                     dataIsUpdated = response.isHit
                 }
-/*
-                if ((!dataIsUpdated)&&(productId.isNotEmpty()))
+                if ((!dataIsUpdated)&&((productId.isNotEmpty())||(isbn.isNotEmpty())))
                 {
-                    // ----- product IDが取得できていた場合の処理 (ただし、ISBNでデータが更新されていた場合は除く)
-                    val recognizer = RecognizeFromProductId(activity)
-                    val response = recognizer.recognizeInformationFromProductId(productId = productId, title = data1, subTitle = data2, author = data3, publisher = data4)
+                    // ----- product IDが取得できていた場合の処理 (ただし、先にISBNでデータが更新されていた場合は除く)
+                    val recognizer = RecognizeFromProductId()
+                    val response = recognizer.recognizeInformationFromProductId(
+                        isOverWrite = isOverWrite,
+                        isbn = isbn,
+                        productId = productId,
+                        title = data1,
+                        description = description,
+                        author = data3,
+                        publisher = data4
+                    )
 
                     // 結果をコピー
                     title = response.title
-                    subTitle = response.subtitle
+                    description = response.appendData
                     author = response.author
                     publisher = response.publisher
                 }
-*/
             }
 
             // データをデータベースに登録する
-            val content = DataContent.create(title, subTitle, author, publisher, isbn, productId ,readUrl, readText, category, "", "", "", "", "", data5)
+            val content = DataContent.create(title, subTitle, author, publisher, isbn, productId ,readUrl, readText, category, "", "", "", "", "", data5, description)
             val entryId = storageDao.insertSingle(content)
 
             val image1FileName = if (image1 != null) { "${entryId}_img01.jpg" } else { "" }

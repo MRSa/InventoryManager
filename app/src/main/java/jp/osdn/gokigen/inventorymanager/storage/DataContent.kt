@@ -53,6 +53,7 @@ data class DataContent(
                    imageFile4: String?,
                    imageFile5: String?,
                    textRecognitionData: String?,
+                   description: String?,
                    level: Int = 0,
                    counter: Int = 0,
         ) : DataContent
@@ -65,7 +66,7 @@ data class DataContent(
                         subTitle = subTitle,
                         author = author,
                         publisher = publisher,
-                        description = "",
+                        description = description,
                         isbn = isbn,
                         productId = productId,
                         urlStr = urlStr,

@@ -49,6 +49,9 @@ class DetailInventoryViewModel: ViewModel(), IRecognizedDataCallback {
     private val dataRating: MutableLiveData<Int> by lazy { MutableLiveData<Int>() }
     val ratingValue: LiveData<Int> = dataRating
 
+    private val initialTextRecognitionData: MutableLiveData<Int> by lazy { MutableLiveData<Int>() }
+    val initialTextRecognitionDataLength: LiveData<Int> = initialTextRecognitionData
+
     fun initializeViewModel()
     {
         try
@@ -65,6 +68,7 @@ class DetailInventoryViewModel: ViewModel(), IRecognizedDataCallback {
             isNoteEdit.value = false
             isMemoEdit.value = false
             dataRating.value = 0
+            initialTextRecognitionData.value = 0
         }
         catch (e: Exception)
         {
@@ -84,6 +88,7 @@ class DetailInventoryViewModel: ViewModel(), IRecognizedDataCallback {
                     content.value = value
                     isUpdate.value = false
                     isQueryEnable.value = true
+                    initialTextRecognitionData.value = value?.note?.length ?: 0
 
                     // ----- 編集モードはいったんリセット
                     isSubtitleEdit.value = false

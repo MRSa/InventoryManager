@@ -73,6 +73,7 @@ fun DetailScreen(navController: NavHostController, viewModel : DetailInventoryVi
         }
         else
         {
+            val textRecognitionLength = viewModel.initialTextRecognitionDataLength.observeAsState()
             val scrollState = rememberScrollState()
             Column(modifier = Modifier
                 .fillMaxSize()
@@ -146,7 +147,7 @@ fun DetailScreen(navController: NavHostController, viewModel : DetailInventoryVi
                     false,
                     viewModel)
                 Spacer(Modifier.size(padding))
-                if ((detail.value?.note ?: "").isNotEmpty()) {
+                if ((textRecognitionLength.value ?: 0) > 0) {
                     HorizontalDivider(thickness = 1.dp)
                     Spacer(Modifier.size(padding))
                     ShowTextInputData(

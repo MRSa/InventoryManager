@@ -114,6 +114,6 @@ class RecognizeFromProductId
         private val TAG = RecognizeFromProductId::class.java.simpleName
         private const val COMMUNICATION_TIMEOUT = 15000 // 15sec
         private const val QUERY_WAIT_MS = 500L // 500ms → 0.5sec
-        private const val YAHOO_CLIENT_ID = ""  // Yahoo! Client ID (コミット時は値を削除削除)
+        private const val YAHOO_CLIENT_ID = ""  // Yahoo! Client ID (コミット時は値を削除)
     }
 }

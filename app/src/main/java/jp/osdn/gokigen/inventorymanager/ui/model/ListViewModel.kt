@@ -7,7 +7,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import jp.osdn.gokigen.inventorymanager.AppSingleton
 import jp.osdn.gokigen.inventorymanager.export.DataExporter
-import jp.osdn.gokigen.inventorymanager.recognize.RecognizeFromIsbn
+import jp.osdn.gokigen.inventorymanager.recognize.IRecognizeDataFromInternetCallback
+import jp.osdn.gokigen.inventorymanager.recognize.RecognizeDataProgress
 import jp.osdn.gokigen.inventorymanager.storage.DataContent
 import jp.osdn.gokigen.inventorymanager.storage.FilterState
 import kotlinx.coroutines.CoroutineScope
@@ -15,7 +16,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class ListViewModel: ViewModel(), DataExporter.IExportProgressCallback, RecognizeFromIsbn.RecognizeDataFromIsbnCallback
+class ListViewModel: ViewModel(), DataExporter.IExportProgressCallback,
+    IRecognizeDataFromInternetCallback
 {
     private val storageDao = AppSingleton.db.storageDao()
     val dataList = mutableStateListOf<DataContent>()
@@ -53,6 +55,15 @@ class ListViewModel: ViewModel(), DataExporter.IExportProgressCallback, Recogniz
     private val listCount : MutableLiveData<Int> by lazy { MutableLiveData<Int>() }
     val dataListCount: LiveData<Int> = listCount
 
+    private val recognizeProgressStatus : MutableLiveData<RecognizeDataProgress> by lazy { MutableLiveData<RecognizeDataProgress>() }
+    val recognizeStatus: LiveData<RecognizeDataProgress> = recognizeProgressStatus
+
+    private val recognizeProgressCount : MutableLiveData<Int> by lazy { MutableLiveData<Int>() }
+    val currentRecognizeProgressCount: LiveData<Int> = recognizeProgressCount
+
+    private val totalRecognizeCount : MutableLiveData<Int> by lazy { MutableLiveData<Int>() }
+    val currentTotalRecognizeCount: LiveData<Int> = totalRecognizeCount
+
     fun initializeViewModel()
     {
         try
@@ -67,6 +78,9 @@ class ListViewModel: ViewModel(), DataExporter.IExportProgressCallback, Recogniz
             listCount.value = 0
             isFilterApply.value = false
             filterStatus.value = FilterState()
+            recognizeProgressCount.value = 0
+            totalRecognizeCount.value = 0
+            recognizeProgressStatus.value = RecognizeDataProgress.READY
         }
         catch (e: Exception)
         {
@@ -230,17 +244,45 @@ class ListViewModel: ViewModel(), DataExporter.IExportProgressCallback, Recogniz
         }
     }
 
-    override fun startRecognizeFromIsbn()
+    override fun startRecognizeFromInternet()
     {
-        isUpdatingFromIsbn.value = true
-        enableFilter.value = FilterDialogCondition.DISABLE
+        try
+        {
+            isUpdatingFromIsbn.value = true
+            enableFilter.value = FilterDialogCondition.DISABLE
+            recognizeProgressCount.value = 0
+            totalRecognizeCount.value = 0
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
     }
 
-    override fun finishRecognizeFromIsbn()
+    override fun progressRecognizeFromInternet(status: RecognizeDataProgress, count: Int, totalCount: Int)
+    {
+        try
+        {
+            recognizeProgressCount.value = count
+            totalRecognizeCount.value = totalCount
+            recognizeProgressStatus.value = status
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
+    }
+
+    override fun finishRecognizeFromInternet()
     {
         isUpdatingFromIsbn.value = false
         enableFilter.value = FilterDialogCondition.READY
-        update() // ISBNの更新をしたときには、一覧の情報を更新する (フィルタも強制解除)
+
+        recognizeProgressCount.value = 0
+        totalRecognizeCount.value = 0
+        recognizeProgressStatus.value = RecognizeDataProgress.READY
+
+        update() // 情報の更新をしたときには、一覧の情報を更新する (フィルタも強制解除)
     }
 
     enum class FilterDialogCondition {

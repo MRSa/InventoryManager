@@ -22,7 +22,7 @@ import jp.osdn.gokigen.inventorymanager.ui.model.ListViewModel
 import jp.osdn.gokigen.gokigenassets.scene.IVibrator
 import jp.osdn.gokigen.inventorymanager.export.DataExporter
 import jp.osdn.gokigen.inventorymanager.import.DataImporter
-import jp.osdn.gokigen.inventorymanager.recognize.RecognizeFromIsbn
+import jp.osdn.gokigen.inventorymanager.recognize.RecognizeFromInternet
 import jp.osdn.gokigen.inventorymanager.storage.DataContent
 import jp.osdn.gokigen.inventorymanager.storage.InventoryDataHolder
 import jp.osdn.gokigen.inventorymanager.ui.model.DataMaintenanceViewModel
@@ -42,7 +42,7 @@ class MainActivity : AppCompatActivity()
     private lateinit var liaison : CameraLiaison
     private val dataExporter =  DataExporter(this)
     private val dataImporter =  DataImporter(this)
-    private val isbnRecognizer = RecognizeFromIsbn(this)
+    private val recognizerFromInternet = RecognizeFromInternet(this)
 
     override fun onCreate(savedInstanceState: Bundle?)
     {
@@ -87,7 +87,7 @@ class MainActivity : AppCompatActivity()
                 liaison = liaison,
                 exporter = dataExporter,
                 importer = dataImporter,
-                recognizer = isbnRecognizer)
+                recognizer = recognizerFromInternet)
 
             setContent {
                 //Box(Modifier.safeDrawingPadding()) {

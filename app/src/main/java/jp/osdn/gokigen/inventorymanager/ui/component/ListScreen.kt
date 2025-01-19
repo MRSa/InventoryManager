@@ -39,14 +39,15 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import jp.osdn.gokigen.inventorymanager.R
 import jp.osdn.gokigen.inventorymanager.export.DataExporter
-import jp.osdn.gokigen.inventorymanager.recognize.RecognizeFromIsbn
+import jp.osdn.gokigen.inventorymanager.recognize.RecognizeDataProgress
+import jp.osdn.gokigen.inventorymanager.recognize.RecognizeFromInternet
 import jp.osdn.gokigen.inventorymanager.storage.SortOrderDirection
 import jp.osdn.gokigen.inventorymanager.ui.model.ListViewModel
 import jp.osdn.gokigen.inventorymanager.ui.model.ListViewModel.FilterDialogCondition
 import java.util.Locale.US
 
 @Composable
-fun ListScreen(navController: NavHostController, viewModel : ListViewModel, exporter: DataExporter, recognizer: RecognizeFromIsbn)
+fun ListScreen(navController: NavHostController, viewModel : ListViewModel, exporter: DataExporter, recognizer: RecognizeFromInternet)
 {
     // 画面遷移時にデータを取得
     rememberNavController()
@@ -71,7 +72,7 @@ fun ListScreen(navController: NavHostController, viewModel : ListViewModel, expo
 }
 
 @Composable
-fun CommandPanel(navController: NavHostController, dataListModel : ListViewModel, exporter: DataExporter, recognizer: RecognizeFromIsbn)
+fun CommandPanel(navController: NavHostController, dataListModel : ListViewModel, exporter: DataExporter, recognizer: RecognizeFromInternet)
 {
     // ----- 表示メッセージを生成する
     val listCount = dataListModel.dataListCount.observeAsState()
@@ -173,7 +174,7 @@ fun CommandPanel(navController: NavHostController, dataListModel : ListViewModel
         IconButton(
             modifier = Modifier,
             onClick = {
-                recognizer.doRecognizeAllFromIsbn(dataListModel)
+                recognizer.doRecognizeAllFromInternet(dataListModel)
             })
         {
             Icon(
@@ -244,9 +245,16 @@ fun ShowBusyDialogsAtListScreen(dataListModel: ListViewModel)
 
     // ----- 更新中ダイアログを表示する (ISBNを使ってインターネット経由で更新）
     val updateContentFromIsbn = dataListModel.isUpdatingDataFromIsbn.observeAsState()
+    val progressCount = dataListModel.currentRecognizeProgressCount.observeAsState()
+    val totalCount = dataListModel.currentTotalRecognizeCount.observeAsState()
+    val currentStatus = dataListModel.recognizeStatus.observeAsState()
+    val currentStatusMessage = when (currentStatus.value) {
+        RecognizeDataProgress.CHECK_ISBN -> stringResource(R.string.label_data_updating_record)
+        else -> stringResource(R.string.label_data_updating_record)
+    }
     if (updateContentFromIsbn.value == true)
     {
-        ShowUpdatingDialog(stringResource(R.string.label_data_updating_record))
+        ShowUpdatingDialog("$currentStatusMessage (${progressCount.value} / ${totalCount.value})")
     }
 
     // ----- データ更新中ダイアログを表示する （データベースを取得する）

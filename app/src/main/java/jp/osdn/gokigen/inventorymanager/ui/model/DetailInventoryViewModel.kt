@@ -5,14 +5,14 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import jp.osdn.gokigen.inventorymanager.AppSingleton
-import jp.osdn.gokigen.inventorymanager.recognize.RecognizeFromIsbnCallback
+import jp.osdn.gokigen.inventorymanager.recognize.IRecognizedDataCallback
 import jp.osdn.gokigen.inventorymanager.recognize.UpdateRecordInformation
 import jp.osdn.gokigen.inventorymanager.storage.DataContent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class DetailInventoryViewModel: ViewModel(), RecognizeFromIsbnCallback {
+class DetailInventoryViewModel: ViewModel(), IRecognizedDataCallback {
     private val content: MutableLiveData<DataContent> by lazy { MutableLiveData<DataContent>() }
     val detailData: LiveData<DataContent> = content
 
@@ -49,6 +49,9 @@ class DetailInventoryViewModel: ViewModel(), RecognizeFromIsbnCallback {
     private val dataRating: MutableLiveData<Int> by lazy { MutableLiveData<Int>() }
     val ratingValue: LiveData<Int> = dataRating
 
+    private val initialTextRecognitionData: MutableLiveData<Int> by lazy { MutableLiveData<Int>() }
+    val initialTextRecognitionDataLength: LiveData<Int> = initialTextRecognitionData
+
     fun initializeViewModel()
     {
         try
@@ -65,6 +68,7 @@ class DetailInventoryViewModel: ViewModel(), RecognizeFromIsbnCallback {
             isNoteEdit.value = false
             isMemoEdit.value = false
             dataRating.value = 0
+            initialTextRecognitionData.value = 0
         }
         catch (e: Exception)
         {
@@ -84,6 +88,7 @@ class DetailInventoryViewModel: ViewModel(), RecognizeFromIsbnCallback {
                     content.value = value
                     isUpdate.value = false
                     isQueryEnable.value = true
+                    initialTextRecognitionData.value = value?.note?.length ?: 0
 
                     // ----- 編集モードはいったんリセット
                     isSubtitleEdit.value = false
@@ -241,13 +246,13 @@ class DetailInventoryViewModel: ViewModel(), RecognizeFromIsbnCallback {
         }
     }
 
-    override fun finishRecognizedDataFromIsbn(needUpdate: Boolean)
+    override fun finishRecognizedData(needUpdate: Boolean)
     {
         isUpdate.value = needUpdate
         isQueryEnable.value = true
     }
 
-    override fun recognizedDataFromIsbnCallback(data: UpdateRecordInformation, isOverwrite: Boolean)
+    override fun recognizedData(data: UpdateRecordInformation, isOverwrite: Boolean)
     {
         try
         {
@@ -257,7 +262,7 @@ class DetailInventoryViewModel: ViewModel(), RecognizeFromIsbnCallback {
                 subTitle = data.subTitle,
                 author = data.author,
                 publisher = data.publisher,
-                description = content.value?.description,
+                description = data.description,
                 isbn = content.value?.isbn,
                 productId = content.value?.productId,
                 urlStr = content.value?.urlStr,

@@ -15,11 +15,13 @@ class PreferenceViewModel: ViewModel()
 
     private val readIsbnImmediately : MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     private val overwriteTitleFromIsbn : MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
+    private val getDataUsingProductId : MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     private val archiveOnlyOneFile : MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     private val appendStringTextRecognition : MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
 
     val overwriteInfoFromIsbn: LiveData<Boolean> = overwriteTitleFromIsbn
     val checkIsbnImmediately: LiveData<Boolean> = readIsbnImmediately
+    val checkProductId: LiveData<Boolean> = getDataUsingProductId
     val archiveOneFile: LiveData<Boolean> = archiveOnlyOneFile
     val appendTextRecognition: LiveData<Boolean> = appendStringTextRecognition
 
@@ -35,6 +37,10 @@ class PreferenceViewModel: ViewModel()
             overwriteTitleFromIsbn.value = preference.getBoolean(
                 IPreferencePropertyAccessor.PREFERENCE_OVERWRITE_FROM_ISBN_TO_TITLE,
                 IPreferencePropertyAccessor.PREFERENCE_OVERWRITE_FROM_ISBN_TO_TITLE_DEFAULT_VALUE
+            )
+            getDataUsingProductId.value = preference.getBoolean(
+                IPreferencePropertyAccessor.PREFERENCE_CHECK_PRODUCT_ID,
+                IPreferencePropertyAccessor.PREFERENCE_CHECK_PRODUCT_ID_DEFAULT_VALUE
             )
             archiveOnlyOneFile.value = preference.getBoolean(
                 IPreferencePropertyAccessor.PREFERENCE_EXPORT_ARCHIVE_ONLY_ONE_FILE,
@@ -85,6 +91,26 @@ class PreferenceViewModel: ViewModel()
             editor.putBoolean(IPreferencePropertyAccessor.PREFERENCE_OVERWRITE_FROM_ISBN_TO_TITLE, value)
             editor.apply()
             overwriteTitleFromIsbn.value = value
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
+    }
+
+    fun setCheckProductId(value: Boolean)
+    {
+        try
+        {
+            if (!::preference.isInitialized)
+            {
+                Log.v(TAG, " Preference Manager is unknown...")
+                return
+            }
+            val editor = preference.edit()
+            editor.putBoolean(IPreferencePropertyAccessor.PREFERENCE_CHECK_PRODUCT_ID, value)
+            editor.apply()
+            getDataUsingProductId.value = value
         }
         catch (e: Exception)
         {

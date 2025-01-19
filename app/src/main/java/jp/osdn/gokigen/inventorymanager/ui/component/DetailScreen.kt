@@ -49,13 +49,13 @@ import jp.osdn.gokigen.gokigenassets.scene.IVibrator
 import jp.osdn.gokigen.inventorymanager.AppSingleton
 import jp.osdn.gokigen.inventorymanager.R
 import jp.osdn.gokigen.inventorymanager.export.InOutExportImage
-import jp.osdn.gokigen.inventorymanager.recognize.RecognizeFromIsbn
+import jp.osdn.gokigen.inventorymanager.recognize.RecognizeFromInternet
 import jp.osdn.gokigen.inventorymanager.ui.model.DetailInventoryViewModel
 import jp.osdn.gokigen.inventorymanager.ui.model.TextFieldId
 import java.util.Date
 
 @Composable
-fun DetailScreen(navController: NavHostController, viewModel : DetailInventoryViewModel, id : Long, recognizer: RecognizeFromIsbn)
+fun DetailScreen(navController: NavHostController, viewModel : DetailInventoryViewModel, id : Long, recognizer: RecognizeFromInternet)
 {
     viewModel.initializeData(id)
     val detail = viewModel.detailData.observeAsState()
@@ -73,6 +73,7 @@ fun DetailScreen(navController: NavHostController, viewModel : DetailInventoryVi
         }
         else
         {
+            val textRecognitionLength = viewModel.initialTextRecognitionDataLength.observeAsState()
             val scrollState = rememberScrollState()
             Column(modifier = Modifier
                 .fillMaxSize()
@@ -146,7 +147,7 @@ fun DetailScreen(navController: NavHostController, viewModel : DetailInventoryVi
                     false,
                     viewModel)
                 Spacer(Modifier.size(padding))
-                if ((detail.value?.note ?: "").isNotEmpty()) {
+                if ((textRecognitionLength.value ?: 0) > 0) {
                     HorizontalDivider(thickness = 1.dp)
                     Spacer(Modifier.size(padding))
                     ShowTextInputData(
@@ -183,7 +184,7 @@ fun DetailScreen(navController: NavHostController, viewModel : DetailInventoryVi
                                 isEnableQuery = false
                             )
                             AppSingleton.vibrator.vibrate(context, IVibrator.VibratePattern.SIMPLE_SHORT)
-                            recognizer.doRecognizeFromIsbn(id, viewModel)
+                            recognizer.doRecognizeFromInternet(id, viewModel)
                         })
                     {
                         Icon(

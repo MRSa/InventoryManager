@@ -21,7 +21,7 @@ import jp.osdn.gokigen.gokigenassets.liveview.LiveViewOnTouchListener
 import jp.osdn.gokigen.inventorymanager.export.DataExporter
 import jp.osdn.gokigen.inventorymanager.import.DataImporter
 import jp.osdn.gokigen.inventorymanager.liaison.CameraLiaison
-import jp.osdn.gokigen.inventorymanager.recognize.RecognizeFromIsbn
+import jp.osdn.gokigen.inventorymanager.recognize.RecognizeFromInternet
 import jp.osdn.gokigen.inventorymanager.ui.model.DataMaintenanceViewModel
 import jp.osdn.gokigen.inventorymanager.ui.model.DetailInventoryViewModel
 import jp.osdn.gokigen.inventorymanager.ui.model.ListViewModel
@@ -38,7 +38,7 @@ class ViewRootComponent @JvmOverloads constructor(context: Context, attrs: Attri
     private lateinit var myLiaison : CameraLiaison
     private lateinit var myExporter : DataExporter
     private lateinit var myImporter : DataImporter
-    private lateinit var myRecognizer : RecognizeFromIsbn
+    private lateinit var myRecognizer : RecognizeFromInternet
 
     fun setLiaisons(
         viewModel : ListViewModel,
@@ -49,7 +49,7 @@ class ViewRootComponent @JvmOverloads constructor(context: Context, attrs: Attri
         liaison: CameraLiaison,
         exporter: DataExporter,
         importer: DataImporter,
-        recognizer: RecognizeFromIsbn)
+        recognizer: RecognizeFromInternet)
     {
         this.myViewModel = viewModel
         this.myRegistViewModel = registScreenViewModel
@@ -107,7 +107,8 @@ fun NavigationMain(
     anotherDrawer: IAnotherDrawer?,
     exporter: DataExporter,
     importer: DataImporter,
-    recognizer: RecognizeFromIsbn)
+    recognizer: RecognizeFromInternet
+)
 {
     MaterialTheme {
         NavHost(

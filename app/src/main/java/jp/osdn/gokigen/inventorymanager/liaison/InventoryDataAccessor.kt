@@ -5,13 +5,12 @@ import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.preference.PreferenceManager
-import jp.osdn.gokigen.gokigenassets.utils.communication.SimpleHttpClient
 import jp.osdn.gokigen.inventorymanager.AppSingleton
 import jp.osdn.gokigen.inventorymanager.R
 import jp.osdn.gokigen.inventorymanager.export.InOutExportImage
 import jp.osdn.gokigen.inventorymanager.preference.IPreferencePropertyAccessor
-import jp.osdn.gokigen.inventorymanager.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CHECK_ISBN_IMMEDIATELY_DEFAULT_VALUE
-import jp.osdn.gokigen.inventorymanager.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_OVERWRITE_FROM_ISBN_TO_TITLE_DEFAULT_VALUE
+import jp.osdn.gokigen.inventorymanager.recognize.RecognizeFromIsbn
+import jp.osdn.gokigen.inventorymanager.recognize.RecognizeFromProductId
 import jp.osdn.gokigen.inventorymanager.storage.DataContent
 import java.util.Date
 
@@ -68,8 +67,6 @@ class InventoryDataAccessor(private val activity: ComponentActivity)
     {
         try
         {
-
-
             val storageDao = AppSingleton.db.storageDao()
 
             Log.v(TAG, "data entry ... : $category, $data1, $data2, $data3, $data4, $data5, $isbn, $productId, $readText, $readUrl")
@@ -77,80 +74,63 @@ class InventoryDataAccessor(private val activity: ComponentActivity)
             var subTitle = data2
             var author = data3
             var publisher = data4
+            var dataIsUpdated = false
+            var description = ""
 
-            if (isbn.isNotEmpty())
+            val preferences = PreferenceManager.getDefaultSharedPreferences(activity)
+            val isCheck = preferences.getBoolean(
+                IPreferencePropertyAccessor.PREFERENCE_CHECK_ISBN_IMMEDIATELY,
+                IPreferencePropertyAccessor.PREFERENCE_CHECK_ISBN_IMMEDIATELY_DEFAULT_VALUE
+            )
+            val isOverWrite = preferences.getBoolean(
+                IPreferencePropertyAccessor.PREFERENCE_OVERWRITE_FROM_ISBN_TO_TITLE,
+                IPreferencePropertyAccessor.PREFERENCE_OVERWRITE_FROM_ISBN_TO_TITLE_DEFAULT_VALUE
+            )
+            if (isCheck)
             {
-                // ISBNが取得できていた場合の特殊処理...
-                try
-                {
-                    val preferences = PreferenceManager.getDefaultSharedPreferences(activity)
-                    val isCheck = preferences.getBoolean(IPreferencePropertyAccessor.PREFERENCE_CHECK_ISBN_IMMEDIATELY, PREFERENCE_CHECK_ISBN_IMMEDIATELY_DEFAULT_VALUE)
-                    val isOverWrite = preferences.getBoolean(IPreferencePropertyAccessor.PREFERENCE_OVERWRITE_FROM_ISBN_TO_TITLE, PREFERENCE_OVERWRITE_FROM_ISBN_TO_TITLE_DEFAULT_VALUE)
+                // ----- 登録時にバーコードデータの情報から題名等を取得する設定だった場合...
+                if (isbn.isNotEmpty()) {
+                    // ----- ISBNが取得できていた場合の特殊処理...
+                    val recognizer = RecognizeFromIsbn(activity)
+                    val response = recognizer.recognizeInformationFromIsbn(
+                        isbn = isbn,
+                        title = data1,
+                        subTitle = data2,
+                        author = data3,
+                        publisher = data4
+                    )
 
-                    if (isCheck)
-                    {
-                        // REFERENCE_CHECK_ISBN_IMMEDIATELY が trueなら、国立国会図書館のAPIにISBN番号で問い合わせを実行し、タイトル、著者、出版社を取得する
-                        val urlToQuery = "https://ndlsearch.ndl.go.jp/api/sru?operation=searchRetrieve&query=isbn=$isbn"
-                        val response = SimpleHttpClient().httpGet(urlToQuery, -1)
-                        //Log.v(TAG, " response: $response")
-
-                        // PREFERENCE_OVERWRITE_FROM_ISBN_TO_TITLE が true あるいは 入力されていない場合は、問い合わせ結果を反映させる (ちょー手抜きの解析処理)
-                        if ((isOverWrite)||(title.isEmpty()))
-                        {
-                            if (response.contains("&lt;dc:title&gt;")) {
-                                val startIndex = response.indexOf("&lt;dc:title&gt;")
-                                val endIndex = response.indexOf("&lt;/dc:title&gt;")
-                                title =
-                                    response.substring(startIndex + "&lt;dc:title&gt;".length, endIndex)
-                            }
-                        }
-
-                        if ((isOverWrite)||(subTitle.isEmpty()))
-                        {
-                            if (response.contains("&lt;dc:description&gt;")) {
-                                val startIndex = response.indexOf("&lt;dc:description&gt;")
-                                val endIndex = response.indexOf("&lt;/dc:description&gt;")
-                                subTitle = response.substring(
-                                    startIndex + "&lt;dc:description&gt;".length,
-                                    endIndex
-                                )
-                            }
-                        }
-
-                        if ((isOverWrite)||(author.isEmpty()))
-                        {
-                            if (response.contains("&lt;dc:creator&gt;")) {
-                                val startIndex = response.indexOf("&lt;dc:creator&gt;")
-                                val endIndex = response.indexOf("&lt;/dc:creator&gt;")
-                                author = response.substring(
-                                    startIndex + "&lt;dc:creator&gt;".length,
-                                    endIndex
-                                )
-
-                            }
-                        }
-                        if ((isOverWrite)||(publisher.isEmpty()))
-                        {
-                            if (response.contains("&lt;dc:publisher&gt;")) {
-                                val startIndex = response.indexOf("&lt;dc:publisher&gt;")
-                                val endIndex = response.indexOf("&lt;/dc:publisher&gt;")
-                                publisher = response.substring(
-                                    startIndex + "&lt;dc:publisher&gt;".length,
-                                    endIndex
-                                )
-                            }
-                        }
-                        Log.v(TAG, "title: $title, subTitle: $subTitle, author: $author, publisher: $publisher")
-                    }
+                    // 結果をコピー
+                    title = response.title
+                    subTitle = response.appendData
+                    author = response.author
+                    publisher = response.publisher
+                    dataIsUpdated = response.isHit
                 }
-                catch (ee: Exception)
+                if ((!dataIsUpdated)&&((productId.isNotEmpty())||(isbn.isNotEmpty())))
                 {
-                    ee.printStackTrace()
+                    // ----- product IDが取得できていた場合の処理 (ただし、先にISBNでデータが更新されていた場合は除く)
+                    val recognizer = RecognizeFromProductId()
+                    val response = recognizer.recognizeInformationFromProductId(
+                        isOverWrite = isOverWrite,
+                        isbn = isbn,
+                        productId = productId,
+                        title = data1,
+                        description = description,
+                        author = data3,
+                        publisher = data4
+                    )
+
+                    // 結果をコピー
+                    title = response.title
+                    description = response.appendData
+                    author = response.author
+                    publisher = response.publisher
                 }
             }
 
             // データをデータベースに登録する
-            val content = DataContent.create(title, subTitle, author, publisher, isbn, productId ,readUrl, readText, category, "", "", "", "", "", data5)
+            val content = DataContent.create(title, subTitle, author, publisher, isbn, productId ,readUrl, readText, category, "", "", "", "", "", data5, description)
             val entryId = storageDao.insertSingle(content)
 
             val image1FileName = if (image1 != null) { "${entryId}_img01.jpg" } else { "" }

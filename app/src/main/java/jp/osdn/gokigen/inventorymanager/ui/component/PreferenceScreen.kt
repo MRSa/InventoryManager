@@ -59,6 +59,9 @@ fun PreferenceScreen(navController: NavHostController, prefsModel: PreferenceVie
             SwitchOverwriteInformationFromIsbn(prefsModel)
             Spacer(Modifier.size(padding))
             HorizontalDivider(thickness = 1.dp)
+            SwitchCheckProductId(prefsModel)
+            Spacer(Modifier.size(padding))
+            HorizontalDivider(thickness = 1.dp)
             SwitchArchiveOnlyOneFile(prefsModel)
             Spacer(Modifier.size(padding))
             HorizontalDivider(thickness = 1.dp)
@@ -177,6 +180,37 @@ fun SwitchOverwriteInformationFromIsbn(prefsModel: PreferenceViewModel)
         )
     }
     Text(text = stringResource(R.string.description_switch_overwrite_information_from_isbn),
+        color = MaterialTheme.colorScheme.secondary,
+        fontSize = with(density) { 14.dp.toSp() },)
+}
+
+@Composable
+fun SwitchCheckProductId(prefsModel: PreferenceViewModel)
+{
+    val density = LocalDensity.current
+    val scope = rememberCoroutineScope()
+    val checkProductId = prefsModel.checkProductId.observeAsState()
+    Row (
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.padding(horizontal = 4.dp)
+    ) {
+        Switch(
+            checked = checkProductId.value?: false,
+            onCheckedChange = {
+                scope.launch {
+                    prefsModel.setCheckProductId(!(checkProductId.value?: false))
+                }
+            })
+        Spacer(modifier = Modifier.width(8.dp))
+        Text(text = stringResource(R.string.label_switch_use_title_search_product_id),
+            fontSize = with(density) { 18.dp.toSp() },
+            color = MaterialTheme.colorScheme.primary,
+            modifier = Modifier.clickable( onClick = {
+                scope.launch { prefsModel.setCheckProductId(!(checkProductId.value?: false)) }
+            })
+        )
+    }
+    Text(text = stringResource(R.string.description_switch_use_title_search_product_id),
         color = MaterialTheme.colorScheme.secondary,
         fontSize = with(density) { 14.dp.toSp() },)
 }
